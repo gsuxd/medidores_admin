@@ -11,6 +11,10 @@
   padding: 1rem;
 }
 
+.menu-button {
+  display: none;
+}
+
 .nav-title img {
   width: 10%;
   border-radius: 50%;
