@@ -4,12 +4,13 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  background: rgb(11, 51, 68);
-  background: linear-gradient(
-    45deg,
-    rgba(11, 51, 68, 1) 19%,
-    rgba(64, 156, 157, 1) 100%
-  );
+  background-color: rgb(11, 51, 68);
+  background:linear-gradient(    
+  to bottom,
+      rgba(11, 51, 68, 0.50) 19%,
+      rgba(64, 156, 157, 0.50)100%
+      ),
+      url(../assets/hand-phone.png) no-repeat center /calc(400 * 100vw / 1556 ),url(../assets/house.png)  no-repeat calc(900 * 100vw / 1556) center /calc(500 * 100vw /1556), rgb(11, 51, 68);
   color: white;
   font-size: 2em;
 }
@@ -63,38 +64,13 @@
 }
 
 @media (max-width: 760px) {
-  .nav-buttons {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-top: 10%;
-    position: absolute;
-    z-index: 300;
-    font-size: 1.5em;
-    display: none;
-    top: calc(450 * 100vh / 1556);
-    left: calc(400 * 100vh / 1556);
-    padding: 10%;
-    border-radius: 20%;
-    background-color: var(--primary-color);
-  }
-
-  .nav-buttons.active {
-    display: flex;
-  }
-
-  .menu-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   #heading {
     font-size: 2em;
     padding-left: 0;
     padding-right: 0;
     text-align: center;
-    align-items: center;
+    background-color: var(--primary-color);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
   }
 
   #heading h2,
