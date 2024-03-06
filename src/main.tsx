@@ -1,13 +1,24 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import {
-  RouterProvider,
-} from "react-router-dom";
-import './index.css'
-import router from './routes';
+import ReactDOM from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
+import { BrowserRouter } from "react-router-dom";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>,
-)
+import "nprogress/nprogress.css";
+import App from "./App";
+import { SidebarProvider } from "./contexts/SidebarContext";
+import * as serviceWorker from "./serviceWorker";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const client = new QueryClient();
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <HelmetProvider>
+    <SidebarProvider>
+      <BrowserRouter>
+        <QueryClientProvider client={client}>
+        <App />
+        </QueryClientProvider>
+      </BrowserRouter>
+    </SidebarProvider>
+  </HelmetProvider>
+);
+serviceWorker.unregister();

@@ -15,7 +15,7 @@ export default function Navbar() {
           <h4>Sistema de Gestión H2O</h4>
         </div>
         <div className={`nav-buttons ${showModal && "active"}`}>
-          <button className="button primary-button">Iniciar Sesión</button>
+          <button onClick={() => navigate("/login")} className="button primary-button">Iniciar Sesión</button>
           <button className="button secondary-button">Registro</button>
         </div>
         <div className="menu-button">
