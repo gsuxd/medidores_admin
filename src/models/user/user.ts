@@ -93,6 +93,25 @@ export default class User {
     });
   }
 
+  get fullName(): string {
+    return `${this.name} ${this.lastName}`;
+  }
+
+  get roleLabel(): string {
+    switch (this.role) {
+      case UserRole.admin:
+        return "Administrador";
+      case UserRole.operator:
+        return "Operador";
+      case UserRole.partner:
+        return "Socio";
+      case UserRole.seller:
+        return "Vendedor";
+      case UserRole.master:
+        return "Master";
+    }
+  }
+
   toJson(): {
     id: number;
     name: string;

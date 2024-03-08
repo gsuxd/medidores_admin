@@ -21,29 +21,15 @@ const LandingPage = Loader(lazy(() => import("@/landing/Index")));
 
 const AditionalPage = Loader(lazy(() => import("@/landing/AditionalPage")));
 
-// Dashboards
+const Login = Loader(lazy(() => import("@/auth/screens/login")));
 
-const Crypto = Loader(lazy(() => import("@/content/dashboards/Crypto")));
+const Dashboard = Loader(lazy(() => import("@/content/dashboard")));
 
 // Applications
 
-const Transactions = Loader(
-  lazy(() => import("@/content/applications/Transactions"))
+const UsersManagement = Loader(
+  lazy(() => import("@/content/applications/User"))
 );
-const UserProfile = Loader(
-  lazy(() => import("@/content/applications/Users/profile"))
-);
-const UserSettings = Loader(
-  lazy(() => import("@/content/applications/Users/settings"))
-);
-
-const Forms = Loader(
-  lazy(() => import("@/content/pages/Components/Forms"))
-)
-
-const Login = Loader(
-  lazy(() => import("@/auth/screens/login"))
-)
 
 // Status
 
@@ -68,7 +54,7 @@ const routes: RouteObject[] = [
   },
   {
     path: "/login",
-    element: <Login />
+    element: <Login />,
   },
   {
     path: "",
@@ -99,47 +85,11 @@ const routes: RouteObject[] = [
     children: [
       {
         path: "dashboard",
-        element: <Crypto />,
+        element: <Dashboard />,
       },
       {
-        path: "components",
-        children: [
-          {
-            path: "forms",
-            element: <Forms />,
-          }
-        ]
-      },
-      {
-        path: "management",
-        element: <SidebarLayout />,
-        children: [
-          {
-            path: "",
-            element: <Navigate to="transactions" replace />,
-          },
-          {
-            path: "transactions",
-            element: <Transactions />,
-          },
-          {
-            path: "profile",
-            children: [
-              {
-                path: "",
-                element: <Navigate to="details" replace />,
-              },
-              {
-                path: "details",
-                element: <UserProfile />,
-              },
-              {
-                path: "settings",
-                element: <UserSettings />,
-              },
-            ],
-          },
-        ],
+        path: "users",
+        element: <UsersManagement />,
       },
     ],
   },

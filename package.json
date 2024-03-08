@@ -23,6 +23,7 @@
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
     "date-fns": "^3.3.1",
+    "framer-motion": "^11.0.8",
     "history": "^5.3.0",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
@@ -39,6 +40,7 @@
     "stylis": "^4.3.1"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "^5.25.0",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",

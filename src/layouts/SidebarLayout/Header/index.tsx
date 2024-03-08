@@ -13,7 +13,7 @@ import MenuTwoToneIcon from '@mui/icons-material/MenuTwoTone';
 import { SidebarContext } from '@/contexts/SidebarContext';
 import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 
-import HeaderButtons from './Buttons';
+// import HeaderButtons from './Buttons';
 import HeaderUserbox from './Userbox';
 
 const HeaderWrapper = styled(Box)(
@@ -60,7 +60,7 @@ function Header() {
       }}
     >
       <Box marginLeft='auto' display="flex" alignItems="center">
-        <HeaderButtons />
+        {/* <HeaderButtons /> */}
         <HeaderUserbox />
         <Box
           component="span"

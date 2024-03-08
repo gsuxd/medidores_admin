@@ -14,5 +14,6 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    'typescript-eslint/non-unsued-vars': 'off',
   },
 }
