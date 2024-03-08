@@ -1,7 +1,15 @@
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
 
+interface IProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    mentor: { profile: { nickname: string } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query: { isLoading: boolean, isError: boolean, data: any, error: any };
 
-const ConfirmModal = ({ isOpen, onClose, onConfirm,  mentor, query}): JSX.Element => {
+}
+const ConfirmModal = ({ isOpen, onClose, onConfirm,  mentor, query}: IProps): JSX.Element => {
     return (
         <Dialog open={isOpen} onClose={onClose}>
         <DialogTitle>{"Confirmar asignación"}</DialogTitle>

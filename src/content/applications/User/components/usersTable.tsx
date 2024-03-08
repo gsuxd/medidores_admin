@@ -86,7 +86,7 @@ const UsersTable: React.FC = () => {
       </Fab>
       {isDeleteOpen && (
         <DeleteModal
-          user={selectedUser}
+          user={selectedUser!}
           isOpen={isDeleteOpen}
           onClose={() => {
             setIsDeleteOpen(false);

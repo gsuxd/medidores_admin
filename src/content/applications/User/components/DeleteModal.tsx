@@ -1,3 +1,4 @@
+import User from '@/models/user/user';
 import {
     Dialog,
     DialogTitle,
@@ -12,7 +13,7 @@ import {
   interface IProps {
     isOpen: boolean;
     onClose: () => void;
-    user: PlayerUser.User;
+    user: User;
   }
   
   const DeleteModal: React.FC<IProps> = ({
@@ -20,7 +21,7 @@ import {
     onClose,
     user
   }): JSX.Element => {
-    const { data, isLoading, isError, error, mutate } = useMutation(handleDelete);
+    const { data, isPending, isError, error, mutate } = useMutation({mutationFn: handleDelete});
   
     async function handleDelete() {
       const { data } = await axios.post(
@@ -31,7 +32,7 @@ import {
         {
           headers: {
             Authorization: `Token ${
-              JSON.parse(localStorage.getItem('auth')).token
+              JSON.parse(localStorage.getItem('token')!).token
             }`
           }
         }
@@ -43,29 +44,30 @@ import {
       <Dialog open={isOpen} onClose={onClose}>
         <DialogTitle>{'Eliminar Usuario'}</DialogTitle>
         <DialogContent>
-          {isLoading && <p>Cargando...</p>}
+          {isPending && <p>Cargando...</p>}
           {isError && (
             <p>
               {(error as AxiosError).response
                 ?
-                  (error as AxiosError).response.data.error
+                //@ts-expect-error common error
+                  (error as AxiosError).response!.data!.error!
                 : (error as AxiosError).message}
             </p>
           )}
           {data && <p>Usuario Eliminado</p>}
-          {!(isLoading || isError || data) && (
+          {!(isPending || isError || data) && (
             <DialogContentText>
-              Está seguro de eliminar al usuario {user.nickname}?
+              Está seguro de eliminar al usuario {user.fullName}?
             </DialogContentText>
           )}
         </DialogContent>
         <DialogActions>
-          <Button disabled={isLoading} onClick={onClose}>
+          <Button disabled={isPending} onClick={onClose}>
             Cancelar
           </Button>
           <Button
             onClick={() => {
-              if ((!isLoading || error) && !data) {
+              if ((!isPending || error) && !data) {
                 mutate();
               } else if (data) {
                 onClose();

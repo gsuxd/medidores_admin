@@ -4,6 +4,7 @@ import { themeCreator } from './base';
 import { StylesProvider } from '@mui/styles';
 
 export const ThemeContext = React.createContext(
+  //@ts-expect-error common error
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (themeName: string): void => {}
 );
