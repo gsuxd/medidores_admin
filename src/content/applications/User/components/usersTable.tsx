@@ -34,6 +34,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DeleteModal from "./DeleteModal";
 import User, { UserRole } from "@/models/user/user";
 import { format } from "date-fns";
+import UserModal from "./UserModal";
 
 const UsersTable: React.FC = () => {
   const { query, filters, setFilters } = useContext(usersContext);
@@ -54,7 +55,7 @@ const UsersTable: React.FC = () => {
   const usersList = useMemo(
     () =>
       query.data &&
-      query.data.users.map((user) => {
+      Array.from(query.data.users.values()).map((user) => {
         return (
           <TableRow hover key={user.id.toString()}>
             <UserRow
@@ -95,7 +96,7 @@ const UsersTable: React.FC = () => {
           }}
         />
       )}
-      {/* {isOpen && (
+       {isOpen && (
           <UserModal
             isOpen={isOpen}
             setIsOpen={setIsOpen}
@@ -106,7 +107,7 @@ const UsersTable: React.FC = () => {
               setSelectedUser(null);
             }}
           />
-        )} */}
+        )}
       <Divider />
       <TableContainer>
         <Accordion expanded={true}>
@@ -132,7 +133,7 @@ const UsersTable: React.FC = () => {
                   <Typography variant="h6">Cargando...</Typography>
                 </TableCell>
               </TableRow>
-            ) : query.data && query.data.users.length ? (
+            ) : query.data && query.data.users.size ? (
               usersList
             ) : (
               <TableRow>
@@ -154,7 +155,7 @@ const UsersTable: React.FC = () => {
             alignItems: "center",
           }}
         >
-          Page {filters.page} of {query.data?.pages}
+          Page {(filters.page ?? 0) + 1} of {query.data?.pages}
           <Box>
             <Button
               disabled={filters.page === 0}
@@ -165,7 +166,7 @@ const UsersTable: React.FC = () => {
               <ArrowBackIosIcon />
             </Button>
             <Button
-              disabled={filters.page === (query.data ? query.data.pages : 1)}
+              disabled={filters.page === (query.data ? query.data.pages -1 : 0)}
               onClick={() => {
                 setFilters({
                   ...filters,

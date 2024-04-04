@@ -9,6 +9,7 @@ import {
   } from '@mui/material';
   import { useMutation } from '@tanstack/react-query';
   import axios, { AxiosError } from 'axios';
+import { useState } from 'react';
   
   interface IProps {
     isOpen: boolean;
@@ -22,20 +23,22 @@ import {
     user
   }): JSX.Element => {
     const { data, isPending, isError, error, mutate } = useMutation({mutationFn: handleDelete});
+    const [adminId, setAdminId] = useState()
+    const [sellerId, setSellerId] = useState()
   
     async function handleDelete() {
-      const { data } = await axios.post(
-        import.meta.env.VITE_SERVER + '/api/v01/delete-user-backoffice/',
-        {
-          user_id: user.id
-        },
+      const { data } = await axios.delete(
+        import.meta.env.VITE_SERVER_URL + '/api/admin/user/' + user.id,
         {
           headers: {
-            Authorization: `Token ${
-              JSON.parse(localStorage.getItem('token')!).token
-            }`
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+          data: {
+            id: user.id,
+            adminId: adminId,
+            sellerId: sellerId,
           }
-        }
+        },
       );
       return data;
     }

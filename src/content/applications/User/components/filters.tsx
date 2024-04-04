@@ -66,7 +66,17 @@ const Filtros: React.FC = (): JSX.Element => {
         />
       </FormItem>
       <FormItem>
-        <InputLabel htmlFor="phone">phone</InputLabel>
+        <InputLabel htmlFor="email">Correo</InputLabel>
+        <Input
+          id="email"
+          placeholder="Correo electrónico"
+          name="email"
+          value={filters.email}
+          onChange={(e) => handleChange(e)}
+        />
+      </FormItem>
+      <FormItem>
+        <InputLabel htmlFor="phone">Numero de telefono</InputLabel>
         <Input
           id="phone"
           placeholder="Numero de telefono"

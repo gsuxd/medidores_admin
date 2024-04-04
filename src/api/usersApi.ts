@@ -33,7 +33,7 @@ export default abstract class UsersApi {
   static async listUsers(params: ParamsListUsers): Promise<{
     count: number;
     pages: number;
-    users: User[];
+    users: Map<number, User>;
   }> {
     try {
       const res = await axios.get(
@@ -45,8 +45,11 @@ export default abstract class UsersApi {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         } }
       );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return {...res.data, users: res.data.users.map((user: any) => User.fromJson(user))};
+      const users = new Map<number, User>();
+      for (const user of res.data.users) {
+        users.set(user.id, User.fromJson(user));
+      }
+      return {...res.data, users};
     } catch (error) {
       throw new Error(
         "Error inesperado, verifica tu conexión e intenta más tarde"

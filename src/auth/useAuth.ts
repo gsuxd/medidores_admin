@@ -38,6 +38,7 @@ export default function useAuth() {
 
   async function logout() {
     localStorage.clear();
+    setUser(null);
     navigate("/", {replace: true});
   }
 
@@ -49,7 +50,7 @@ export default function useAuth() {
   }, []);
 
   return {
-    logged: true,
+    logged: Boolean(localStorage.getItem("token")),
     user,
     login,
     logout,

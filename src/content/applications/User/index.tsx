@@ -24,7 +24,7 @@ export default function UsersManagement() {
     adminId: undefined,
     enabled: false
   });
-  const query = useQuery({queryFn: () => UsersApi.listUsers(filters), queryKey: ['users', filters.page]});
+  const query = useQuery({queryFn: () => UsersApi.listUsers(filters), queryKey: ['users', filters]});
 
   return (
     <motion.div

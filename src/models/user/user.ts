@@ -1,6 +1,7 @@
 import AdminAccount from "./adminAccount";
 import OperatorAccount from "./operatorAccount";
 import PartnerAccount from "./partnerAccount";
+import SellerAccount from "./sellerAccount";
 
 export enum UserRole { master, seller, admin, operator, partner }
 
@@ -11,6 +12,7 @@ export default class User {
   readonly createdAt: Date;
   readonly updatedAt: Date;
   readonly email?: string;
+  readonly password?: string;
   readonly role: UserRole;
   readonly emailVerified: boolean;
   readonly phone: string;
@@ -19,6 +21,7 @@ export default class User {
   readonly partnerAccount?: PartnerAccount;
   readonly adminAccount?: AdminAccount;
   readonly operatorAccount?: OperatorAccount;
+  readonly sellerAccount?: SellerAccount;
 
   constructor({
     id,
@@ -27,6 +30,7 @@ export default class User {
     createdAt,
     updatedAt,
     email,
+    password,
     role,
     emailVerified,
     phone,
@@ -35,6 +39,7 @@ export default class User {
     partnerAccount,
     adminAccount,
     operatorAccount,
+    sellerAccount,
   }: {
     id: number;
     name: string;
@@ -42,6 +47,7 @@ export default class User {
     createdAt: Date;
     updatedAt: Date;
     email?: string;
+    password?: string;
     role: UserRole;
     emailVerified: boolean;
     phone: string;
@@ -50,6 +56,7 @@ export default class User {
     partnerAccount?: PartnerAccount;
     adminAccount?: AdminAccount;
     operatorAccount?: OperatorAccount;
+    sellerAccount?: SellerAccount;
   }) {
     this.id = id;
     this.name = name;
@@ -57,6 +64,7 @@ export default class User {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.email = email;
+    this.password = password;
     this.role = role;
     this.emailVerified = emailVerified;
     this.phone = phone;
@@ -64,6 +72,7 @@ export default class User {
     this.address = address;
     this.partnerAccount = partnerAccount;
     this.adminAccount = adminAccount;
+    this.sellerAccount = sellerAccount
     this.operatorAccount = operatorAccount;
   }
 
@@ -76,6 +85,7 @@ export default class User {
       createdAt: new Date(json.createdAt),
       updatedAt: new Date(json.updatedAt),
       email: json.email,
+      password: json.password,
       role: UserRole[json.role as keyof typeof UserRole],
       emailVerified: json.emailVerified,
       phone: json.phone,
@@ -90,6 +100,9 @@ export default class User {
       adminAccount: json.adminAccount
         ? AdminAccount.fromJson(json.adminAccount)
         : undefined,
+      sellerAccount: json.sellerAccount
+      ? SellerAccount.fromJson(json.sellerAccount)
+      : undefined
     });
   }
 
@@ -111,6 +124,17 @@ export default class User {
         return "Master";
     }
   }
+  getSuperior(array: User[]) : User | undefined{
+    switch (this.role) {
+      case UserRole.partner:
+        return array.find((val) => val.adminAccount?.id === this.partnerAccount?.adminId);
+      case UserRole.operator:
+        return array.find((val) => val.adminAccount?.id === this.operatorAccount?.adminId);
+       case UserRole.admin:
+         return array.find((val) => val.sellerAccount?.id === this.adminAccount?.id);
+    }
+  }
+  
 
   toJson(): {
     id: number;
@@ -119,12 +143,16 @@ export default class User {
     createdAt: string;
     updatedAt: string;
     email?: string;
+    password?: string;
     role: string;
     emailVerified: boolean;
     phone: string;
     rut: string;
     address: string;
     partnerAccount?: Record<string, unknown>;
+    adminAccount?: Record<string, unknown>;
+    sellerAccount?: Record<string, unknown>;
+    operatorAccount?: Record<string, unknown>;
   } {
     return {
       id: this.id,
@@ -133,7 +161,8 @@ export default class User {
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
       email: this.email,
-      role: this.role.toString(),
+      password: this.password,
+      role: UserRole[this.role],
       emailVerified: this.emailVerified,
       phone: this.phone,
       rut: this.rut,
@@ -141,6 +170,9 @@ export default class User {
       partnerAccount: this.partnerAccount
         ? this.partnerAccount.toJson()
         : undefined,
+      operatorAccount: this.operatorAccount?.toJson(),
+      adminAccount: this.adminAccount?.toJson(),
+      sellerAccount: this.sellerAccount?.toJson()
     };
   }
 
@@ -151,12 +183,16 @@ export default class User {
     createdAt,
     updatedAt,
     email,
+    password,
     role,
     emailVerified,
     phone,
     rut,
     address,
     partnerAccount,
+    operatorAccount,
+    adminAccount,
+    sellerAccount
   }: {
     id?: number;
     name?: string;
@@ -164,12 +200,16 @@ export default class User {
     createdAt?: Date;
     updatedAt?: Date;
     email?: string;
+    password?: string;
     role?: UserRole;
     emailVerified?: boolean;
     phone?: string;
     rut?: string;
     address?: string;
     partnerAccount?: PartnerAccount;
+    operatorAccount?: OperatorAccount;
+    adminAccount?: AdminAccount;
+    sellerAccount?: SellerAccount;
   }): User {
     return new User({
       id: id ?? this.id,
@@ -178,12 +218,16 @@ export default class User {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       email: email ?? this.email,
+      password: password ?? this.password,
       role: role ?? this.role,
       emailVerified: emailVerified ?? this.emailVerified,
       phone: phone ?? this.phone,
       rut: rut ?? this.rut,
       address: address ?? this.address,
       partnerAccount: partnerAccount ?? this.partnerAccount,
+      operatorAccount: operatorAccount ?? this.operatorAccount,
+      adminAccount: adminAccount ?? this.adminAccount,
+      sellerAccount: sellerAccount ?? this.sellerAccount,
     });
   }
 }

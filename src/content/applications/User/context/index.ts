@@ -11,7 +11,7 @@ interface IUsersContext {
     {
       count: number;
       pages: number;
-      users: User[];
+      users: Map<number, User>;
     },
     unknown
   >;

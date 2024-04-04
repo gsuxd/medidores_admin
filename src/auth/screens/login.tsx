@@ -1,8 +1,16 @@
 import Text from "@/components/Text";
 import { AdminContext } from "@/contexts/AdminContext";
-import { Box, Button, Card, TextField, Typography, useMediaQuery } from "@mui/material";
-import { useContext, useState } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  TextField,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import { useContext, useEffect, useState } from "react";
 import Logo from "@/assets/logo.jpeg";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [values, setValues] = useState({
@@ -15,7 +23,13 @@ export default function LoginPage() {
       login,
     },
   } = useContext(AdminContext);
-  const phone = useMediaQuery('max-width: 640px')
+  const phone = useMediaQuery("max-width: 640px");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (localStorage.getItem("token"))
+      navigate("/admin/dashboard", { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <>
       <Box
@@ -32,8 +46,8 @@ export default function LoginPage() {
             placeItems: "center",
             gap: "2rem",
             padding: "4rem 0",
-            maxWidth: phone ? 400 : 'unset',
-            maxHeight: phone ? 400 : 'unset'
+            maxWidth: phone ? 400 : "unset",
+            maxHeight: phone ? 400 : "unset",
           }}
         >
           <img
@@ -47,14 +61,14 @@ export default function LoginPage() {
           </Typography>
           <TextField
             value={values.email}
-            sx={{width: "70%"}}
+            sx={{ width: "70%" }}
             type="email"
             required
             onChange={(e) => setValues({ ...values, email: e.target.value })}
           />
           <TextField
             value={values.password}
-            sx={{width: "70%"}}
+            sx={{ width: "70%" }}
             type="password"
             required
             onChange={(e) => setValues({ ...values, password: e.target.value })}
