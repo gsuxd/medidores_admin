@@ -100,6 +100,7 @@ const AssignModal: React.FC<IProps> = ({
     const users = new Map();
     const filtered =
       Array.from(query.data?.users.values() ?? []).filter((val) => {
+        if (userSelected && userSelected.id === val.id) return false;
         switch (user?.role) {
           case UserRole.admin:
             return val.role === UserRole.seller;
@@ -117,7 +118,7 @@ const AssignModal: React.FC<IProps> = ({
       users.set(user.id, user);
     }
     return users;
-  }, [query.data?.users, user?.role]);
+  }, [query.data?.users, user?.role, userSelected]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [adminId, setAdminId] = useState<number>(

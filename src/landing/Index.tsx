@@ -7,6 +7,7 @@ import { RiFolderDownloadLine } from "react-icons/ri";
 import "./landing.styles.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -115,6 +116,8 @@ function IconButton({
   Icon: IconType;
 }) {
   const [width, setWidth] = useState(window.innerWidth);
+  const desktop = useMediaQuery("(min-width: 1024px)");
+  const mobile = useMediaQuery("(max-width: 768px)");
   function onResize(e: UIEvent) {
     setWidth(e.view!.innerWidth!);
   }
@@ -126,7 +129,7 @@ function IconButton({
   }, []);
   return (
     <button className="icon-button" onClick={onClick}>
-      <Icon size={width > 1024 ? 37 : width > 760 ? width * 0.025 : 30} />
+      <Icon size={desktop ? 37 : mobile ? width * 0.025 : 30} />
       <span>{title}</span>
     </button>
   );
