@@ -31,6 +31,10 @@ const UsersManagement = Loader(
   lazy(() => import("@/content/applications/User"))
 );
 
+const BillsManagement = Loader(
+  lazy(() => import("@/content/applications/Bill"))
+);
+
 // Status
 
 const Status404 = Loader(
@@ -91,6 +95,10 @@ const routes: RouteObject[] = [
         path: "users",
         element: <UsersManagement />,
       },
+      {
+        path: "bills",
+        element: <BillsManagement/>
+      }
     ],
   },
 ];

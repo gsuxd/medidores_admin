@@ -6,7 +6,9 @@ import ThemeProvider from "./theme/ThemeProvider";
 import { AdminContext } from "./contexts/AdminContext";
 import useAuth from "./auth/useAuth";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { pdfjs } from 'react-pdf';
 
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 function App() {
   const content = useRoutes(router);
