@@ -8,6 +8,7 @@ interface ParamsListBills {
   start: Date,
   end: Date,
   deleted: boolean,
+  userId?: number,
   order?: "asc" | "desc"| null;
   orderBy?: string| null;
   enabled?: boolean| null;

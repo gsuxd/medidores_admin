@@ -24,11 +24,9 @@ export default abstract class SSRApi {
                 }
             })
             const ssrMap = new Map<number, SSR>();
-            console.log('data')
             for (const ssr of data.ssr) {
                 ssrMap.set(ssr.id, SSR.fromJson(ssr));
             }
-            console.log('returned')
             return {...data, ssr: ssrMap};
         } catch (error) {
             throw new Error('Error inesperado, verifica tu conexión e intenta más tarde');

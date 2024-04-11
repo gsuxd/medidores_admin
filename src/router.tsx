@@ -33,8 +33,12 @@ const UsersManagement = Loader(
   lazy(() => import("@/content/applications/User"))
 );
 
-const BillsManagement = Loader(
-  lazy(() => import("@/content/applications/Bill"))
+// const BillsManagement = Loader(
+//   lazy(() => import("@/content/applications/Bill"))
+// );
+
+const UserDashboard = Loader(
+  lazy(() => import("@/content/applications/UserDashboard"))
 );
 
 // Status
@@ -102,9 +106,13 @@ const routes: RouteObject[] = [
         element: <UsersManagement />,
       },
       {
-        path: "bills",
-        element: <BillsManagement/>
-      }
+        path: "user/:userId",
+        element: <UserDashboard />,
+      },
+      // {
+      //   path: "bills",
+      //   element: <BillsManagement/>
+      // }
     ],
   },
 ];

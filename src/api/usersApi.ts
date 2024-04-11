@@ -19,12 +19,18 @@ interface ParamsListUsers {
 }
 
 export default abstract class UsersApi {
-  static async getUser(id: number): Promise<User> {
+  static async getUser(id: number): Promise<{
+    user: User;
+    ssrId: number;
+  }> {
     try {
       const res = await axios.get(import.meta.env.VITE_SERVER_URL + "/api/admin/user/" + id, {headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }});
-      return User.fromJson(res.data);
+      return {
+        user: User.fromJson(res.data.user),
+        ssrId: res.data.ssrId
+      };
     } catch (error) {
       throw new Error(
         "Error inesperado, verifica tu conexión e intenta más tarde"

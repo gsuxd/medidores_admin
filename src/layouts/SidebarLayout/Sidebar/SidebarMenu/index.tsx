@@ -5,7 +5,9 @@ import { NavLink as RouterLink } from "react-router-dom";
 import { SidebarContext } from "@/contexts/SidebarContext";
 
 import HomeIcon from "@mui/icons-material/Home";
-import { Apartment, Receipt, SupervisedUserCircle } from "@mui/icons-material";
+import { Apartment, 
+  //Receipt,
+   SupervisedUserCircle } from "@mui/icons-material";
 
 const MenuWrapper = styled(Box)(
   ({ theme }) => `
@@ -184,7 +186,7 @@ function SidebarMenu() {
                   Usuarios
                 </Button>
               </ListItem>
-              <ListItem>
+              {/* <ListItem>
                 <Button
                   disableRipple
                   component={RouterLink}
@@ -194,7 +196,7 @@ function SidebarMenu() {
                 >
                   Facturas
                 </Button>
-              </ListItem>
+              </ListItem> */}
               <ListItem>
                 <Button
                   disableRipple

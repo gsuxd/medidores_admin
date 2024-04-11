@@ -1,8 +1,4 @@
-import {
-  Add,
-  DeleteForeverOutlined,
-  RequestQuote,
-} from "@mui/icons-material";
+import {  DeleteForeverOutlined } from "@mui/icons-material";
 import {
   useTheme,
   Card,
@@ -19,29 +15,26 @@ import {
   Tooltip,
   IconButton,
   Box,
-  Fab,
   Button,
 } from "@mui/material";
 import Filtros from "./filters";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import { useContext, useMemo, useState } from "react";
-import { usersContext } from "../context";
-//import UserModal from './UserModal';
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DeleteModal from "./DeleteModal";
-import User, { UserRole } from "@/models/user/user";
 import { format } from "date-fns";
-import UserModal from "./UserModal";
+import BillModal from "./BillModal";
+import { userBillsContext } from "../context";
+import Bill from "@/models/bill";
 
-const UsersTable: React.FC = () => {
-  const { query, filters, setFilters } = useContext(usersContext);
+const BillsTable: React.FC = () => {
+  const { query, filters, setFilters } = useContext(userBillsContext);
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -52,17 +45,17 @@ const UsersTable: React.FC = () => {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const usersList = useMemo(
+  const billsList = useMemo(
     () =>
       query.data &&
-      Array.from(query.data.users.values()).map((user) => {
+      Array.from(query.data.bills.values()).map((bill) => {
         return (
-          <TableRow hover key={user.id.toString()}>
-            <UserRow
-            user={user}
-            setSelectedUser={setSelectedUser}
-            setIsOpen={setIsOpen}
-            setIsDeleteOpen={setIsDeleteOpen}
+          <TableRow hover key={bill.id.toString()}>
+            <BillRow
+              bill={bill}
+              setSelectedBill={setSelectedBill}
+              setIsOpen={setIsOpen}
+              setIsDeleteOpen={setIsDeleteOpen}
             />
           </TableRow>
         );
@@ -73,41 +66,29 @@ const UsersTable: React.FC = () => {
 
   return (
     <Card>
-      <Fab
-        color="primary"
-        aria-label="add"
-        style={{ position: "fixed", bottom: "10px", right: "10px" }}
-        onClick={() => {
-          // alert('A')
-          setSelectedUser(null);
-          setIsOpen(true);
-        }}
-      >
-        <Add />
-      </Fab>
       {isDeleteOpen && (
         <DeleteModal
-          user={selectedUser!}
+          bill={selectedBill!}
           isOpen={isDeleteOpen}
           onClose={() => {
             setIsDeleteOpen(false);
-            setSelectedUser(null);
+            setSelectedBill(null);
             query.refetch();
           }}
         />
       )}
-       {isOpen && (
-          <UserModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            setSelectedUser={setSelectedUser}
-            user={selectedUser}
-            onClose={() => {
-              setIsOpen(false);
-              setSelectedUser(null);
-            }}
-          />
-        )}
+      {isOpen && (
+        <BillModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          setSelectedBill={setSelectedBill}
+          bill={selectedBill!}
+          onClose={() => {
+            setIsOpen(false);
+            setSelectedBill(null);
+          }}
+        />
+      )}
       <Divider />
       <TableContainer>
         <Accordion expanded={true}>
@@ -118,11 +99,10 @@ const UsersTable: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Correo</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Estado</TableCell>
-              <TableCell>Fecha de creación</TableCell>
+              <TableCell align="center">Consumo</TableCell>
+              <TableCell align="center">Total</TableCell>
+              <TableCell align="center">Estado</TableCell>
+              <TableCell align="center">Fecha de creación</TableCell>
               <TableCell align="right">Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -133,8 +113,8 @@ const UsersTable: React.FC = () => {
                   <Typography variant="h6">Cargando...</Typography>
                 </TableCell>
               </TableRow>
-            ) : query.data && query.data.users.size ? (
-              usersList
+            ) : query.data && query.data.bills.size ? (
+              billsList
             ) : (
               <TableRow>
                 <TableCell colSpan={9} align="center">
@@ -155,7 +135,7 @@ const UsersTable: React.FC = () => {
             alignItems: "center",
           }}
         >
-          Page {(filters.page ?? 0) + 1} of {query.data?.pages}
+          Page {filters.page ?? 0} of {query.data?.pages}
           <Box>
             <Button
               disabled={filters.page === 0}
@@ -166,7 +146,7 @@ const UsersTable: React.FC = () => {
               <ArrowBackIosIcon />
             </Button>
             <Button
-              disabled={filters.page === (query.data ? query.data.pages -1 : 0)}
+              disabled={filters.page === (query.data ? query.data.pages : 0)}
               onClick={() => {
                 setFilters({
                   ...filters,
@@ -183,22 +163,23 @@ const UsersTable: React.FC = () => {
   );
 };
 
-function UserRow({
-  user,
-  setSelectedUser,
+function BillRow({
+  bill,
+  setSelectedBill,
   setIsOpen,
   setIsDeleteOpen,
 }: {
-  user: User;
-  setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>;
+  bill: Bill;
+  setSelectedBill: React.Dispatch<React.SetStateAction<Bill | null>>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const theme = useTheme();
-  const navigate = useNavigate();
   return (
     <>
-      <TableCell>
+      <TableCell
+      align="center"
+      >
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -206,10 +187,12 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.fullName}
+          {bill.consumed} M3
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell
+      align="center"
+      >
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -217,10 +200,12 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.email}
+          {bill.total}$
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell
+      align="center"
+      >
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -228,10 +213,12 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.roleLabel}
+          {bill.estado}
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell
+      align="center"
+      >
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -239,18 +226,7 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.emailVerified ? "Verificado" : "No verificado"}
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <Typography
-          variant="body1"
-          fontWeight="bold"
-          color="text.primary"
-          gutterBottom
-          noWrap
-        >
-          {format(user.createdAt, "dd/MM/yyyy")}
+          {format(bill.createdAt, "dd/MM/yyyy hh:mm a")}
         </Typography>
       </TableCell>
       <TableCell align="right">
@@ -265,7 +241,7 @@ function UserRow({
             color="inherit"
             size="small"
             onClick={() => {
-              setSelectedUser(user);
+              setSelectedBill(bill);
               setIsOpen(true);
             }}
           >
@@ -283,35 +259,16 @@ function UserRow({
             color="inherit"
             size="small"
             onClick={() => {
-              setSelectedUser(user);
+              setSelectedBill(bill);
               setIsDeleteOpen(true);
             }}
           >
             <DeleteForeverOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
-        {user.role === UserRole.partner && (
-          <Tooltip title="Ver Facturas" arrow>
-            <IconButton
-              sx={{
-                "&:hover": {
-                  background: theme.colors.primary.lighter,
-                },
-                color: theme.palette.primary.main,
-              }}
-              color="inherit"
-              size="small"
-              onClick={() => {
-                navigate("/admin/user/" + user.id + "/");
-              }}
-            >
-              <RequestQuote fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        )}
       </TableCell>
     </>
   );
 }
 
-export default UsersTable;
+export default BillsTable;
