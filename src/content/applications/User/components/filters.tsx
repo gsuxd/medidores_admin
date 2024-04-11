@@ -7,10 +7,12 @@ import {
   Grid,
   Button,
 } from "@mui/material";
-import { CSSProperties, useContext } from "react";
+import { CSSProperties, useContext, useMemo } from "react";
 import { usersContext } from "../context";
 import { UserRole } from "@/models/user/user";
 import { AdminContext } from "@/contexts/AdminContext";
+import SSRApi from "@/api/ssrAPI";
+import { useQuery } from "@tanstack/react-query";
 
 const Filtros: React.FC = (): JSX.Element => {
   const {
@@ -22,10 +24,26 @@ const Filtros: React.FC = (): JSX.Element => {
     const { name, value } = event.target;
     setFilters((val) => {
       if (val.enabled) query.refetch();
-     return { ...val,
-      [name]: value,}
+      return { ...val, [name]: value };
     });
   };
+
+  const ssrQuery = useQuery({
+    queryFn: SSRApi.list,
+    queryKey: ["ssrList"],
+  });
+
+  const ssrList = useMemo(
+    () =>
+      ssrQuery.data &&
+      Array.from(ssrQuery.data.ssr.values()).map((ssr) => (
+        <MenuItem key={ssr.id} value={ssr.id}>
+          {ssr.name}
+        </MenuItem>
+      )),
+    [ssrQuery.data]
+  );
+
   return (
     <Grid
       container
@@ -86,6 +104,21 @@ const Filtros: React.FC = (): JSX.Element => {
         />
       </FormItem>
       <FormItem
+      style={{
+        minWidth: "20%",
+      }}
+      >
+        <Select
+          id="ssrId"
+          placeholder="SSR"
+          name="ssrId"
+          value={filters.ssrId}
+          onChange={(e) => handleChange(e)}
+        >
+          {ssrList}
+        </Select>
+      </FormItem>
+      <FormItem
         style={{
           minWidth: "10%",
         }}
@@ -136,7 +169,7 @@ const Filtros: React.FC = (): JSX.Element => {
             query.refetch();
           }}
         >
-          {filters.enabled ? 'Quitar filtro' : 'Filtrar'}
+          {filters.enabled ? "Quitar filtro" : "Filtrar"}
         </Button>
       </FormItem>
     </Grid>

@@ -30,10 +30,15 @@ export default function useAuth() {
       navigate("/app", {replace: true});
       return;
     }
+
     localStorage.setItem("token", res.token)
     localStorage.setItem("user", JSON.stringify(res.user))
     setUser(user);
+    if (user.role === UserRole.master) {
+    navigate("/login-ssr", {replace: true})
+    } else {
     navigate("/admin/dashboard", {replace: true})
+    }
   }
 
   async function logout() {
@@ -45,8 +50,10 @@ export default function useAuth() {
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
-      setUser(User.fromJson(JSON.parse(user)));
+      const parsed = User.fromJson(JSON.parse(user));
+      setUser(parsed);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

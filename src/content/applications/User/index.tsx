@@ -22,6 +22,7 @@ export default function UsersManagement() {
     orderBy: 'name',
     sellerId: undefined,
     adminId: undefined,
+    ssrId: 1,
     enabled: false
   });
   const query = useQuery({queryFn: () => UsersApi.listUsers(filters), queryKey: ['users', filters]});

@@ -26,8 +26,10 @@ export default function LoginPage() {
   const phone = useMediaQuery("max-width: 640px");
   const navigate = useNavigate();
   useEffect(() => {
-    if (localStorage.getItem("token"))
+    if (localStorage.getItem("token")) {
       navigate("/admin/dashboard", { replace: true });
+
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (

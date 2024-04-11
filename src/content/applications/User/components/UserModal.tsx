@@ -14,9 +14,9 @@ import {
   Switch,
   FormControlLabel,
 } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { Label } from "@mui/icons-material";
 import { usersContext } from "../context";
@@ -26,6 +26,7 @@ import { AdminContext } from "@/contexts/AdminContext";
 import PartnerAccount from "@/models/user/partnerAccount";
 import AdminAccount from "@/models/user/adminAccount";
 import OperatorAccount from "@/models/user/operatorAccount";
+import UsersApi from "@/api/usersApi";
 
 interface IProps {
   isOpen: boolean;
@@ -94,7 +95,12 @@ const AssignModal: React.FC<IProps> = ({
         }),
       })
   );
-  const { query } = useContext(usersContext);
+  const { filters } = useContext(usersContext);
+
+  const query = useQuery({
+    queryFn: () => UsersApi.listUsers({role: (user.role === UserRole.operator || user.role === UserRole.partner) ? 'admin' : 'seller', ssrId: filters.ssrId}),
+    queryKey: ["usersModal"]
+  })
 
   const selectionUsers = useMemo<Map<number, User>>(() => {
     const users = new Map();
@@ -108,7 +114,7 @@ const AssignModal: React.FC<IProps> = ({
             return false;
           case UserRole.operator:
             return val.role === UserRole.admin;
-          case UserRole.partner:
+            case UserRole.partner:
             return val.role === UserRole.admin;
           default:
             return false;
@@ -129,8 +135,22 @@ const AssignModal: React.FC<IProps> = ({
           user?.role !== UserRole.admin) ||
         (actualUser?.role === UserRole.seller && user?.role === UserRole.admin)
       ? actualUser!.id
-      : selectionUsers.entries().next().value[0]
+      : selectionUsers.size > 0 ? selectionUsers.entries().next().value[0] : ''
   );
+
+  useEffect(() => {
+    //@ts-expect-error 3212
+    if (adminId === '') {
+        setAdminId(userSelected &&
+          userSelected.getSuperior(Array.from(query.data?.users.values() ?? []))
+          ? userSelected.getSuperior(Array.from(query.data!.users!.values()))!.id
+          : (actualUser!.role === UserRole.admin &&
+              user?.role !== UserRole.admin) ||
+            (actualUser?.role === UserRole.seller && user?.role === UserRole.admin)
+          ? actualUser!.id
+          : selectionUsers.size > 0 ? selectionUsers.entries().next().value[0] : '')
+    }
+  }, [query.data])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (event: any) => {

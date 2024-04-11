@@ -14,6 +14,7 @@ interface ParamsListUsers {
   orderBy?: string| null;
   sellerId?: number| null;
   adminId?: number| null;
+  ssrId?: number| null;
   enabled?: boolean| null;
 }
 
