@@ -16,12 +16,10 @@ import {
   Typography
 } from '@mui/material';
 
-import InboxTwoToneIcon from '@mui/icons-material/InboxTwoTone';
 import { styled } from '@mui/material/styles';
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
-import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 import { AdminContext } from '@/contexts/AdminContext';
 
 const UserBoxButton = styled(Button)(
@@ -80,7 +78,7 @@ function HeaderUserbox() {
           <UserBoxText>
             <UserBoxLabel variant="body1">{user!.name}</UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user!.role}
+              {user!.roleLabel}
             </UserBoxDescription>
           </UserBoxText>
         </Hidden>
@@ -106,27 +104,15 @@ function HeaderUserbox() {
           <UserBoxText>
             <UserBoxLabel variant="body1">{user!.name}</UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user!.role}
+              {user!.roleLabel}
             </UserBoxDescription>
           </UserBoxText>
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
-          <ListItem button to="/management/profile/details" component={NavLink}>
+          <ListItem button to="/admin/edit-profile" component={NavLink}>
             <AccountBoxTwoToneIcon fontSize="small" />
-            <ListItemText primary="My Profile" />
-          </ListItem>
-          <ListItem button to="/dashboards/messenger" component={NavLink}>
-            <InboxTwoToneIcon fontSize="small" />
-            <ListItemText primary="Messenger" />
-          </ListItem>
-          <ListItem
-            button
-            to="/management/profile/settings"
-            component={NavLink}
-          >
-            <AccountTreeTwoToneIcon fontSize="small" />
-            <ListItemText primary="Account Settings" />
+            <ListItemText primary="Mi Perfil" />
           </ListItem>
         </List>
         <Divider />

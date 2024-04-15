@@ -203,7 +203,7 @@ function SidebarMenu() {
                   component={RouterLink}
                   onClick={closeSidebar}
                   startIcon={<Apartment />}
-                  to="/admin/ssr"
+                  to="/admin/config"
                 >
                   SSR
                 </Button>

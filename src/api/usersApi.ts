@@ -19,6 +19,22 @@ interface ParamsListUsers {
 }
 
 export default abstract class UsersApi {
+  static async update(user: unknown): Promise<void> {
+    try {
+      const res = await axios.put(import.meta.env.VITE_SERVER_URL + "/api/auth/update/", user, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      return res.data;
+    } catch (error) {
+      console.log(error)
+      throw new Error(
+        "Error inesperado, verifica tu conexión e intenta más tarde"
+      );
+    }
+  }
+
   static async getUser(id: number): Promise<{
     user: User;
     ssrId: number;

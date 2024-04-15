@@ -25,9 +25,6 @@ function PageHeader() {
         <Typography variant="h3" component="h3" gutterBottom>
           Bienvenid@, {user!.name}!
         </Typography>
-        <Typography variant="subtitle2">
-          Today is a good day to start trading crypto assets!
-        </Typography>
       </Grid>
     </Grid>
   );

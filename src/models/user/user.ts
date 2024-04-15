@@ -3,7 +3,7 @@ import OperatorAccount from "./operatorAccount";
 import PartnerAccount from "./partnerAccount";
 import SellerAccount from "./sellerAccount";
 
-export enum UserRole { master, seller, admin, operator, partner }
+export enum UserRole { master = "master", seller = "seller", admin = "admin", operator = "operator", partner = "partner" }
 
 export default class User {
   readonly id: number;

@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import AuthApi from "@/api/authApi";
 import { useNavigate } from "react-router-dom";
 import User, { UserRole } from "@/models/user/user";
+import UsersApi from "@/api/usersApi";
 
 export default function useAuth() {
     const [user, setUser] = useState<User | null>(null);
@@ -13,6 +14,11 @@ export default function useAuth() {
       AuthApi.login({ email: values.email, password: values.password }),
       mutationKey: ['login']
   });
+
+  const updateMutation = useMutation({
+    mutationKey: ["userUpdate", user?.id],
+    mutationFn: UsersApi.update,
+})
 
   async function login(email: string, password: string) {
     const emailParsed = email.trim();
@@ -34,11 +40,7 @@ export default function useAuth() {
     localStorage.setItem("token", res.token)
     localStorage.setItem("user", JSON.stringify(res.user))
     setUser(user);
-    if (user.role === UserRole.master) {
-    navigate("/login-ssr", {replace: true})
-    } else {
     navigate("/admin/dashboard", {replace: true})
-    }
   }
 
   async function logout() {
@@ -56,6 +58,34 @@ export default function useAuth() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  async function update(user: User) {
+    if (!user) {
+      return;
+    }
+    if (updateMutation.isPending) {
+      return;
+    }
+    const userActual = JSON.parse(localStorage.getItem("user")!);
+      const data = user.toJson();
+      for (const key in data) {  
+        //@ts-expect-error 23as
+        if (data[key] === null) {
+          //@ts-expect-error 23as
+              delete data[key];
+              continue
+        }
+        //@ts-expect-error 23as
+        if (userActual[key] === data[key]) {
+          //@ts-expect-error 23as
+          delete data[key];
+        }
+      }
+      await updateMutation.mutateAsync(data);
+      const userRes = await UsersApi.getUser(user.id);
+      localStorage.setItem("user", JSON.stringify(userRes.user));
+      setUser(userRes.user);
+  }
+
   return {
     logged: Boolean(localStorage.getItem("token")),
     user,
@@ -65,5 +95,8 @@ export default function useAuth() {
       loading: loginMutation.isPending,
       error: loginMutation.error,
     },
+    update,
+    updateMutation: {
+      loading: updateMutation.isPending, error: updateMutation.error}
   };
 }

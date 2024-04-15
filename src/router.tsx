@@ -37,8 +37,16 @@ const UsersManagement = Loader(
 //   lazy(() => import("@/content/applications/Bill"))
 // );
 
+const SSRConfig = Loader(
+  lazy(() => import("@/content/applications/Configuration"))
+);
+
 const UserDashboard = Loader(
   lazy(() => import("@/content/applications/UserDashboard"))
+);
+
+const ProfileConfig = Loader(
+  lazy(() => import("@/content/applications/UserConfig"))
 );
 
 // Status
@@ -109,6 +117,14 @@ const routes: RouteObject[] = [
         path: "user/:userId",
         element: <UserDashboard />,
       },
+      {
+        path: 'config/',
+        element: <SSRConfig/>
+      },
+      {
+        path: "edit-profile",
+        element: <ProfileConfig />,
+      }
       // {
       //   path: "bills",
       //   element: <BillsManagement/>

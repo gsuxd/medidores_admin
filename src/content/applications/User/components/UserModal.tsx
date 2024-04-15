@@ -98,9 +98,16 @@ const AssignModal: React.FC<IProps> = ({
   const { filters } = useContext(usersContext);
 
   const query = useQuery({
-    queryFn: () => UsersApi.listUsers({role: (user.role === UserRole.operator || user.role === UserRole.partner) ? 'admin' : 'seller', ssrId: filters.ssrId}),
-    queryKey: ["usersModal"]
-  })
+    queryFn: () =>
+      UsersApi.listUsers({
+        role:
+          user.role === UserRole.operator || user.role === UserRole.partner
+            ? "admin"
+            : "seller",
+        ssrId: filters.ssrId,
+      }),
+    queryKey: ["usersModal"],
+  });
 
   const selectionUsers = useMemo<Map<number, User>>(() => {
     const users = new Map();
@@ -114,7 +121,7 @@ const AssignModal: React.FC<IProps> = ({
             return false;
           case UserRole.operator:
             return val.role === UserRole.admin;
-            case UserRole.partner:
+          case UserRole.partner:
             return val.role === UserRole.admin;
           default:
             return false;
@@ -135,22 +142,31 @@ const AssignModal: React.FC<IProps> = ({
           user?.role !== UserRole.admin) ||
         (actualUser?.role === UserRole.seller && user?.role === UserRole.admin)
       ? actualUser!.id
-      : selectionUsers.size > 0 ? selectionUsers.entries().next().value[0] : ''
+      : selectionUsers.size > 0
+      ? selectionUsers.entries().next().value[0]
+      : ""
   );
 
   useEffect(() => {
     //@ts-expect-error 3212
-    if (adminId === '') {
-        setAdminId(userSelected &&
+    if (adminId === "") {
+      setAdminId(
+        userSelected &&
           userSelected.getSuperior(Array.from(query.data?.users.values() ?? []))
-          ? userSelected.getSuperior(Array.from(query.data!.users!.values()))!.id
+          ? userSelected.getSuperior(Array.from(query.data!.users!.values()))!
+              .id
           : (actualUser!.role === UserRole.admin &&
               user?.role !== UserRole.admin) ||
-            (actualUser?.role === UserRole.seller && user?.role === UserRole.admin)
+            (actualUser?.role === UserRole.seller &&
+              user?.role === UserRole.admin)
           ? actualUser!.id
-          : selectionUsers.size > 0 ? selectionUsers.entries().next().value[0] : '')
+          : selectionUsers.size > 0
+          ? selectionUsers.entries().next().value[0]
+          : ""
+      );
     }
-  }, [query.data])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.data]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (event: any) => {
@@ -366,7 +382,7 @@ const AssignModal: React.FC<IProps> = ({
                   <InputLabel htmlFor="password">Contraseña</InputLabel>
                   <Input
                     error={
-                    //@ts-expect-error 321
+                      //@ts-expect-error 321
                       (query.error as AxiosError)?.response?.data.error.password
                     }
                     id="password"
@@ -396,8 +412,7 @@ const AssignModal: React.FC<IProps> = ({
                 >
                   <MenuItem value={UserRole.partner}>Socio</MenuItem>
                   <MenuItem value={UserRole.operator}>Operador</MenuItem>
-                  {(actualUser!.role === UserRole.seller ||
-                    actualUser!.role === UserRole.master) && (
+                  {actualUser!.role !== UserRole.admin && (
                     <MenuItem value={UserRole.admin}>Administrador</MenuItem>
                   )}
                   {actualUser!.role === UserRole.master && (
@@ -580,6 +595,67 @@ const AssignModal: React.FC<IProps> = ({
 
             {user?.role === UserRole.admin && (
               <>
+                {actualUser!.role === UserRole.master && (
+                  <>
+                    <Grid item>
+                      <FormControl>
+                        <InputLabel htmlFor="billDate">
+                          Fecha de Factura
+                        </InputLabel>
+                        <Input
+                          error={
+                            //@ts-expect-error 321
+                            (query.error as AxiosError)?.response?.data.error
+                              .billDate
+                          }
+                          id="billDate"
+                          name="adminAccount.billDate"
+                          type="date"
+                          value={user!.adminAccount!.billDate}
+                          onChange={(e) => handleChange(e)}
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid item>
+                      <FormControl>
+                        <InputLabel htmlFor="billPrice">
+                          Precio de Factura
+                        </InputLabel>
+                        <Input
+                          error={
+                            //@ts-expect-error 321
+                            (query.error as AxiosError)?.response?.data.error
+                              .billPrice
+                          }
+                          id="billPrice"
+                          name="adminAccount.billPrice"
+                          placeholder="Precio de Factura"
+                          type="number"
+                          value={user!.adminAccount!.billPrice}
+                          onChange={(e) => handleChange(e)}
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid item>
+                      <FormControl>
+                        <InputLabel htmlFor="totalDebt">Deuda total</InputLabel>
+                        <Input
+                          error={
+                            //@ts-expect-error 321
+                            (query.error as AxiosError)?.response?.data.error
+                              .totalDebt
+                          }
+                          id="totalDebt"
+                          name="adminAccount.totalDebt"
+                          placeholder="Deuda total"
+                          type="number"
+                          value={user!.adminAccount!.totalDebt}
+                          onChange={(e) => handleChange(e)}
+                        />
+                      </FormControl>
+                    </Grid>
+                  </>
+                )}
                 <Grid item>
                   <FormControl>
                     <InputLabel htmlFor="fixedPrice">Precio Fijo</InputLabel>
@@ -720,32 +796,6 @@ const AssignModal: React.FC<IProps> = ({
                 </Grid>
               </>
             )}
-            {/* <Grid item>
-                  <FormControl>
-                    <DesktopDatePicker
-                      label="Nacimiento"
-                      inputFormat="dd-MM-yyyy"
-                      value={
-                        user?.data ? user?.data.profile.date_birth : new Date()
-                      }
-                      onChange={(e) =>
-                        setUser({
-                          ...user,
-                          data: {
-                            ...user.data,
-                            profile: {
-                              ...user.data.profile,
-                              date_birth: e,
-                            },
-                          },
-                        })
-                      }
-                      renderInput={(params) => (
-                        <TextField {...params} sx={{ width: 160 }} />
-                      )}
-                    />
-                  </FormControl>
-                </Grid> */}
           </Grid>
         </DialogContent>
         <DialogActions>
