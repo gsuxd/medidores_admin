@@ -1,8 +1,4 @@
-import {
-  Add,
-  DeleteForeverOutlined,
-  RequestQuote,
-} from "@mui/icons-material";
+import {  DeleteForeverOutlined } from "@mui/icons-material";
 import {
   useTheme,
   Card,
@@ -19,30 +15,26 @@ import {
   Tooltip,
   IconButton,
   Box,
-  Fab,
   Button,
 } from "@mui/material";
 import Filtros from "./filters";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import { useContext, useMemo, useState } from "react";
-import { usersContext } from "../context";
-//import UserModal from './UserModal';
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DeleteModal from "./DeleteModal";
-import User, { UserRole } from "@/models/user/user";
 import { format } from "date-fns";
-import UserModal from "./UserModal";
-import { AdminContext } from "@/contexts/AdminContext";
+import DueModal from "./DueModal";
+import { adminDuesContext } from "../context";
+import Due from "@/models/due";
 
-const UsersTable: React.FC = () => {
-  const { query, filters, setFilters } = useContext(usersContext);
+const DueTable: React.FC = () => {
+  const { query, filters, setFilters } = useContext(adminDuesContext);
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedDue, setSelectedDue] = useState<Due | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -53,17 +45,17 @@ const UsersTable: React.FC = () => {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const usersList = useMemo(
+  const duesList = useMemo(
     () =>
       query.data &&
-      Array.from(query.data.users.values()).map((user) => {
+      Array.from(query.data.dues.values()).map((due) => {
         return (
-          <TableRow hover key={user.id.toString()}>
-            <UserRow
-            user={user}
-            setSelectedUser={setSelectedUser}
-            setIsOpen={setIsOpen}
-            setIsDeleteOpen={setIsDeleteOpen}
+          <TableRow hover key={due.id.toString()}>
+            <DueRow
+              due={due}
+              setSelectedDue={setSelectedDue}
+              setIsOpen={setIsOpen}
+              setIsDeleteOpen={setIsDeleteOpen}
             />
           </TableRow>
         );
@@ -74,41 +66,29 @@ const UsersTable: React.FC = () => {
 
   return (
     <Card>
-      <Fab
-        color="primary"
-        aria-label="add"
-        style={{ position: "fixed", bottom: "10px", right: "10px" }}
-        onClick={() => {
-          // alert('A')
-          setSelectedUser(null);
-          setIsOpen(true);
-        }}
-      >
-        <Add />
-      </Fab>
       {isDeleteOpen && (
         <DeleteModal
-          user={selectedUser!}
+          due={selectedDue!}
           isOpen={isDeleteOpen}
           onClose={() => {
             setIsDeleteOpen(false);
-            setSelectedUser(null);
+            setSelectedDue(null);
             query.refetch();
           }}
         />
       )}
-       {isOpen && (
-          <UserModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            setSelectedUser={setSelectedUser}
-            user={selectedUser}
-            onClose={() => {
-              setIsOpen(false);
-              setSelectedUser(null);
-            }}
-          />
-        )}
+      {isOpen && (
+        <DueModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          setSelectedDue={setSelectedDue}
+          due={selectedDue!}
+          onClose={() => {
+            setIsOpen(false);
+            setSelectedDue(null);
+          }}
+        />
+      )}
       <Divider />
       <TableContainer>
         <Accordion expanded={true}>
@@ -119,11 +99,9 @@ const UsersTable: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Correo</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Estado</TableCell>
-              <TableCell>Fecha de creación</TableCell>
+              <TableCell align="center">Fecha de creación</TableCell>
+              <TableCell align="center">Total</TableCell>
+              <TableCell align="center">Estado</TableCell>
               <TableCell align="right">Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -134,8 +112,8 @@ const UsersTable: React.FC = () => {
                   <Typography variant="h6">Cargando...</Typography>
                 </TableCell>
               </TableRow>
-            ) : query.data && query.data.users.size ? (
-              usersList
+            ) : query.data && query.data.dues.size > 0 ? (
+              duesList
             ) : (
               <TableRow>
                 <TableCell colSpan={9} align="center">
@@ -156,7 +134,7 @@ const UsersTable: React.FC = () => {
             alignItems: "center",
           }}
         >
-          Page {(filters.page ?? 0) + 1} of {query.data?.pages}
+          Pagina {filters.page ?? 0} de {query.data?.pages}
           <Box>
             <Button
               disabled={filters.page === 0}
@@ -167,7 +145,7 @@ const UsersTable: React.FC = () => {
               <ArrowBackIosIcon />
             </Button>
             <Button
-              disabled={filters.page === (query.data ? query.data.pages -1 : 0)}
+              disabled={filters.page === (query.data ? query.data.pages : 0)}
               onClick={() => {
                 setFilters({
                   ...filters,
@@ -184,23 +162,23 @@ const UsersTable: React.FC = () => {
   );
 };
 
-function UserRow({
-  user,
-  setSelectedUser,
+function DueRow({
+  due,
+  setSelectedDue,
   setIsOpen,
   setIsDeleteOpen,
 }: {
-  user: User;
-  setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>;
+  due: Due;
+  setSelectedDue: React.Dispatch<React.SetStateAction<Due | null>>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const theme = useTheme();
-  const navigate = useNavigate();
-  const {auth: {user: actualUser}} = useContext(AdminContext)
   return (
     <>
-      <TableCell>
+      <TableCell
+      align="center"
+      >
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -208,10 +186,12 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.fullName}
+          {format(due.createdAt, "dd/MM/yyyy hh:mm a")}
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell
+      align="center"
+      >
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -219,10 +199,12 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.email}
+          {due.dues}$
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell
+      align="center"
+      >
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -230,29 +212,7 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.roleLabel}
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <Typography
-          variant="body1"
-          fontWeight="bold"
-          color="text.primary"
-          gutterBottom
-          noWrap
-        >
-          {user.emailVerified ? "Verificado" : "No verificado"}
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <Typography
-          variant="body1"
-          fontWeight="bold"
-          color="text.primary"
-          gutterBottom
-          noWrap
-        >
-          {format(user.createdAt, "dd/MM/yyyy")}
+          {due.estado}
         </Typography>
       </TableCell>
       <TableCell align="right">
@@ -267,7 +227,7 @@ function UserRow({
             color="inherit"
             size="small"
             onClick={() => {
-              setSelectedUser(user);
+              setSelectedDue(due);
               setIsOpen(true);
             }}
           >
@@ -285,54 +245,16 @@ function UserRow({
             color="inherit"
             size="small"
             onClick={() => {
-              setSelectedUser(user);
+              setSelectedDue(due);
               setIsDeleteOpen(true);
             }}
           >
             <DeleteForeverOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
-        {user.role === UserRole.partner && (
-          <Tooltip title="Ver Facturas" arrow>
-            <IconButton
-              sx={{
-                "&:hover": {
-                  background: theme.colors.primary.lighter,
-                },
-                color: theme.palette.primary.main,
-              }}
-              color="inherit"
-              size="small"
-              onClick={() => {
-                navigate("/admin/user/" + user.id + "/");
-              }}
-            >
-              <RequestQuote fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        )}
-        {user.role === UserRole.admin && actualUser!.role === UserRole.master && (
-          <Tooltip title="Ver Deudas" arrow>
-            <IconButton
-              sx={{
-                "&:hover": {
-                  background: theme.colors.primary.lighter,
-                },
-                color: theme.palette.primary.main,
-              }}
-              color="inherit"
-              size="small"
-              onClick={() => {
-                navigate("/admin/user-admin/" + user.id + "/");
-              }}
-            >
-              <RequestQuote fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        )}
       </TableCell>
     </>
   );
 }
 
-export default UsersTable;
+export default DueTable;

@@ -49,6 +49,10 @@ const ProfileConfig = Loader(
   lazy(() => import("@/content/applications/UserConfig"))
 );
 
+const AdminDashboard = Loader(
+  lazy(() => import("@/content/applications/AdminDashboard"))
+);
+
 // Status
 
 const Status404 = Loader(
@@ -116,6 +120,10 @@ const routes: RouteObject[] = [
       {
         path: "user/:userId",
         element: <UserDashboard />,
+      },
+      {
+        path: "user-admin/:userId",
+        element: <AdminDashboard />,
       },
       {
         path: 'config/',
