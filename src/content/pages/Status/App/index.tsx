@@ -21,24 +21,24 @@ const MainContent = styled(Box)(
 `
 );
 
-function App() {
+function Status404() {
   return (
     <>
       <Helmet>
-        <title>Instalar App</title>
+        <title>App</title>
       </Helmet>
       <MainContent>
         <Container maxWidth="md">
           <Box textAlign="center">
             <img alt="404" height={180} src="/static/images/status/404.svg" />
             <Typography variant="h2" sx={{ my: 2 }}>
-              La página que buscas no existe.
+              Instala la app móvil para acceder.
             </Typography>
           </Box>
           <Container maxWidth="sm">
             <Card sx={{ textAlign: 'center', mt: 3, p: 4 }}>
               <Button href="/" variant="outlined">
-                Ir a la página principal
+                Ir a la tienda
               </Button>
             </Card>
           </Container>

@@ -33,7 +33,7 @@ export default function useAuth() {
     }
     const user = User.fromJson(res.user);
     if (user.role === UserRole.operator || user.role === UserRole.partner) {
-      navigate("/app", {replace: true});
+      navigate("/status/app", {replace: true});
       return;
     }
 
