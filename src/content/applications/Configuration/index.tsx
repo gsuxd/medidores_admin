@@ -103,6 +103,16 @@ export default function SSRConfiguration() {
     const { name, value } = e.target as HTMLInputElement;
     if (name.includes(".")) {
       const [obj, key] = name.split(".");
+      if (obj === "config") {
+        setEditSSR((val) => {
+          return val.copyWith({
+            config: val.config.copyWith({
+              [key]: value,
+            }),
+          });
+        });
+        return;
+      }
       setEditSSR((val) => {
         return val.copyWith({
           [obj]: {
@@ -134,13 +144,21 @@ export default function SSRConfiguration() {
   const sellersList = useMemo(
     () =>
       sellers.data
-        ? Array.from(sellers.data.users.values()).map((seller) => (
-            <MenuItem key={seller.id} value={seller.id}>
-              {seller.name}
-            </MenuItem>
-          ))
+        ? editSSR.president.id === actualUser?.sellerAccount?.id
+          ? [actualUser, ...Array.from(sellers.data.users.values())].map(
+              (seller) => (
+                <MenuItem key={seller.id} value={seller.id}>
+                  {seller.name}
+                </MenuItem>
+              )
+            )
+          : Array.from(sellers.data.users.values()).map((seller) => (
+              <MenuItem key={seller.id} value={seller.id}>
+                {seller.name}
+              </MenuItem>
+            ))
         : [],
-    [sellers.data]
+    [sellers.data, editSSR.president.id, actualUser]
   );
 
   const [showAlert, setShowAlert] = useState(false);
@@ -175,7 +193,7 @@ export default function SSRConfiguration() {
             delete data["config"][subKey];
             continue;
           }
-          data[subKey] = data["config"][subKey];
+          data[subKey] = Number(data["config"][subKey]);
         }
       }
       if (!data[key]) {
@@ -208,8 +226,8 @@ export default function SSRConfiguration() {
     >
       {showAlert && (
         <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-        Actualizado exitosamente.
-      </Alert>
+          Actualizado exitosamente.
+        </Alert>
       )}
       {
         <Helmet>
