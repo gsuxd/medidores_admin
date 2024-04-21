@@ -21,7 +21,7 @@ const MainContent = styled(Box)(
 `
 );
 
-function Status404() {
+function App() {
   return (
     <>
       <Helmet>
@@ -48,4 +48,4 @@ function Status404() {
   );
 }
 
-export default Status404;
+export default App;

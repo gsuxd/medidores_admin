@@ -21,11 +21,11 @@ const MainContent = styled(Box)(
 `
 );
 
-function App() {
+function Status404() {
   return (
     <>
       <Helmet>
-        <title>Instalar App</title>
+        <title>Estado - 404</title>
       </Helmet>
       <MainContent>
         <Container maxWidth="md">
