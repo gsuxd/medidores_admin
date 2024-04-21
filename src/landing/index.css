@@ -17,7 +17,7 @@
   
   #navbar {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-around;
     background-color: var(--primary-color);
     padding: 1rem;
   }
@@ -75,23 +75,18 @@
 
 @media (max-width: 760px) {
   .nav-buttons {
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding-top: 10%;
     position: absolute;
-    z-index: 300;
     font-size: 1.5em;
-    display: none;
-    top: calc(450 * 100vh / 1556);
-    left: calc(400 * 100vh / 1556);
+    left: 25%;
     padding: 10%;
     border-radius: 20%;
     background-color: var(--primary-color);
-  }
-
-  .nav-buttons.active {
-    display: flex;
+    z-index: 300;
   }
 
   .menu-button {

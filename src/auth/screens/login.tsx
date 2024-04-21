@@ -62,13 +62,15 @@ export default function LoginPage() {
             Iniciar Sesión
           </Typography>
           <TextField
+            label="Correo"
             value={values.email}
             sx={{ width: "70%" }}
             type="email"
             required
             onChange={(e) => setValues({ ...values, email: e.target.value })}
-          />
+            />
           <TextField
+            label="Contraseña"
             value={values.password}
             sx={{ width: "70%" }}
             type="password"

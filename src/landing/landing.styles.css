@@ -1,5 +1,5 @@
 #heading {
-  padding: calc(163 * 100vh / 1556) 2%;
+  padding: 3.88rem 2%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -10,7 +10,8 @@
       rgba(11, 51, 68, 0.50) 19%,
       rgba(64, 156, 157, 0.50)100%
       ),
-      url(../assets/hand-phone.png) no-repeat center /calc(400 * 100vw / 1556 ),url(../assets/house.png)  no-repeat calc(900 * 100vw / 1556) center /calc(500 * 100vw /1556), rgb(11, 51, 68);
+      url(../assets/Utility-Meter-Scanning-1024x555.jpg) no-repeat center / cover;
+      /* url(../assets/hand-phone.png) no-repeat center / calc(600 * 100vh / 1556 ) ,url(../assets/house.png)  no-repeat calc(900 * 100vw / 1556) center /calc(500 * 100vw /1556), rgb(11, 51, 68); */
   color: white;
   font-size: 2em;
 }
@@ -27,12 +28,11 @@
 
 #button-group {
   background-color: var(--secondary-color);
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2%;
-  height: calc(276 * 100vh / 1556);
+  padding: 1% 2%;
+  height: max-content;
 }
 
 .icon-button {
@@ -68,6 +68,7 @@
     font-size: 2em;
     padding-left: 0;
     padding-right: 0;
+    align-items: center;
     text-align: center;
     background-color: var(--primary-color);
     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));

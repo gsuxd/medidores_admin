@@ -5,12 +5,17 @@ import Logo from "../assets/logo.jpeg";
 import { Outlet, useNavigate } from "react-router-dom";
 import "./index.css";
 import { AdminContext } from "@/contexts/AdminContext";
+import { AnimatePresence, motion } from "framer-motion";
+import useWindowSize from "@/hooks/useWindowSize";
+import { useMediaQuery } from "@mui/material";
 export default function Navbar() {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const {
     auth: { logged },
   } = useContext(AdminContext);
+  const { width } = useWindowSize();
+  const mobile = useMediaQuery("(max-width: 760px)");
   return (
     <>
       <nav id="navbar">
@@ -18,15 +23,19 @@ export default function Navbar() {
           <img src={Logo} alt="logo" onClick={() => navigate("/")} />
           <h4>Sistema de Gestión H2O</h4>
         </div>
-        <div className={`nav-buttons ${showModal && "active"}`}>
+        <motion.div
+          initial={{ y: mobile && !showModal ? -1000 : 0 }}
+          animate={{ y: mobile && showModal ? width * 0.2 : undefined }}
+          className={"nav-buttons"}
+        >
           {logged ? (
             <>
-            <button
-            onClick={() => navigate("/admin/dashboard")}
+              <button
+                onClick={() => navigate("/admin/dashboard")}
                 className="button primary-button"
-            >
-            Dashboard
-            </button>
+              >
+                Dashboard
+              </button>
             </>
           ) : (
             <>
@@ -36,24 +45,38 @@ export default function Navbar() {
               >
                 Iniciar Sesión
               </button>
-              <button className="button secondary-button">Registro</button>
             </>
           )}
-        </div>
+        </motion.div>
         <div className="menu-button">
-          {showModal ? (
-            <IoIosCloseCircleOutline
-              size={30}
-              color="white"
-              onClick={() => setShowModal(!showModal)}
-            />
-          ) : (
-            <CiMenuBurger
-              size={30}
-              color="white"
-              onClick={() => setShowModal(!showModal)}
-            />
-          )}
+          <AnimatePresence mode="wait" initial={false}>
+            {showModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <IoIosCloseCircleOutline
+                  size={30}
+                  color="white"
+                  onClick={() => setShowModal(!showModal)}
+                />
+              </motion.div>
+            )}
+            {!showModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <CiMenuBurger
+                  size={30}
+                  color="white"
+                  onClick={() => setShowModal(!showModal)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </nav>
       <Outlet />
