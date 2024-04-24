@@ -1,4 +1,5 @@
 import Config from "./config";
+import AdminAccount from "./user/adminAccount";
 import SellerAccount from "./user/sellerAccount";
 
 export default class SSR {
@@ -10,8 +11,9 @@ export default class SSR {
   readonly address: string;
   readonly phone: string;
   readonly email: string;
-  readonly president: SellerAccount;
-  readonly sellers: SellerAccount[];
+  readonly seller: SellerAccount;
+  readonly president: AdminAccount;
+  readonly admins: AdminAccount[];
   readonly bankNumber: string;
   readonly config: Config;
 
@@ -26,9 +28,10 @@ export default class SSR {
       address: data.address,
       phone: data.phone,
       email: data.email,
-      president: SellerAccount.fromJson(data.president),
+      seller: SellerAccount.fromJson(data.seller),
+      president: AdminAccount.fromJson(data.president),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      sellers: data.sellers.map((seller: any) => SellerAccount.fromJson(seller)),
+      admins: data.admins.map((seller: any) => AdminAccount.fromJson(seller)),
       bankNumber: data.bankNumber,
       config: Config.fromJson(data.config),
     
@@ -45,7 +48,8 @@ export default class SSR {
     phone,
     email,
     president,
-    sellers,
+    seller,
+    admins,
     bankNumber,
     config,
   }: {
@@ -57,8 +61,9 @@ export default class SSR {
     address: string;
     phone: string;
     email: string;
-    president: SellerAccount;
-    sellers: SellerAccount[];
+    president: AdminAccount;
+    seller: SellerAccount;
+    admins: AdminAccount[];
     bankNumber: string;
     config: Config;
   }) {
@@ -71,7 +76,8 @@ export default class SSR {
     this.phone = phone;
     this.email = email;
     this.president = president;
-    this.sellers = sellers;
+    this.seller = seller;
+    this.admins = admins;
     this.bankNumber = bankNumber;
     this.config = config;
   }
@@ -88,7 +94,8 @@ export default class SSR {
       phone: this.phone,
       email: this.email,
       president: this.president.toJson(),
-      sellers: this.sellers.map((seller) => seller.toJson()),
+      seller: this.seller.toJson(),
+      admins: this.admins.map((admin) => admin.toJson()),
       bankNumber: this.bankNumber,
       config: this.config?.toJson(),
     };
@@ -104,7 +111,8 @@ export default class SSR {
     phone = this.phone,
     email = this.email,
     president = this.president,
-    sellers = this.sellers,
+    seller = this.seller,
+    admins = this.admins,
     bankNumber = this.bankNumber,
     config = this.config,
   }: {
@@ -116,8 +124,9 @@ export default class SSR {
     address?: string;
     phone?: string;
     email?: string;
-    president?: SellerAccount;
-    sellers?: SellerAccount[];
+    president?: AdminAccount;
+    seller?: SellerAccount;
+    admins?: AdminAccount[];
     bankNumber?: string;
     config?: Config;
   }): SSR {
@@ -131,7 +140,8 @@ export default class SSR {
       phone,
       email,
       president,
-      sellers,
+      seller,
+      admins,
       bankNumber,
       config,
     });

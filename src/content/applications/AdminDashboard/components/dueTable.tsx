@@ -199,7 +199,7 @@ function DueRow({
           gutterBottom
           noWrap
         >
-          {due.dues}$
+          {due.total}$
         </Typography>
       </TableCell>
       <TableCell

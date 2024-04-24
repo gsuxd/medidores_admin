@@ -165,7 +165,7 @@ const AssignModal: React.FC<IProps> = ({
           : ""
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.data]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -421,45 +421,44 @@ const AssignModal: React.FC<IProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-            {user.role === UserRole.operator ||
-              (user.role === UserRole.partner && (
-                <Grid
-                  item
-                >
-                  <FormControl sx={{
-                    minWidth: "100%",
-                  }}>
-                    <InputLabel htmlFor="adminId">Administrador</InputLabel>
-                    <Select
-                      error={
-                        //@ts-expect-error 321
-                        (query.error as AxiosError)?.response?.data.error
-                          .adminId
-                      }
-                      labelId="adminId"
-                      label="Administrador"
-                      id="adminId"
-                      name="adminId"
-                      value={adminId}
-                      required
-                      children={
-                        selectionUsers.size > 0
-                          ? Array.from(selectionUsers.values()).map((val) => (
-                              <MenuItem
-                                LinkComponent={"div"}
-                                key={val.id}
-                                value={val.id}
-                              >
-                                {val.fullName}
-                              </MenuItem>
-                            ))
-                          : []
-                      }
-                      onChange={(e) => setAdminId(e.target.value as number)}
-                    />
-                  </FormControl>
-                </Grid>
-              ))}
+            {(actualUser!.role === UserRole.seller &&
+              user?.role !== UserRole.admin) ||
+            actualUser!.role === UserRole.master ? (
+              <Grid
+                sx={{
+                  minWidth: "100%",
+                }}
+                item
+              >
+                <Select
+                  error={
+                    //@ts-expect-error 321
+                    (query.error as AxiosError)?.response?.data.error.adminId
+                  }
+                  label={
+                    user?.role === UserRole.admin ? "Vendedor" : "Administrador"
+                  }
+                  id="adminId"
+                  name="adminId"
+                  value={adminId}
+                  required
+                  children={
+                    selectionUsers.size > 0
+                      ? Array.from(selectionUsers.values()).map((val) => (
+                          <MenuItem
+                            LinkComponent={"div"}
+                            key={val.id}
+                            value={val.id}
+                          >
+                            {val.fullName}
+                          </MenuItem>
+                        ))
+                      : []
+                  }
+                  onChange={(e) => setAdminId(e.target.value as number)}
+                />
+              </Grid>
+            ) : null}
             <Grid item>
               <FormControlLabel
                 label="Correo Verificado?"

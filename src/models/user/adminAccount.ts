@@ -1,9 +1,9 @@
 export default class AdminAccount {
-    readonly id: string;
+    readonly id: number;
     readonly createdAt: Date;
     readonly updatedAt: Date;
-    readonly userId: string;
-    readonly sellerId: string;
+    readonly userId: number;
+    readonly ssrId: number;
     readonly totalDebt: number;
     readonly fixedPrice: number;
     readonly section1Price: number;
@@ -19,7 +19,7 @@ export default class AdminAccount {
       createdAt,
       updatedAt,
       userId,
-      sellerId,
+      ssrId,
       totalDebt,
       fixedPrice,
       section1Price,
@@ -31,11 +31,11 @@ export default class AdminAccount {
       billDate,
       billPrice,
     }: {
-      id: string;
+      id: number;
       createdAt: Date;
       updatedAt: Date;
-      userId: string;
-      sellerId: string;
+      userId: number;
+      ssrId: number;
       totalDebt: number;
       fixedPrice: number;
       section1Price: number;
@@ -51,7 +51,7 @@ export default class AdminAccount {
       this.createdAt = createdAt;
       this.updatedAt = updatedAt;
       this.userId = userId;
-      this.sellerId = sellerId;
+      this.ssrId = ssrId;
       this.totalDebt = totalDebt;
       this.fixedPrice = fixedPrice;
       this.section1Price = section1Price;
@@ -70,7 +70,7 @@ export default class AdminAccount {
         createdAt: new Date(json.createdAt),
         updatedAt: new Date(json.updatedAt),
         userId: json.userId,
-        sellerId: json.sellerId,
+        ssrId: json.ssrId,
         totalDebt: json.totalDebt,
         fixedPrice: json.fixedPrice,
         section1Price: json.section1Price,
@@ -84,11 +84,11 @@ export default class AdminAccount {
       });
     }
     toJson(): {
-      id: string;
+      id: number;
       createdAt: string;
       updatedAt: string;
-      userId: string;
-      sellerId: string;
+      userId: number;
+      ssrId: number;
       totalDebt: number;
       fixedPrice: number;
       section1Price: number;
@@ -105,7 +105,7 @@ export default class AdminAccount {
         createdAt: this.createdAt.toISOString(),
         updatedAt: this.updatedAt.toISOString(),
         userId: this.userId,
-        sellerId: this.sellerId,
+        ssrId: this.ssrId,
         totalDebt: this.totalDebt,
         fixedPrice: this.fixedPrice,
         section1Price: this.section1Price,
@@ -123,7 +123,7 @@ export default class AdminAccount {
       createdAt,
       updatedAt,
       userId,
-      sellerId,
+      ssrId,
       totalDebt,
       fixedPrice,
       section1Price,
@@ -135,11 +135,11 @@ export default class AdminAccount {
       billDate,
       billPrice,
     }: {
-      id?: string;
+      id?: number;
       createdAt?: Date;
       updatedAt?: Date;
-      userId?: string;
-      sellerId?: string;
+      userId?: number;
+      ssrId?: number;
       totalDebt?: number;
       fixedPrice?: number;
       section1Price?: number;
@@ -156,7 +156,7 @@ export default class AdminAccount {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         userId: userId ?? this.userId,
-        sellerId: sellerId ?? this.sellerId,
+        ssrId: ssrId ?? this.ssrId,
         totalDebt: totalDebt ?? this.totalDebt,
         fixedPrice: fixedPrice ?? this.fixedPrice,
         section1Price: section1Price ?? this.section1Price,

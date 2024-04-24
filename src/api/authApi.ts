@@ -1,6 +1,31 @@
 import axios, { AxiosError } from "axios";
 
 export default abstract class AuthApi {
+  static async createMaster(data: {
+    name: string;
+    lastName: string;
+    rut: string;
+    address: string;
+    email: string;
+    password: string;}): Promise<{user: object, token: string}> {
+      try {
+        const res = await axios.post(
+          `${import.meta.env.VITE_SERVER_URL}/api/auth/createMaster`, data);
+        return res.data;
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          if (e.response!.status === 400) {
+            throw new Error('Revisa los campos y vuelve a intentarlo')
+          }
+          if (e.response!.status === 409) {
+            throw new Error('El email ya está en uso')
+          }
+        }
+        throw new Error('Ha ocurrido un error, por favor intente de nuevo')
+      }
+    }
+
+
   static async getDashboardInfo(): Promise<{
     totalDebt: number;
     totalConsumed: number;

@@ -156,7 +156,7 @@ const UsersTable: React.FC = () => {
             alignItems: "center",
           }}
         >
-          Page {(filters.page ?? 0)} of {query.data?.pages}
+          Page {(filters.page ?? 0) + 1} of {query.data?.pages}
           <Box>
             <Button
               disabled={filters.page === 0}
@@ -167,7 +167,7 @@ const UsersTable: React.FC = () => {
               <ArrowBackIosIcon />
             </Button>
             <Button
-              disabled={filters.page === (query.data ? query.data.pages : 0)}
+              disabled={filters.page === (query.data ? query.data.pages -1 : 0)}
               onClick={() => {
                 setFilters({
                   ...filters,

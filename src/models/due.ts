@@ -6,7 +6,7 @@ export default class Due {
   readonly updatedAt: Date;
   readonly deletedAt: Date;
   readonly adminId: number;
-  readonly dues: number;
+  readonly total: number;
   readonly status: BillStatus;
 
   constructor({
@@ -15,7 +15,7 @@ export default class Due {
     updatedAt,
     deletedAt,
     adminId,
-    dues,
+    total,
     status,
   }: {
     id: number;
@@ -23,7 +23,7 @@ export default class Due {
     updatedAt: Date;
     deletedAt: Date;
     adminId: number;
-    dues: number;
+    total: number;
     status: BillStatus;
   }) {
     this.id = id;
@@ -31,7 +31,7 @@ export default class Due {
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
     this.adminId = adminId;
-    this.dues = dues;
+    this.total = total;
     this.status = status;
   }
 
@@ -56,7 +56,7 @@ export default class Due {
         updatedAt: new Date(data.updatedAt),
         deletedAt: new Date(data.deletedAt),
         adminId: data.adminId,
-        dues: data.dues,
+        total: data.total,
         status: BillStatus[data.status as keyof typeof BillStatus],
         });
     }
@@ -69,7 +69,7 @@ export default class Due {
         updatedAt: this.updatedAt,
         deletedAt: this.deletedAt,
         adminId: this.adminId,
-        dues: this.dues,
+        total: this.total,
         status: this.status,
         };
     }
@@ -80,7 +80,7 @@ export default class Due {
         updatedAt,
         deletedAt,
         adminId,
-        dues,
+        total,
         status,
     }: {
         id?: number;
@@ -88,7 +88,7 @@ export default class Due {
         updatedAt?: Date;
         deletedAt?: Date;
         adminId?: number;
-        dues?: number;
+        total?: number;
         status?: BillStatus;
     }): Due {
         return new Due({
@@ -97,7 +97,7 @@ export default class Due {
         updatedAt: updatedAt ?? this.updatedAt,
         deletedAt: deletedAt ?? this.deletedAt,
         adminId: adminId ?? this.adminId,
-        dues: dues ?? this.dues,
+        total: total ?? this.total,
         status: status ?? this.status,
         });
     }

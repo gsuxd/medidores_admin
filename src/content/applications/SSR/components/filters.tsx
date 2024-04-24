@@ -29,7 +29,7 @@ const Filtros: React.FC = (): JSX.Element => {
   };
 
   const ssrQuery = useQuery({
-    queryFn: async () => await SSRApi.list(undefined),
+    queryFn: SSRApi.list,
     queryKey: ["ssrList"],
   });
 

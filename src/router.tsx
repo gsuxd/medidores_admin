@@ -23,6 +23,8 @@ const AditionalPage = Loader(lazy(() => import("@/landing/AditionalPage")));
 
 const Login = Loader(lazy(() => import("@/auth/screens/login")));
 
+const CreateMaster = Loader(lazy(() => import("@/auth/screens/createMaster")))
+
 const SelectSSR = Loader(lazy(() => import("@/auth/screens/selectSSR")));
 
 const Dashboard = Loader(lazy(() => import("@/content/dashboard")));
@@ -81,6 +83,10 @@ const routes: RouteObject[] = [
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/create-master",
+    element: <CreateMaster/>
   },
   {
     path: "/login-ssr",

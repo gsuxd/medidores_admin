@@ -4,7 +4,7 @@ export default class SellerAccount {
   readonly updatedAt: Date;
   readonly deletedAt?: Date;
   readonly userId: number;
-  readonly ssrId: number;
+  readonly organizations: number[];
 
   constructor({
     id,
@@ -12,21 +12,21 @@ export default class SellerAccount {
     updatedAt,
     deletedAt,
     userId,
-    ssrId
+    organizations
   }: {
     id: number,
     createdAt: Date,
     updatedAt: Date,
     deletedAt?: Date | undefined,
     userId: number,
-    ssrId: number
+    organizations: number[]
   }){
     this.createdAt = createdAt
     this.id = id
     this.deletedAt =  deletedAt
     this.updatedAt = updatedAt
     this.userId = userId
-    this.ssrId = ssrId
+    this.organizations = organizations
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,7 +36,7 @@ export default class SellerAccount {
         id: data['id'],
         updatedAt: new Date(data['updatedAt']),
         userId: data['userId'],
-        ssrId: data['ssrId']
+        organizations: data['organizations']
     })
   }
 
@@ -47,7 +47,7 @@ export default class SellerAccount {
       id: this.id,
       userId: this.userId,
       deletedAt: this.deletedAt,
-      ssrId: this.ssrId 
+      ssrId: this.organizations 
     }
   }
 }

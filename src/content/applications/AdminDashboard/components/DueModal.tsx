@@ -117,7 +117,7 @@ const AssignModal: React.FC<IProps> = ({
                   id="dues"
                   name="dues"
                   label="Total"
-                  value={due.dues}
+                  value={due.total}
                   onChange={(e) => handleChange(e)}
                 />
               </FormControl>

@@ -22,6 +22,15 @@ interface IUpdate {
     };
   }
 
+  interface IListParams {
+    name: string,
+    enabled: boolean,
+    page: number,
+    limit: number,
+    order: string,
+    orderBy: string,
+}
+
 export default abstract class SSRApi {
     static async login(ssrId: number): Promise<void>{
         try {
@@ -50,12 +59,13 @@ export default abstract class SSRApi {
         }
     }
 
-    static async list(): Promise<{ssr: Map<number, SSR>}>{
+    static async list(params: IListParams | undefined): Promise<{ssr: Map<number, SSR>}>{
         try {
             const {data} = await axios.get(import.meta.env.VITE_SERVER_URL + '/api/admin/ssr/', {
                 headers: {
                     Authorization: 'Bearer ' + localStorage.getItem('token')
-                }
+                },
+                params
             })
             const ssrMap = new Map<number, SSR>();
             for (const ssr of data.ssr) {
@@ -63,6 +73,7 @@ export default abstract class SSRApi {
             }
             return {...data, ssr: ssrMap};
         } catch (error) {
+            console.log(error)
             throw new Error('Error inesperado, verifica tu conexión e intenta más tarde');
         }
     }
