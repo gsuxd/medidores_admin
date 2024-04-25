@@ -6,8 +6,6 @@ export default function getSuperiorId(user: User): string | undefined {
       return user.operatorAccount?.adminId.toString();
     case UserRole.partner:
       return user.partnerAccount?.adminId.toString();
-    case UserRole.admin:
-      return user.adminAccount?.sellerId;
     default:
       break;
   }

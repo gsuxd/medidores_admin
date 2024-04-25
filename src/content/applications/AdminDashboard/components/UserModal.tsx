@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { Label } from "@mui/icons-material";
 // import { DesktopDatePicker } from "@mui/x-date-pickers";
@@ -48,56 +48,6 @@ const AssignModal: React.FC<IProps> = ({
     queryFn: () => UsersApi.listUsers({role: (user.role === UserRole.operator || user.role === UserRole.partner) ? 'admin' : 'seller', ssrId: ssrId}),
     queryKey: ["usersModal"]
   })
-
-  const selectionUsers = useMemo<Map<number, User>>(() => {
-    const users = new Map();
-    const filtered =
-      Array.from(query.data?.users.values() ?? []).filter((val) => {
-        if (userSelected && userSelected.id === val.id) return false;
-        switch (user?.role) {
-          case UserRole.admin:
-            return val.role === UserRole.seller;
-          case UserRole.seller:
-            return false;
-          case UserRole.operator:
-            return val.role === UserRole.admin;
-            case UserRole.partner:
-            return val.role === UserRole.admin;
-          default:
-            return false;
-        }
-      }) ?? [];
-    for (const user of filtered!) {
-      users.set(user.id, user);
-    }
-    return users;
-  }, [query.data?.users, user?.role, userSelected]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [adminId, setAdminId] = useState<number>(
-    userSelected &&
-      userSelected.getSuperior(Array.from(query.data?.users.values() ?? []))
-      ? userSelected.getSuperior(Array.from(query.data!.users!.values()))!.id
-      : (actualUser!.role === UserRole.admin &&
-          user?.role !== UserRole.admin) ||
-        (actualUser?.role === UserRole.seller && user?.role === UserRole.admin)
-      ? actualUser!.id
-      : selectionUsers.size > 0 ? selectionUsers.entries().next().value[0] : ''
-  );
-
-  useEffect(() => {
-    //@ts-expect-error 3212
-    if (adminId === '') {
-        setAdminId(userSelected.getSuperior(Array.from(query.data?.users.values() ?? []))
-          ? userSelected.getSuperior(Array.from(query.data!.users!.values()))!.id
-          : (actualUser!.role === UserRole.admin &&
-              user?.role !== UserRole.admin) ||
-            (actualUser?.role === UserRole.seller && user?.role === UserRole.admin)
-          ? actualUser!.id
-          : selectionUsers.size > 0 ? selectionUsers.entries().next().value[0] : '')
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query.data])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (event: any) => {
@@ -150,30 +100,8 @@ const AssignModal: React.FC<IProps> = ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sendData: any = {
       ...user.toJson(),
-      adminId,
     };
 
-    switch (user.role) {
-      case UserRole.partner:
-        sendData["totalDebt"] = user.partnerAccount?.totalDebt;
-        sendData["totalConsumed"] = user.partnerAccount?.totalConsumed;
-        sendData["measurer"] = user.partnerAccount?.measurer;
-        sendData["adminId"] =
-          actualUser!.role === UserRole.admin
-            ? actualUser?.adminAccount?.id
-            : selectionUsers.get(adminId)?.adminAccount?.id;
-        break;
-      case UserRole.operator:
-        sendData["adminId"] =
-          actualUser!.role === UserRole.admin
-            ? actualUser?.adminAccount?.id
-            : selectionUsers.get(adminId)?.adminAccount?.id;
-        break;
-      case UserRole.admin:
-        sendData["sellerId"] =
-          actualUser!.role === UserRole.seller
-            ? actualUser?.sellerAccount?.id
-            : selectionUsers.get(adminId)?.sellerAccount?.id;
         sendData["fixedPrice"] = parseFloat(
           user.adminAccount?.fixedPrice as unknown as string
         );
@@ -201,7 +129,6 @@ const AssignModal: React.FC<IProps> = ({
             user.adminAccount?.billPrice as unknown as string
           );
         }
-    }
     const userData = user.toJson();
     for (const key of Object.keys(userSelected ?? {})) {
       if (key === "id") continue;
@@ -360,33 +287,6 @@ const AssignModal: React.FC<IProps> = ({
                 }}
                 item
               >
-                <Select
-                  error={
-                    //@ts-expect-error 321
-                    (query.error as AxiosError)?.response?.data.error.adminId
-                  }
-                  label={
-                    user?.role === UserRole.admin ? "Vendedor" : "Administrador"
-                  }
-                  id="adminId"
-                  name="adminId"
-                  value={adminId}
-                  required
-                  children={
-                    selectionUsers.size > 0
-                      ? Array.from(selectionUsers.values()).map((val) => (
-                          <MenuItem
-                            LinkComponent={"div"}
-                            key={val.id}
-                            value={val.id}
-                          >
-                            {val.fullName}
-                          </MenuItem>
-                        ))
-                      : []
-                  }
-                  onChange={(e) => setAdminId(e.target.value as number)}
-                />
               </Grid>
             ) : null}
             <Grid item>

@@ -130,8 +130,6 @@ export default class User {
         return array.find((val) => val.adminAccount?.id === this.partnerAccount?.adminId);
       case UserRole.operator:
         return array.find((val) => val.adminAccount?.id === this.operatorAccount?.adminId);
-       case UserRole.admin:
-         return array.find((val) => val.sellerAccount?.id === this.adminAccount?.id);
     }
   }
   
