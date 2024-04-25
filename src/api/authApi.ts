@@ -1,6 +1,15 @@
 import axios, { AxiosError } from "axios";
 
 export default abstract class AuthApi {
+  static async verify(code: string) {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/verify-email`, {code})
+      return res.data;
+    } catch (error) {
+      throw new Error("Ocurrio un error, intenta más tarde")
+    }
+  }
+
   static async createMaster(data: {
     name: string;
     lastName: string;
