@@ -27,7 +27,6 @@ const CreateMaster = Loader(lazy(() => import("@/auth/screens/createMaster")))
 
 const VerifyCode = Loader(lazy(() => import("@/auth/screens/verifyEmail")))
 
-const SelectSSR = Loader(lazy(() => import("@/auth/screens/selectSSR")));
 
 const Dashboard = Loader(lazy(() => import("@/content/dashboard")));
 
@@ -89,10 +88,6 @@ const routes: RouteObject[] = [
   {
     path: "/create-master",
     element: <CreateMaster/>
-  },
-  {
-    path: "/login-ssr",
-    element: <SelectSSR />,
   },
   {
     path: "/verify/:code",
