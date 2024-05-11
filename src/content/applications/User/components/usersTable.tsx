@@ -1,5 +1,6 @@
 import {
   Add,
+  Checklist,
   DeleteForeverOutlined,
   RequestQuote,
 } from "@mui/icons-material";
@@ -19,8 +20,9 @@ import {
   Tooltip,
   IconButton,
   Box,
-  Fab,
   Button,
+  SpeedDialAction,
+  SpeedDial,
 } from "@mui/material";
 import Filtros from "./filters";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
@@ -36,6 +38,7 @@ import User, { UserRole } from "@/models/user/user";
 import { format } from "date-fns";
 import UserModal from "./UserModal";
 import { AdminContext } from "@/contexts/AdminContext";
+import MultipleUserModal from "./MultipleUserModal";
 
 const UsersTable: React.FC = () => {
   const { query, filters, setFilters } = useContext(usersContext);
@@ -72,20 +75,33 @@ const UsersTable: React.FC = () => {
     [query.data]
   );
 
+  const [isMultipleOpen, setIsMultipleOpen] = useState(false);
+
   return (
     <Card>
-      <Fab
+      <SpeedDial
         color="primary"
-        aria-label="add"
+        aria-label="edit"
+        icon={<Add />}
         style={{ position: "fixed", bottom: "10px", right: "10px" }}
-        onClick={() => {
-          // alert('A')
-          setSelectedUser(null);
-          setIsOpen(true);
-        }}
+        ariaLabel="Crear"
       >
-        <Add />
-      </Fab>
+        <SpeedDialAction
+          icon={<Add />}
+          tooltipTitle="Crear Usuario"
+          onClick={() => {
+            setSelectedUser(null);
+            setIsOpen(true);
+          }}
+        />
+        <SpeedDialAction
+          icon={<Checklist />}
+          onClick={() => {
+            setIsMultipleOpen(true);
+          }}
+          tooltipTitle="Multiples Usuarios"
+        />
+      </SpeedDial>
       {isDeleteOpen && (
         <DeleteModal
           user={selectedUser!}
@@ -97,6 +113,17 @@ const UsersTable: React.FC = () => {
           }}
         />
       )}
+      {
+        
+          <MultipleUserModal
+          isOpen={isMultipleOpen}
+          ssrId={filters.ssrId!}
+          onClose={() => {
+            setIsMultipleOpen(false);
+          }}
+          setIsOpen={setIsMultipleOpen}
+          />
+      }
        {isOpen && (
           <UserModal
             isOpen={isOpen}

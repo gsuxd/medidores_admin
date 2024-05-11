@@ -251,6 +251,8 @@ function WarningModal({
         }.pdf`,
         {
           headers: {
+            'Content-Type': 'application/pdf',
+            'Accept': 'application/pdf',
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }

@@ -39,7 +39,7 @@ export default function UserDashboard() {
   const userQuery = useQuery({
     queryFn: () => UsersApi.getUser(parseInt(params.userId!)),
     queryKey: ["user", parseInt(params.userId!)],
-  })
+  });
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -60,17 +60,18 @@ export default function UserDashboard() {
           <title>Administración de Facturas</title>
         </Helmet>
       }
-      {
-        userQuery.data && <AssignModal 
-        isOpen={isOpen}
-        ssrId={userQuery.data.ssrId}
-        user={userQuery.data.user}
-        onClose={() => {
-          setIsOpen(false);
-        }}
-        setIsOpen={setIsOpen}
+      {userQuery.data && (
+        <AssignModal
+          isOpen={isOpen}
+          ssrId={userQuery.data.ssrId}
+          user={userQuery.data.user}
+          onClose={() => {
+            setIsOpen(false);
+          }}
+          setIsOpen={setIsOpen}
         />
-      }
+      )}
+
       <Fab
         color="primary"
         aria-label="edit"

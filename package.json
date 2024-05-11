@@ -41,6 +41,7 @@
     "react-router-dom": "^6.22.2",
     "sort-by": "^1.2.0",
     "stylis": "^4.3.1",
+    "use-file-picker": "^2.1.2",
     "web-vitals": "^3.5.2"
   },
   "devDependencies": {
