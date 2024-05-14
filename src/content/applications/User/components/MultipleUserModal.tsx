@@ -8,6 +8,7 @@ import {
   MenuItem,
   Grid,
   DialogActions,
+  Typography,
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
@@ -29,7 +30,6 @@ const MultipleUserModal: React.FC<IProps> = ({
   isOpen,
   onClose,
   ssrId,
-  setIsOpen,
 }) => {
   const {
     auth: { user: actualUser },
@@ -75,6 +75,7 @@ const MultipleUserModal: React.FC<IProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.data]);
+
   const confirm = async () => {
     if (!file) return;
     const formData = new FormData();
@@ -86,16 +87,15 @@ const MultipleUserModal: React.FC<IProps> = ({
             ContentType: "multipart/form-data", 
           },
     });
-    setIsOpen(false);
     return data;
   };
 
   const confirmQuery = useMutation({ mutationFn: () => confirm() });
 
   const handleConfirm = async () => {
+    if (!file) return;
     await confirmQuery.mutateAsync();
     if (confirmQuery.data) {
-      setIsOpen(false);
       query.refetch();
     }
   };
@@ -170,20 +170,20 @@ const MultipleUserModal: React.FC<IProps> = ({
               </Grid>
             ) : null}
           </Grid>
+          <Typography color={'error'} p={5}>
+            {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ((confirmQuery.error as AxiosError)?.response?.data as any).error}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => {
-              if (confirmQuery.data) {
-                onClose({}, "backdropClick");
-                return;
-              }
-              handleConfirm();
-            }}
+          disabled={confirmQuery.isPending || confirmQuery.data}
+            onClick={handleConfirm}
           >
             {" "}
             {confirmQuery.data ? (
-              <Label color="success">Usuario creado</Label>
+              <Label color="success">Usuarios creado</Label>
             ) : confirmQuery.isPending ? (
               <CircularProgress color="secondary" />
             ) : (
