@@ -9,7 +9,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import Logo from "@/assets/logo.jpeg";
+import Logo from "../../assets/logo.jpeg";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {

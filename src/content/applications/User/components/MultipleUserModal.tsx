@@ -171,7 +171,7 @@ const MultipleUserModal: React.FC<IProps> = ({
             ) : null}
           </Grid>
           <Typography color={'error'} p={5}>
-            {
+            { confirmQuery.error &&
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ((confirmQuery.error as AxiosError)?.response?.data as any).error}
           </Typography>
