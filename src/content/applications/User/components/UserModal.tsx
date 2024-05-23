@@ -598,14 +598,13 @@ const AssignModal: React.FC<IProps> = ({
               <>
                 {actualUser!.role === UserRole.master && (
                   <>
-                    <Grid item>
+                    {/* <Grid item>
                       <FormControl>
                         <InputLabel htmlFor="billDate">
                           Fecha de Factura
                         </InputLabel>
                         <Input
                           error={
-                            //@ts-expect-error 321
                             (query.error as AxiosError)?.response?.data.error
                               .billDate
                           }
@@ -616,7 +615,7 @@ const AssignModal: React.FC<IProps> = ({
                           onChange={(e) => handleChange(e)}
                         />
                       </FormControl>
-                    </Grid>
+                    </Grid> */}
                     <Grid item>
                       <FormControl>
                         <InputLabel htmlFor="billPrice">
@@ -675,7 +674,7 @@ const AssignModal: React.FC<IProps> = ({
                     />
                   </FormControl>
                 </Grid>
-                <Grid item>
+                {/* <Grid item>
                   <FormControl>
                     <InputLabel htmlFor="section1Limit">
                       Seccion 1 Limite
@@ -694,7 +693,7 @@ const AssignModal: React.FC<IProps> = ({
                       onChange={(e) => handleChange(e)}
                     />
                   </FormControl>
-                </Grid>
+                </Grid> */}
                 <Grid item>
                   <FormControl>
                     <InputLabel htmlFor="section1Price">
