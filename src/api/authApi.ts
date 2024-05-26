@@ -1,6 +1,26 @@
 import axios, { AxiosError } from "axios";
 
 export default abstract class AuthApi {
+  static async recoverPassword(data: { newPassword: string; confirmNewPassword: string; token: string }) {
+    if (data.newPassword !== data.confirmNewPassword) {
+      throw new Error('Las contraseñas no coinciden')
+    }
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/reset-password`, data)
+      return res.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response!.status === 400) {
+          throw new Error('Revisa los campos y vuelve a intentarlo')
+        }
+        if (error.response!.status === 404) {
+          throw new Error('El token es inválido')
+        }
+      }
+      throw new Error('Ha ocurrido un error, por favor intente de nuevo')
+    }
+  }
+
   static async verify(code: string) {
     try {
       const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/verify-email`, {code})
