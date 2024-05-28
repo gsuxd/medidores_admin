@@ -14,6 +14,15 @@ axios.interceptors.request.use((config) => {
   config.headers['ngrok-skip-browser-warning'] = "48392"
   return config;
 });
+
+axios.interceptors.response.use((res) => {
+  if (res.status === 401) {
+    localStorage.clear();
+    window.location.href = '/login';
+  }
+  return res;
+})
+
 function App() {
   const content = useRoutes(router);
   const auth = useAuth();
