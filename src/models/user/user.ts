@@ -113,6 +113,9 @@ export default class User {
   get roleLabel(): string {
     switch (this.role) {
       case UserRole.admin:
+        if (this.adminAccount?.organization) {
+          return 'Presidente';
+        }
         return "Administrador";
       case UserRole.operator:
         return "Operador";
