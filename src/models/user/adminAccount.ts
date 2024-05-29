@@ -1,12 +1,10 @@
-import SSR from "../ssr";
-
 export default class AdminAccount {
     readonly id: number;
     readonly createdAt: Date;
     readonly updatedAt: Date;
     readonly userId: number;
     readonly ssrId: number;
-    readonly organization?: SSR;
+    readonly organizationId?: number;
     readonly totalDebt: number;
     readonly fixedPrice: number;
     readonly section1Price: number;
@@ -23,7 +21,7 @@ export default class AdminAccount {
       updatedAt,
       userId,
       ssrId,
-      organization,
+      organizationId,
       totalDebt,
       fixedPrice,
       section1Price,
@@ -40,7 +38,7 @@ export default class AdminAccount {
       updatedAt: Date;
       userId: number;
       ssrId: number;
-      organization?: SSR;
+      organizationId?: number;
       totalDebt: number;
       fixedPrice: number;
       section1Price: number;
@@ -57,7 +55,7 @@ export default class AdminAccount {
       this.updatedAt = updatedAt;
       this.userId = userId;
       this.ssrId = ssrId;
-      this.organization = organization;
+      this.organizationId = organizationId;
       this.totalDebt = totalDebt;
       this.fixedPrice = fixedPrice;
       this.section1Price = section1Price;
@@ -77,7 +75,7 @@ export default class AdminAccount {
         updatedAt: new Date(json.updatedAt),
         userId: json.userId,
         ssrId: json.ssrId,
-        organization: json.organization ? SSR.fromJson(json.organization) : undefined,
+        organizationId: json.organizationId ? json.organizationId : undefined,
         totalDebt: json.totalDebt,
         fixedPrice: json.fixedPrice,
         section1Price: json.section1Price,
@@ -96,7 +94,7 @@ export default class AdminAccount {
       updatedAt: string;
       userId: number;
       ssrId: number;
-      organization?: SSR;
+      organizationId?: number;
       totalDebt: number;
       fixedPrice: number;
       section1Price: number;
@@ -114,7 +112,7 @@ export default class AdminAccount {
         updatedAt: this.updatedAt.toISOString(),
         userId: this.userId,
         ssrId: this.ssrId,
-        organization: this.organization ? this.organization.toJson() : undefined,
+        organizationId: this.organizationId ? this.organizationId : undefined,
         totalDebt: this.totalDebt,
         fixedPrice: this.fixedPrice,
         section1Price: this.section1Price,
@@ -133,7 +131,7 @@ export default class AdminAccount {
       updatedAt,
       userId,
       ssrId,
-      organization,
+      organizationId,
       totalDebt,
       fixedPrice,
       section1Price,
@@ -150,7 +148,7 @@ export default class AdminAccount {
       updatedAt?: Date;
       userId?: number;
       ssrId?: number;
-      organization?: SSR;
+      organizationId?: number;
       totalDebt?: number;
       fixedPrice?: number;
       section1Price?: number;
@@ -168,7 +166,7 @@ export default class AdminAccount {
         updatedAt: updatedAt ?? this.updatedAt,
         userId: userId ?? this.userId,
         ssrId: ssrId ?? this.ssrId,
-        organization: organization ?? this.organization,
+        organizationId: organizationId ?? this.organizationId,
         totalDebt: totalDebt ?? this.totalDebt,
         fixedPrice: fixedPrice ?? this.fixedPrice,
         section1Price: section1Price ?? this.section1Price,
