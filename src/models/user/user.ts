@@ -113,7 +113,7 @@ export default class User {
   get roleLabel(): string {
     switch (this.role) {
       case UserRole.admin:
-        if (this.adminAccount?.organization) {
+        if (this.adminAccount?.organizationId) {
           return 'Presidente';
         }
         return "Administrador";
