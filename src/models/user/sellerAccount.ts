@@ -36,7 +36,7 @@ export default class SellerAccount {
         id: data['id'],
         updatedAt: new Date(data['updatedAt']),
         userId: data['userId'],
-        organizations: data['organizations']
+        organizations: data['organizations'].map((val: {id: number}) => val['id'])
     })
   }
 

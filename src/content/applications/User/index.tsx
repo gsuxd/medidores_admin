@@ -32,7 +32,7 @@ export default function UsersManagement() {
     ssrId:
       user!.role === UserRole.admin
         ? user!.adminAccount!.ssrId
-        : user!.role === UserRole.seller
+        : user!.role === UserRole.seller && user!.sellerAccount!.organizations[0]
         ? user!.sellerAccount!.organizations[0]
         : 1,
     enabled: false,
