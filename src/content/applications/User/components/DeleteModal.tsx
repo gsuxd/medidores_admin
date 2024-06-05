@@ -49,7 +49,7 @@ const DeleteModal: React.FC<IProps> = ({
       users.set(user.id, user);
     }
     return users;
-  }, [query.data?.users, user?.role]);
+  }, [query.data?.users, user.id, user.role]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [adminId, setAdminId] = useState<number>((user.role === UserRole.admin || user.role === UserRole.seller) ? Array.from(selectionUsers.keys())[0] : 0);
@@ -84,16 +84,8 @@ const DeleteModal: React.FC<IProps> = ({
       <DialogTitle>{"Eliminar Usuario"}</DialogTitle>
       <DialogContent>
         {isPending && <p>Cargando...</p>}
-        {isError && (
-          <p>
-            {(error as AxiosError).response
-              ? //@ts-expect-error common error
-                (error as AxiosError).response!.data!.error!
-              : (error as AxiosError).message}
-          </p>
-        )}
         {data && <p>Usuario Eliminado</p>}
-        {!(isPending || isError || data) && user.role !== UserRole.operator && user.role !== UserRole.partner ? (
+        {!(isPending || data) && user.role !== UserRole.operator && user.role !== UserRole.partner ? (
           <DialogContentText sx={{
             display: "flex",
             flexDirection: "column",
@@ -125,6 +117,14 @@ const DeleteModal: React.FC<IProps> = ({
         <Button disabled={isPending} onClick={onClose}>
           Cancelar
         </Button>
+        {isError && (
+          <Typography color="error"> 
+            {(error as AxiosError).response
+              ? //@ts-expect-error common error
+                (error as AxiosError).response!.data!.error!
+              : (error as AxiosError).message}
+          </Typography>
+        )}
         <Button
           onClick={() => {
             if ((!isPending || error) && !data) {
