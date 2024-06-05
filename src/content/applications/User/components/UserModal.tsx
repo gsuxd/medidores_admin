@@ -13,6 +13,7 @@ import {
   DialogActions,
   Switch,
   FormControlLabel,
+  Typography,
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
@@ -239,6 +240,7 @@ const AssignModal: React.FC<IProps> = ({
             : selectionUsers.get(adminId)?.adminAccount?.id;
         break;
       case UserRole.admin:
+        sendData["ssrId"] = filters.ssrId!;
         sendData["sellerId"] =
           actualUser!.role === UserRole.seller
             ? actualUser?.sellerAccount?.id
@@ -295,7 +297,7 @@ const AssignModal: React.FC<IProps> = ({
     return data;
   };
 
-  const confirmQuery = useMutation({ mutationFn: () => confirm() });
+  const confirmQuery = useMutation({ mutationFn: async () => await confirm(), throwOnError: false });
 
   const handleConfirm = async () => {
     await confirmQuery.mutateAsync();
@@ -423,12 +425,12 @@ const AssignModal: React.FC<IProps> = ({
             </Grid>
             {user.role === UserRole.operator ||
               (user.role === UserRole.partner && (
-                <Grid
-                  item
-                >
-                  <FormControl sx={{
-                    minWidth: "100%",
-                  }}>
+                <Grid item>
+                  <FormControl
+                    sx={{
+                      minWidth: "100%",
+                    }}
+                  >
                     <InputLabel htmlFor="adminId">Administrador</InputLabel>
                     <Select
                       error={
@@ -460,25 +462,27 @@ const AssignModal: React.FC<IProps> = ({
                   </FormControl>
                 </Grid>
               ))}
-            <Grid item>
-              <FormControlLabel
-                label="Correo Verificado?"
-                control={
-                  <Switch
-                    name="emailVerified"
-                    checked={user?.emailVerified}
-                    disabled={user?.emailVerified}
-                    onChange={(e) =>
-                      setUser(
-                        user.copyWith({
-                          emailVerified: e.target.checked,
-                        })
-                      )
-                    }
-                  />
-                }
-              />
-            </Grid>
+            {user.id !== -1 && (
+              <Grid item>
+                <FormControlLabel
+                  label="Correo Verificado?"
+                  control={
+                    <Switch
+                      name="emailVerified"
+                      checked={user?.emailVerified}
+                      disabled={user?.emailVerified}
+                      onChange={(e) =>
+                        setUser(
+                          user.copyWith({
+                            emailVerified: e.target.checked,
+                          })
+                        )
+                      }
+                    />
+                  }
+                />
+              </Grid>
+            )}
             <Grid item>
               <FormControl>
                 <InputLabel htmlFor="rut">Rut</InputLabel>
@@ -798,7 +802,20 @@ const AssignModal: React.FC<IProps> = ({
             )}
           </Grid>
         </DialogContent>
-        <DialogActions>
+        <DialogActions
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          {confirmQuery.error && (
+            <Typography color="error">
+              {confirmQuery.error instanceof AxiosError && confirmQuery.error.response?.data.error
+                ? "Revisa los datos y vuelve a intentarlo"
+                : "Error inesperado"}
+            </Typography>
+          )}
           <Button
             onClick={() => {
               if (confirmQuery.data) {

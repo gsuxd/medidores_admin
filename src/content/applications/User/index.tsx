@@ -25,7 +25,7 @@ export default function UsersManagement() {
     ssrId: 1,
     enabled: false
   });
-  const query = useQuery({queryFn: () => UsersApi.listUsers(filters), queryKey: ['users', filters]});
+  const query = useQuery({queryFn: () => UsersApi.listUsers(filters), queryKey: ['users',filters.enabled && filters, filters.page, filters.ssrId]});
 
   return (
     <motion.div
