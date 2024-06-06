@@ -206,6 +206,9 @@ const AssignModal: React.FC<IProps> = ({
           justifyContent: "space-between"
         }}>
         <Button onClick={() => setIsWarningOpen(true)}>Ver Aviso</Button>
+        {
+          confirmQuery.error && <Label color="error">Revisa los datos y vuelve a intentarlo</Label>
+        }
           <Button
             onClick={() => {
               if (confirmQuery.data) {
