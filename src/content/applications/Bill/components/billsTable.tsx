@@ -149,7 +149,11 @@ const BillsTable: React.FC = () => {
             alignItems: "center",
           }}
         >
-          Page {filters.page ?? 0} of {query.data?.pages}
+          Page {filters.page ?? 0} of {query.data?.count
+            ? query.data.count < 10
+              ? filters.page
+              : Math.floor(query.data.count / 10)
+            : 0}
           <Box>
             <Button
               disabled={filters.page === 0}
@@ -160,7 +164,7 @@ const BillsTable: React.FC = () => {
               <ArrowBackIosIcon />
             </Button>
             <Button
-              disabled={filters.page === (query.data ? query.data.pages : 0)}
+              disabled={query.data ? query.data.bills.size < 10 : true}
               onClick={() => {
                 setFilters({
                   ...filters,
