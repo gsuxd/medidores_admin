@@ -68,7 +68,7 @@ export default abstract class SSRApi {
                 params
             })
             const ssrMap = new Map<number, SSR>();
-            for (const ssr of data.ssr) {
+            for (const ssr of data) {
                 ssrMap.set(ssr.id, SSR.fromJson(ssr));
             }
             return {...data, ssr: ssrMap};

@@ -6,7 +6,10 @@ export default abstract class AuthApi {
       throw new Error('Las contraseñas no coinciden')
     }
     try {
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/reset-password`, data)
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/reset-password`, {
+        token: data.token,
+        password: data.newPassword
+      })
       return res.data;
     } catch (error) {
       if (error instanceof AxiosError) {

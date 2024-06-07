@@ -13,6 +13,7 @@ import {
 import { useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import AuthApi from '@/api/authApi';
+import { useState } from 'react';
   
   const MainContent = styled(Box)(
     () => `
@@ -32,6 +33,17 @@ import AuthApi from '@/api/authApi';
         mutationKey: ['recover', token],
         mutationFn: AuthApi.recoverPassword,
     })
+    const [values, setValues] = useState({
+        newPassword: '',
+        confirmNewPassword: '',
+    });
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({
+          ...values,
+          [event.target.name]: event.target.value,
+        });
+      };
     return (
       <>
         <Helmet>
@@ -39,6 +51,8 @@ import AuthApi from '@/api/authApi';
         </Helmet>
         <MainContent>
           <Container maxWidth="md">
+          <Container maxWidth="sm">
+              <Card sx={{ textAlign: 'center', mt: 3, p: 4 }}>
             <Box textAlign="center">
               <Typography variant="h2" sx={{ my: 2 }}>
              {
@@ -52,6 +66,7 @@ import AuthApi from '@/api/authApi';
               variant='outlined'
               fullWidth
               margin='normal'
+              onChange={handleChange}
               required
               />
               <TextField
@@ -61,12 +76,14 @@ import AuthApi from '@/api/authApi';
               variant='outlined'
               fullWidth
               margin='normal'
+              onChange={handleChange}
               required
               />
             </Box>
-            <Container maxWidth="sm">
-              <Card sx={{ textAlign: 'center', mt: 3, p: 4 }}>
-                <Button disabled={mutation.isPending} href="/" variant="outlined">
+                <Button disabled={mutation.isPending} onClick={() => mutation.mutate({
+                    token: token!,
+                    ...values
+                })} variant="outlined">
                   {mutation.isPending ? <CircularProgress size={24} /> : mutation.isSuccess ? 'Ir a la página principal' : 'Enviar'}
                 </Button>
               </Card>

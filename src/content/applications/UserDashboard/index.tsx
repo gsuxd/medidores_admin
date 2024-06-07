@@ -33,7 +33,7 @@ export default function UserDashboard() {
   const query = useQuery({
     queryFn: () =>
       BillsApi.listBills({ ...filters, userId: parseInt(params.userId!) }),
-    queryKey: ["billsUser", filters.userId, filters.enabled && filters],
+    queryKey: ["billsUser", filters.userId, filters.enabled && filters, filters.page],
   });
 
   const userQuery = useQuery({

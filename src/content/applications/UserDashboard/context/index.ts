@@ -10,7 +10,6 @@ interface IUserBillsContext {
   query: UseQueryResult<
     {
       count: number;
-      pages: number;
       bills: Map<number, Bill>;
     },
     unknown

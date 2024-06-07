@@ -2,8 +2,8 @@ import Bill from "@/models/bill";
 import axios from "axios";
 
 interface ParamsListBills {
-  page?: number| null;
-  limit?: number| null;
+  page: number;
+  limit: number;
   rut: string;
   start: Date,
   end: Date,
@@ -29,7 +29,6 @@ export default abstract class BillsApi {
   }
   static async listBills(params: ParamsListBills): Promise<{
     count: number;
-    pages: number;
     bills: Map<number, Bill>;
   }> {
     try {
@@ -39,7 +38,10 @@ export default abstract class BillsApi {
           ...params,
           start: params.start.toISOString(),
           end: params.end.toISOString()
-        } : null, headers: {
+        } : {
+          page: params.page,
+          limit: params.limit,
+        }, headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         } }
       );

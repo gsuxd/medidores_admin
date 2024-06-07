@@ -10,7 +10,6 @@ interface IUsersContext {
   query: UseQueryResult<
     {
       count: number;
-      pages: number;
       users: Map<number, User>;
     },
     unknown

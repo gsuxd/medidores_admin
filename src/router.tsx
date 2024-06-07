@@ -96,7 +96,7 @@ const routes: RouteObject[] = [
     element: <VerifyCode/>
   },
   {
-    path: "/recover-passowrd/:token",
+    path: "/recover-password/:token",
     element: <RecoverPassword/>
   },
   {

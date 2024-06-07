@@ -64,7 +64,6 @@ export default abstract class UsersApi {
   }
   static async listUsers(params: ParamsListUsers): Promise<{
     count: number;
-    pages: number;
     users: Map<number, User>;
   }> {
     try {

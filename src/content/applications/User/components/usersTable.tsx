@@ -63,10 +63,10 @@ const UsersTable: React.FC = () => {
         return (
           <TableRow hover key={user.id.toString()}>
             <UserRow
-            user={user}
-            setSelectedUser={setSelectedUser}
-            setIsOpen={setIsOpen}
-            setIsDeleteOpen={setIsDeleteOpen}
+              user={user}
+              setSelectedUser={setSelectedUser}
+              setIsOpen={setIsOpen}
+              setIsDeleteOpen={setIsDeleteOpen}
             />
           </TableRow>
         );
@@ -114,28 +114,27 @@ const UsersTable: React.FC = () => {
         />
       )}
       {
-        
-          <MultipleUserModal
+        <MultipleUserModal
           isOpen={isMultipleOpen}
           ssrId={filters.ssrId!}
           onClose={() => {
             setIsMultipleOpen(false);
           }}
           setIsOpen={setIsMultipleOpen}
-          />
+        />
       }
-       {isOpen && (
-          <UserModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            setSelectedUser={setSelectedUser}
-            user={selectedUser}
-            onClose={() => {
-              setIsOpen(false);
-              setSelectedUser(null);
-            }}
-          />
-        )}
+      {isOpen && (
+        <UserModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          setSelectedUser={setSelectedUser}
+          user={selectedUser}
+          onClose={() => {
+            setIsOpen(false);
+            setSelectedUser(null);
+          }}
+        />
+      )}
       <Divider />
       <TableContainer>
         <Accordion expanded={true}>
@@ -183,7 +182,12 @@ const UsersTable: React.FC = () => {
             alignItems: "center",
           }}
         >
-          Page {(filters.page ?? 0)} of {query.data?.pages}
+          Page {filters.page ?? 0} of{" "}
+          {query.data?.count
+            ? query.data.count < 10
+              ? filters.page
+              : Math.floor(query.data.count / 10)
+            : 0}
           <Box>
             <Button
               disabled={filters.page === 0}
@@ -194,7 +198,7 @@ const UsersTable: React.FC = () => {
               <ArrowBackIosIcon />
             </Button>
             <Button
-              disabled={filters.page === (query.data ? query.data.pages : 0)}
+              disabled={query.data ?  query.data.users.size < 10 : true}
               onClick={() => {
                 setFilters({
                   ...filters,
@@ -224,7 +228,9 @@ function UserRow({
 }) {
   const theme = useTheme();
   const navigate = useNavigate();
-  const {auth: {user: actualUser}} = useContext(AdminContext)
+  const {
+    auth: { user: actualUser },
+  } = useContext(AdminContext);
   return (
     <>
       <TableCell>
@@ -338,25 +344,26 @@ function UserRow({
             </IconButton>
           </Tooltip>
         )}
-        {user.role === UserRole.admin && actualUser!.role === UserRole.master && (
-          <Tooltip title="Ver Deudas" arrow>
-            <IconButton
-              sx={{
-                "&:hover": {
-                  background: theme.colors.primary.lighter,
-                },
-                color: theme.palette.primary.main,
-              }}
-              color="inherit"
-              size="small"
-              onClick={() => {
-                navigate("/admin/user-admin/" + user.id + "/");
-              }}
-            >
-              <RequestQuote fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        )}
+        {user.role === UserRole.admin &&
+          actualUser!.role === UserRole.master && (
+            <Tooltip title="Ver Deudas" arrow>
+              <IconButton
+                sx={{
+                  "&:hover": {
+                    background: theme.colors.primary.lighter,
+                  },
+                  color: theme.palette.primary.main,
+                }}
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  navigate("/admin/user-admin/" + user.id + "/");
+                }}
+              >
+                <RequestQuote fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
       </TableCell>
     </>
   );
