@@ -31,7 +31,6 @@ export default class SellerAccount {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJson(data: any) {
-    console.log(data)
     return new SellerAccount({
         createdAt: new Date(data['createdAt']),
         id: data['id'],
