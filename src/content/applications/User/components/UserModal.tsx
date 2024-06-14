@@ -266,11 +266,25 @@ const AssignModal: React.FC<IProps> = ({
         sendData["section3Price"] = parseFloat(
           user.adminAccount?.section3Price as unknown as string
         );
-        delete sendData['billDate'];
+        if (actualUser!.role === UserRole.master) {
+          sendData["billPrice"] = parseFloat(
+            user.adminAccount?.billPrice as unknown as string
+          );
+          sendData['billDate'] = Date.parse(user.adminAccount?.billDate as unknown as string)
+        }
     }
     const userData = user.toJson();
     for (const key of Object.keys(userSelected ?? {})) {
       if (key === "id") continue;
+      if (key.includes("Account")) {
+        //@ts-expect-error 40392
+        for (const key2 of Object.keys(userSelected![key]as object)) {
+          //@ts-expect-error 40392
+          if (userData[key][key2] === userSelected[key][key2]) {
+            delete sendData[key][key2];
+          }
+        }
+      }
       //@ts-expect-error 40392
       const val = userData[key];
       //@ts-expect-error 40392
