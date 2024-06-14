@@ -1,136 +1,125 @@
-import type { IconType } from "react-icons";
-import { IoPersonCircleOutline, IoWaterOutline } from "react-icons/io5";
-import { GiReceiveMoney, GiWaterRecycling } from "react-icons/gi";
-import { MdSupportAgent } from "react-icons/md";
-import { FaMoneyBillTransfer, FaRegCirclePlay } from "react-icons/fa6";
-import { RiFolderDownloadLine } from "react-icons/ri";
-import "./landing.styles.css";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMediaQuery } from "@mui/material";
+import { Link } from "react-router-dom";
+import Logo from "@/assets/logo.jpeg";
+import "./landing.css";
 
 export default function LandingPage() {
-  const navigate = useNavigate();
   return (
     <>
-      <div id="heading">
-        <h2>"Siente el flujo controla el curso"</h2>
-        <h4>Controla tu servicio de la manera más eficiente</h4>
-      </div>
-      <div id="button-group">
-        <IconButton
-          Icon={IoWaterOutline}
-          title="Sobre Nosotros"
-          onClick={() => {
-            navigate("/more-info", {
-              state: {
-                title: "Sobre nosotros",
-                content:
-                  "H2O Gestión es una empresa que nace con el propósito de facilitar la gestión de los Sistemas de agua potable rural (SSR o APR) en Chile. Somos un equipo de profesionales con experiencia en el sector hídrico, que hemos desarrollado un software innovador y eficiente, que se adapta a las necesidades de cada SAPR. Nuestra misión es mejorar la calidad de vida de las comunidades rurales, brindándoles una herramienta que les permite administrar y cobrar sus servicios de agua de forma transparente y sencilla.",
-              },
-            });
-          }}
+      <section id="header">
+        <h2>H2O Gestión</h2>
+        <p>Siente el flujo, controla el curso</p>
+        <div id="button-group">
+          <Link to="/contact" id="get-started">
+            Contactar con ventas
+          </Link>
+          <Link to="/info" id="learn-more">
+            Más Información
+          </Link>
+        </div>
+      </section>
+      <section id="designed">
+        <h1>Controla tu SSR</h1>
+        <div className="content">
+          <div className="text">
+            <div className="paragraph">
+              <h3>Administración a medida</h3>
+              <p>
+                H2O Gestión es un sistema completo de administración para tu
+                SSR. Designa administradores para vender a tus socios y
+                operadores, además de ofrecer seguimiento a tus socios de sus
+                deudas y notificaciones en tiempo real mediante notificaciones
+                Push y correos masivos.
+              </p>
+            </div>
+            <div className="paragraph">
+              <h3>Nuestros Servicios</h3>
+              <p>
+                H2O se compromete a mejorar continuamente y a ofrecer servicios
+                de gestión innovadores y actualizados. Nuestro enfoque se basa
+                en la utilización de las últimas tecnologías y metodologías para
+                adelantarnos a las tendencias del sector y cambios en el marco
+                regulatorio para los APR. Invertimos significativamente en
+                investigación y desarrollo para garantizar que nuestro software
+                sea capaz de integrarse a la perfección con las tecnologías de
+                vanguardia que están cambiando el sector del agua potable rural.
+                Por ejemplo, hemos incorporado soluciones inteligentes de
+                lectura de medidores que proporcionan lecturas precisas en
+                tiempo real para minimizar los errores y mejorar la eficacia en
+                la recopilación de datos. Además, nos mantenemos al tanto de las
+                nuevas normativas y estándares del sector para garantizar que
+                nuestros clientes cumplen los nuevos requisitos legales. Por
+                último, nuestro equipo está comprometido con la formación y el
+                desarrollo, aprendiendo y mejorando continuamente para estar al
+                día de las nuevas tendencias, tecnologías y mejores prácticas
+                del sector. En H2O Gestión, nos esforzamos por ofrecer a
+                nuestros clientes servicios excepcionales que sean innovadores,
+                fiables y que satisfagan las necesidades cambiantes del sector
+                del agua potable rural en Chile.
+              </p>
+            </div>
+          </div>
+          <img
+            src="src/img/illustration-editor-desktop.svg"
+            id="illustration-editor"
+            alt="illustration-editor"
+            data-inviewport="illustration-editor"
+          />
+        </div>
+      </section>
+      <section id="state-of-art">
+        <img
+          src="src/img/illustration-phones.svg"
+          alt="illustration-phones"
+          data-inviewport="illustration-phones"
+          id="illustration-phones"
         />
-        <IconButton
-          Icon={GiWaterRecycling}
-          title="Nuestros Servicios"
-          onClick={() => {
-            navigate("more-info", {state: {
-              title: "Nuestros Servicios",
-              content: "H2O se compromete a mejorar continuamente y a ofrecer servicios de gestión innovadores y actualizados. Nuestro enfoque se basa en la utilización de las últimas tecnologías y metodologías para adelantarnos a las tendencias del sector y cambios en el marco regulatorio para los APR. Invertimos significativamente en investigación y desarrollo para garantizar que nuestro software sea capaz de integrarse a la perfección con las tecnologías de vanguardia que están cambiando el sector del agua potable rural. Por ejemplo, hemos incorporado soluciones inteligentes de lectura de medidores que proporcionan lecturas precisas en tiempo real para minimizar los errores y mejorar la eficacia en la recopilación de datos. Además, nos mantenemos al tanto de las nuevas normativas y estándares del sector para garantizar que nuestros clientes cumplen los nuevos requisitos legales. Por último, nuestro equipo está comprometido con la formación y el desarrollo, aprendiendo y mejorando continuamente para estar al día de las nuevas tendencias, tecnologías y mejores prácticas del sector. En H2O Gestión, nos esforzamos por ofrecer a nuestros clientes servicios excepcionales que sean innovadores, fiables y que satisfagan las necesidades cambiantes del sector del agua potable rural en Chile."
-            }})
-          }}
+        <div className="content">
+          <h2>Herramienta para tus operadores</h2>
+          <p>
+            Usando un modelo de Inteligencia Artificial entrenado escanea los
+            medidores con solo una foto, agrega la lectura a la cola y súbelas
+            cuando tengas conexión a internet estable, dando soporte a las zonas
+            rurales donde la conexión es limitada.
+          </p>
+        </div>
+      </section>
+      <section id="info">
+        <img
+          src="src/img/illustration-laptop-desktop.svg"
+          data-inviewport="illustration-laptop"
+          alt="illustration-laptop-desktop"
+          id="illustration-laptop"
         />
-        <IconButton
-          Icon={IoPersonCircleOutline}
-          title="Revisa tu cuenta"
-          onClick={() => {
-            navigate("more-info", {state: {
-              title: "Revisa tu cuenta",
-              content: "Si eres socio de un SAPR que utiliza nuestro software, puedes revisar tu cuenta ingresando tu RUT y tu contraseña. Podrás ver tu consumo de agua, tu saldo, y tu historial de pagos."
-            }})
-          }}
-        />
-        <IconButton
-          Icon={GiReceiveMoney}
-          title="Paga tu cuenta"
-          onClick={() => {
-            navigate("more-info", {state: {
-              title: "Paga tu cuenta",
-              content: "Si eres socio de un SAPR que utiliza nuestro software, puedes pagar tu cuenta de forma fácil y segura a través de este portal. Aceptamos diversos medios de pago, como tarjetas de crédito, débito, transferencias bancarias, y otros."
-            }})
-          }}
-        />
-        <IconButton
-          Icon={MdSupportAgent}
-          title="Contacta un ejecutivo"
-          onClick={() => {
-            navigate('more-info', {state: {
-              title: "Contactar un Ejecutivo",
-              content: " Si quieres saber más sobre nuestro software, o solicitar una demostración gratuita, puedes contactar a uno de nuestros ejecutivos a través de este formulario. Te responderemos a la brevedad posible."
-            }})
-          }}
-        />
-        <IconButton
-          Icon={FaMoneyBillTransfer}
-          title="Servicios Contable"
-          onClick={() => {
-            navigate('more-info', {state: {
-              title: "Servicios Contable",
-              content: "Nuestros profesionales contadores te ayudan a llevar un registro contable de todos los ingresos y egresos de tu SAPR, así como generar informes financieros y tributarios.     * Toma de estado inteligente: Nuestro software se integra con dispositivos móviles que te permiten tomar el estado de los medidores de agua de forma rápida y precisa, y enviar los datos a la plataforma en tiempo real.    * Software de administración y cobranza: Nuestro software te permite gestionar los datos de tus socios, emitir boletas y facturas electrónicas, enviar avisos de pago, realizar cobros automáticos, y consultar el historial de pagos y deudas."
-            }})
-          }}
-        />
-        <IconButton
-          Icon={FaRegCirclePlay}
-          title="Que hacemos"
-          onClick={() => {
-            navigate('more-info', {state: {
-              title: "Que hacemos",
-              content: "Si eres socio de un SAPR que utiliza nuestro software, puedes pagar tu cuenta de forma fácil y segura a través de este portal. Aceptamos diversos medios de pago, como tarjetas de crédito, débito, transferencias bancarias, y otros."
-            }})
-          }}
-        />
-        <IconButton
-          Icon={RiFolderDownloadLine}
-          title="Descargar documentos"
-          onClick={() => {
-            navigate("more-info", {state: {
-              title: "Descargar documentos",
-              content: "En esta sección, puedes descargar documentos útiles para tu SAPR, como manuales de usuario, normativas legales, guías de buenas prácticas, y otros."
-            }})
-          }}
-        />
-      </div>
+        <div className="content">
+          <div className="paragraph">
+            <h2>Pagos oportunos</h2>
+            <p>
+              Tus socios tendrán la opción de pagar mediante la app usando su
+              método de pago preferido, ya sea transferencia bancaria; tarjeta o
+              efectivo.
+            </p>
+          </div>
+        </div>
+      </section>
+      <footer id="footer">
+        <img src={Logo} alt="logo" />
+        <div className="link-container">
+          <h2>Producto</h2>
+          <a href="#">Solicitar una demo</a>
+          <a href="#">Precios</a>
+        </div>
+        <div className="link-container">
+          <h2>Nosotros</h2>
+          <a href="#">Terminos y Condiciones</a>
+          <a href="#">Política de Privacidad</a>
+        </div>
+        <div className="link-container">
+          <h2>Conecta con nosotros</h2>
+          <a href="#">Contacto</a>
+          <a href="#">Instagram</a>
+          <a href="#">Whatsapp</a>
+        </div>
+      </footer>
     </>
-  );
-}
-
-function IconButton({
-  onClick,
-  title,
-  Icon,
-}: {
-  onClick: () => void;
-  title: string;
-  Icon: IconType;
-}) {
-  const [width, setWidth] = useState(window.innerWidth);
-  const desktop = useMediaQuery("(min-width: 1024px)");
-  const mobile = useMediaQuery("(max-width: 768px)");
-  function onResize(e: UIEvent) {
-    setWidth(e.view!.innerWidth!);
-  }
-  useEffect(() => {
-    window.addEventListener("resize", onResize);
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
-  return (
-    <button className="icon-button" onClick={onClick}>
-      <Icon size={desktop ? 37 : mobile ? width * 0.025 : 30} />
-      <span>{title}</span>
-    </button>
   );
 }

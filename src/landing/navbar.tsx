@@ -1,84 +1,39 @@
-import { useContext, useState } from "react";
-import { CiMenuBurger } from "react-icons/ci";
-import { IoIosCloseCircleOutline } from "react-icons/io";
-import Logo from "../assets/logo.jpeg";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import "./index.css";
 import { AdminContext } from "@/contexts/AdminContext";
-import { AnimatePresence, motion } from "framer-motion";
-import useWindowSize from "@/hooks/useWindowSize";
-import { useMediaQuery } from "@mui/material";
+import { Link, Outlet } from "react-router-dom";
+import Menu  from "@mui/icons-material/Menu";
+import Logo from "@/assets/logo.jpeg";
 export default function Navbar() {
-  const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate();
-  const {
+const {
     auth: { logged },
   } = useContext(AdminContext);
-  const { width } = useWindowSize();
-  const mobile = useMediaQuery("(max-width: 760px)");
   return (
     <>
-      <nav id="navbar">
-        <div className="nav-title">
-          <img src={Logo} alt="logo" onClick={() => navigate("/")} />
-          <h4>Sistema de Gestión H2O</h4>
-        </div>
-        <motion.div
-          initial={{ y: mobile && !showModal ? -1000 : 0 }}
-          animate={{ y: mobile && showModal ? width * 0.2 : undefined }}
-          className={"nav-buttons"}
-        >
-          {logged ? (
-            <>
-              <button
-                onClick={() => navigate("/admin/dashboard")}
-                className="button primary-button"
-              >
-                Dashboard
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => navigate("/login")}
-                className="button primary-button"
-              >
-                Iniciar Sesión
-              </button>
-            </>
-          )}
-        </motion.div>
-        <div className="menu-button">
-          <AnimatePresence mode="wait" initial={false}>
-            {showModal && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <IoIosCloseCircleOutline
-                  size={30}
-                  color="white"
-                  onClick={() => setShowModal(!showModal)}
-                />
-              </motion.div>
-            )}
-            {!showModal && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <CiMenuBurger
-                  size={30}
-                  color="white"
-                  onClick={() => setShowModal(!showModal)}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </nav>
+      <nav id="nav">
+        <img id="title" src={Logo} alt="logo" />
+      <div className="links-group links">
+        <ul>
+          <li className="item-group">
+            <h3 className="item-group-title">Producto<span><img src="src/img/icon-arrow-dark.svg" alt="icon-arrow" className="arrow" /></span></h3>
+            <ul>
+              <li>
+                <a href="#">Descripción</a>
+              </li>
+              <li>
+                <a href="#">Precio</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div className="links-group links-2">
+        <ul>
+          <li><Link to={logged ? "/admin/dashboard" :"/admin/login"} id="login">{logged ? "Dashboard" : "Iniciar Sesión"}</Link></li>
+        </ul>
+      </div>
+      <Menu id='menu' />
+    </nav>
       <Outlet />
     </>
   );
