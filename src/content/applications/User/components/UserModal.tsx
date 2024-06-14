@@ -266,6 +266,7 @@ const AssignModal: React.FC<IProps> = ({
         sendData["section3Price"] = parseFloat(
           user.adminAccount?.section3Price as unknown as string
         );
+        delete sendData['billDate'];
     }
     const userData = user.toJson();
     for (const key of Object.keys(userSelected ?? {})) {
