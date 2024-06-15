@@ -19,7 +19,8 @@ const Navbar = Loader(lazy(() => import("@/landing/navbar")));
 
 const LandingPage = Loader(lazy(() => import("@/landing/Index")));
 
-const AditionalPage = Loader(lazy(() => import("@/landing/AditionalPage")));
+const PoliticaPrivacidad = Loader(lazy(() => import("@/landing/politicaPrivacidad")));
+const TyC = Loader(lazy(() => import("@/landing/tyc")));
 
 const Login = Loader(lazy(() => import("@/auth/screens/login")));
 
@@ -78,8 +79,12 @@ const routes: RouteObject[] = [
         element: <LandingPage />,
       },
       {
-        path: "more-info",
-        element: <AditionalPage />,
+        path: "terminos-y-condiciones",
+        element: <TyC />,
+      },
+      {
+        path: "politica-de-privacidad",
+        element: <PoliticaPrivacidad />,
       },
     ],
   },

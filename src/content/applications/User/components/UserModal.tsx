@@ -232,6 +232,13 @@ const AssignModal: React.FC<IProps> = ({
           actualUser!.role === UserRole.admin
             ? actualUser?.adminAccount?.id
             : selectionUsers.get(adminId)?.adminAccount?.id;
+        for (const key of Object.keys(userSelected?.operatorAccount ?? {})) {
+          //@ts-expect-error 40392
+          const val = user!.operatorAccount![key];
+          if (sendData[key] === val) {
+            delete sendData[key];
+          }
+        }
         break;
       case UserRole.operator:
         sendData["adminId"] =
@@ -271,7 +278,14 @@ const AssignModal: React.FC<IProps> = ({
             user.adminAccount?.billPrice as unknown as string
           );
         }
-        delete sendData['billDate'];
+        delete sendData["billDate"];
+        for (const key of Object.keys(userSelected?.adminAccount ?? {})) {
+          //@ts-expect-error 40392
+          const val = user!.adminAccount![key];
+          if (sendData[key] === val) {
+            delete sendData[key];
+          }
+        }
     }
     const userData = user.toJson();
     for (const key of Object.keys(userSelected ?? {})) {
@@ -297,7 +311,10 @@ const AssignModal: React.FC<IProps> = ({
     return data;
   };
 
-  const confirmQuery = useMutation({ mutationFn: async () => await confirm(), throwOnError: false });
+  const confirmQuery = useMutation({
+    mutationFn: async () => await confirm(),
+    throwOnError: false,
+  });
 
   const handleConfirm = async () => {
     await confirmQuery.mutateAsync();
@@ -811,7 +828,8 @@ const AssignModal: React.FC<IProps> = ({
         >
           {confirmQuery.error && (
             <Typography color="error">
-              {confirmQuery.error instanceof AxiosError && confirmQuery.error.response?.data.error
+              {confirmQuery.error instanceof AxiosError &&
+              confirmQuery.error.response?.data.error
                 ? "Revisa los datos y vuelve a intentarlo"
                 : "Error inesperado"}
             </Typography>

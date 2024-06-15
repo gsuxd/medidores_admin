@@ -110,8 +110,8 @@ export default function LandingPage() {
         </div>
         <div className="link-container">
           <h2>Nosotros</h2>
-          <a href="#">Terminos y Condiciones</a>
-          <a href="#">Política de Privacidad</a>
+          <Link to="/terminos-y-condiciones">Terminos y Condiciones</Link>
+          <Link to="/politica-de-privacidad">Política de Privacidad</Link>
         </div>
         <div className="link-container">
           <h2>Conecta con nosotros</h2>
