@@ -71,7 +71,7 @@ export default function Navbar() {
         document.getElementById("mobile-menu")!.remove();
       }
       arrows.forEach(() => {
-        "src/img/icon-arrow-light.svg";
+        "https://img.icons8.com/ios/50/000000/expand-arrow--v1.png";
       });
 
       
@@ -87,12 +87,8 @@ export default function Navbar() {
       }
       arrows.forEach((arrow) => {
         //@ts-expect-error 432
-        arrow.src = "src/img/icon-arrow-dark.svg";
+        arrow.src = "https://img.icons8.com/ios/50/000000/expand-arrow--v1.png";
       });
-      //@ts-expect-error 432
-      img.src = "src/img/illustration-editor-mobile.svg";
-      //@ts-expect-error 432
-      img2.src = "src/img/illustration-laptop-mobile.svg";
     }
   }
   return (
