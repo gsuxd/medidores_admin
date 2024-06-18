@@ -14,8 +14,8 @@
     rgba(0, 0, 0, 0) 0%,
     rgba(0, 0, 0, 0.761) 60%
     ),url(../assets/Utility-Meter-Scanning-1024x555.jpg);
-  /* background-position: -20% 50%, center center; */
-  background-size: 100%;
+  background-position: center center;
+    background-size: 100%;
   background-repeat: no-repeat;
   padding: 8rem 8rem;
   border-bottom-left-radius: 70px;
@@ -74,9 +74,13 @@
 
 @media (max-width: 768px) {
   #header {
-    padding: 15rem 0;
+    padding: 9rem 0;
     background-position: 30% 0%, center center;
     background-size: 250%;
+  }
+
+  #header #learn-more, #get-started {
+    font-size: 0.8em;
   }
 
   #header h2 {
@@ -162,7 +166,11 @@
   #designed .content {
     flex-direction: column-reverse;
     align-items: center;
-    width: fit-content;
+    width: 100%;
+  }
+  #designed {
+    width: 100%;
+    align-items: center;
   }
   #designed h1 {
     font-size: clamp(1.5em, 7vw, 5em);
@@ -173,21 +181,21 @@
     margin-top: clamp(-1rem, 2vw, -7rem);
     text-align: center;
   }
-  #designed .content .text .paragraph h3 {
+  #designed > .content > .text > .paragraph h3 {
     font-size: clamp(1.8em, 2.5vw, 3.5em);
     max-width: 70%;
     margin-left: 13%;
   }
-  #designed .content .text .paragraph p {
+  #designed > .content > .text > .paragraph p {
     width: 70%;
     margin-right: 0;
     margin-left: 13%;
     font-size: clamp(0.8rem, 3vw, 1.5em);
   }
 
-  #designed .content #illustration-editor {
+  #designed > .content > #illustration-editor {
     margin: 0;
-    width: 100%;
+    width: 70%;
   }
 }
 
@@ -274,7 +282,7 @@
     margin-left: 11%;
   }
   #state-of-art img {
-    width: 100%;
+    width: 70%;
     margin: 0;
     margin-top: -50%;
   }
@@ -343,7 +351,7 @@
     margin-bottom: 25%;
   }
   #info #illustration-laptop {
-    width: 100%;
+    width: 70%;
     margin-left: 0;
   }
   #info .content .paragraph {

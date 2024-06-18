@@ -40,10 +40,10 @@ export default function LandingPage() {
         <h2>H2O Gestión</h2>
         <p>Siente el flujo, controla el curso</p>
         <div id="button-group">
-          <Link to="/contact" id="get-started">
+          <Link to="#" id="get-started">
             Contactar con ventas
           </Link>
-          <Link to="/info" id="learn-more">
+          <Link to="#" id="learn-more">
             Más Información
           </Link>
         </div>
