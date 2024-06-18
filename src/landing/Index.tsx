@@ -1,8 +1,39 @@
 import { Link } from "react-router-dom";
 import Logo from "@/assets/logo.jpeg";
 import "./landing.css";
+import IllustrationEditorDesktop from "@/assets/illustration-editor-desktop.png";
+import IllustrationPhones from "@/assets/illustration-phones.png";
+import IllustrationLaptopDesktop from "@/assets/illustration-laptop-desktop.png";
+import IllustrationEditorMobile from "@/assets/illustration-editor-mobile.png";
+import IllustrationLaptopMobile from "@/assets/illustration-laptop-mobile.png";
+import { useEffect } from "react";
+
 
 export default function LandingPage() {
+  function onResize() {
+    const img = document.getElementById("illustration-editor")!;
+    const img2 = document.getElementById("illustration-laptop")!;
+    if (window.innerWidth > 768) {
+      //@ts-expect-error 432
+      img.src = IllustrationEditorDesktop;
+      //@ts-expect-error 432
+      img2.src = IllustrationLaptopDesktop;
+    } else {
+      //@ts-expect-error 432
+      img.src = IllustrationEditorMobile;
+      //@ts-expect-error 432
+      img2.src = IllustrationLaptopMobile;
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", onResize);
+    onResize();
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
+  }, [])
+
   return (
     <>
       <section id="header">
@@ -59,7 +90,7 @@ export default function LandingPage() {
             </div>
           </div>
           <img
-            src="src/img/illustration-editor-desktop.svg"
+            src={IllustrationEditorDesktop}
             id="illustration-editor"
             alt="illustration-editor"
             data-inviewport="illustration-editor"
@@ -68,7 +99,7 @@ export default function LandingPage() {
       </section>
       <section id="state-of-art">
         <img
-          src="src/img/illustration-phones.svg"
+          src={IllustrationPhones}
           alt="illustration-phones"
           data-inviewport="illustration-phones"
           id="illustration-phones"
@@ -85,7 +116,7 @@ export default function LandingPage() {
       </section>
       <section id="info">
         <img
-          src="src/img/illustration-laptop-desktop.svg"
+          src={IllustrationLaptopDesktop}
           data-inviewport="illustration-laptop"
           alt="illustration-laptop-desktop"
           id="illustration-laptop"

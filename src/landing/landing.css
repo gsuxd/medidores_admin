@@ -201,7 +201,7 @@
   gap: 3rem;
   border-top-right-radius: 5rem;
   border-bottom-left-radius: 5rem;
-  background: url(../img/bg-pattern-circles.svg),
+  background: url(../assets/bg-pattern-circles.svg),
     linear-gradient(48deg, rgba(44, 45, 63, 1) 16%, rgba(63, 65, 100, 1) 58%);
   background-repeat: no-repeat;
   background-position: -12em 80%, center center;
@@ -237,7 +237,7 @@
 
 #state-of-art .content {
   margin-right: 3em;
-  font-size: 1.5em;
+  font-size: 1.3em;
 }
 
 #state-of-art .content h2 {
@@ -246,7 +246,7 @@
 }
 
 #state-of-art .content p {
-  width: clamp(22rem, 15vw, 60rem);
+  width: 80%;
   font-family: var(--secondary-font);
   color: var(--grayish-blue);
 }
