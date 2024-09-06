@@ -23,6 +23,7 @@ import { Label } from "@mui/icons-material";
 import User, { UserRole } from "@/models/user/user";
 import { AdminContext } from "@/contexts/AdminContext";
 import UsersApi from "@/api/usersApi";
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
@@ -225,19 +226,37 @@ const AssignModal: React.FC<IProps> = ({
     return data;
   };
 
-  const confirmQuery = useMutation({ mutationFn: () => confirm() });
+  const confirmQuery = useMutation({ mutationFn: async () => await confirm() });
 
   const handleConfirm = async () => {
-    await confirmQuery.mutateAsync();
+    try {await confirmQuery.mutateAsync();
     if (confirmQuery.data) {
       setIsOpen(false);
       query.refetch();
+      setSnack({
+        open: true,
+        message: "Usuario editado correctamente",
+        severity: "success",
+      })
+    }} catch (e) {
+      setSnack({
+        open: true,
+        message: "Error al editar el usuario",
+        severity: "error",
+      })
     }
   };
+
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
+      <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
         <DialogTitle>
           <div
             style={{

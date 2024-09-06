@@ -24,12 +24,12 @@ import { Document, Page } from "react-pdf";
 import blobToURL from "@/helpers/blobToUrl";
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
   bill: Bill;
   onClose: (event: object, reason: "backdropClick" | "escapeKeyDown") => void;
-  setIsOpen: (open: boolean) => void;
   setSelectedBill: React.Dispatch<React.SetStateAction<Bill | null>>;
 }
 
@@ -37,7 +37,6 @@ const AssignModal: React.FC<IProps> = ({
   isOpen,
   bill: billSelected,
   onClose,
-  setIsOpen,
   setSelectedBill,
 }) => {
   const [bill, setBill] = useState<Bill>(billSelected);
@@ -49,8 +48,15 @@ const AssignModal: React.FC<IProps> = ({
     setBill(bill.copyWith({ [name]: value }));
   };
 
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
   const confirm = async () => {
-    //format(user.data.profile.date_birth, "yyyy-MM-dd");
+    try {
+      //format(user.data.profile.date_birth, "yyyy-MM-dd");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sendData: any = {
       ...bill.toJson(),
@@ -78,8 +84,19 @@ const AssignModal: React.FC<IProps> = ({
       data: sendData,
     });
     setSelectedBill(null);
-    setIsOpen(false);
+    setSnack({
+      open: true,
+      message: "Factura editada con éxito",
+      severity: "success",
+    });
     return data;
+    } catch (e) {
+      setSnack({
+        open: true,
+        message: "Error al editar la factura, intente de nuevo",
+        severity: "error",
+      });
+    }
   };
 
   const [isWarningOpen, setIsWarningOpen] = useState(false);
@@ -89,7 +106,6 @@ const AssignModal: React.FC<IProps> = ({
   const handleConfirm = async () => {
     await confirmQuery.mutateAsync();
     if (confirmQuery.data) {
-      setIsOpen(false);
       setSelectedBill(null);
       query.refetch();
     }
@@ -102,6 +118,7 @@ const AssignModal: React.FC<IProps> = ({
     onClose={() => setIsWarningOpen(!isWarningOpen)}
     bill={bill}
     />
+      <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
         <DialogTitle>
           <div

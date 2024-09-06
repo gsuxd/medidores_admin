@@ -23,6 +23,7 @@ import { Label } from "@mui/icons-material";
 import User, { UserRole } from "@/models/user/user";
 import { AdminContext } from "@/contexts/AdminContext";
 import UsersApi from "@/api/usersApi";
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
@@ -45,9 +46,16 @@ const AssignModal: React.FC<IProps> = ({
   const [user, setUser] = useState<User>(userSelected);
 
   const query = useQuery({
-    queryFn: () => UsersApi.listUsers({role: (user.role === UserRole.operator || user.role === UserRole.partner) ? 'admin' : 'seller', ssrId: ssrId}),
-    queryKey: ["usersModal"]
-  })
+    queryFn: () =>
+      UsersApi.listUsers({
+        role:
+          user.role === UserRole.operator || user.role === UserRole.partner
+            ? "admin"
+            : "seller",
+        ssrId: ssrId,
+      }),
+    queryKey: ["usersModal"],
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (event: any) => {
@@ -102,33 +110,33 @@ const AssignModal: React.FC<IProps> = ({
       ...user.toJson(),
     };
 
-        sendData["fixedPrice"] = parseFloat(
-          user.adminAccount?.fixedPrice as unknown as string
-        );
-        sendData["section1Limit"] = parseFloat(
-          user.adminAccount?.section1Limit as unknown as string
-        );
-        sendData["section1Price"] = parseFloat(
-          user.adminAccount?.section1Price as unknown as string
-        );
-        sendData["section2Limit"] = parseFloat(
-          user.adminAccount?.section2Limit as unknown as string
-        );
-        sendData["section2Price"] = parseFloat(
-          user.adminAccount?.section2Price as unknown as string
-        );
-        sendData["section3Limit"] = parseFloat(
-          user.adminAccount?.section3Limit as unknown as string
-        );
-        sendData["section3Price"] = parseFloat(
-          user.adminAccount?.section3Price as unknown as string
-        );
-        if (actualUser!.role === UserRole.master) {
-          sendData["billDate"] = user.adminAccount?.billDate;
-          sendData["billPrice"] = parseFloat(
-            user.adminAccount?.billPrice as unknown as string
-          );
-        }
+    sendData["fixedPrice"] = parseFloat(
+      user.adminAccount?.fixedPrice as unknown as string
+    );
+    sendData["section1Limit"] = parseFloat(
+      user.adminAccount?.section1Limit as unknown as string
+    );
+    sendData["section1Price"] = parseFloat(
+      user.adminAccount?.section1Price as unknown as string
+    );
+    sendData["section2Limit"] = parseFloat(
+      user.adminAccount?.section2Limit as unknown as string
+    );
+    sendData["section2Price"] = parseFloat(
+      user.adminAccount?.section2Price as unknown as string
+    );
+    sendData["section3Limit"] = parseFloat(
+      user.adminAccount?.section3Limit as unknown as string
+    );
+    sendData["section3Price"] = parseFloat(
+      user.adminAccount?.section3Price as unknown as string
+    );
+    if (actualUser!.role === UserRole.master) {
+      sendData["billDate"] = user.adminAccount?.billDate;
+      sendData["billPrice"] = parseFloat(
+        user.adminAccount?.billPrice as unknown as string
+      );
+    }
     const userData = user.toJson();
     for (const key of Object.keys(userSelected ?? {})) {
       if (key === "id") continue;
@@ -152,19 +160,42 @@ const AssignModal: React.FC<IProps> = ({
     return data;
   };
 
-  const confirmQuery = useMutation({ mutationFn: () => confirm() });
+  const confirmQuery = useMutation({ mutationFn: async () => await confirm() });
 
   const handleConfirm = async () => {
-    await confirmQuery.mutateAsync();
-    if (confirmQuery.data) {
-      setIsOpen(false);
-      query.refetch();
+    try {
+      await confirmQuery.mutateAsync();
+      if (confirmQuery.data) {
+        setIsOpen(false);
+        query.refetch();
+      }
+      setSnack({
+        open: true,
+        message: `Usuario ${userSelected ? "editado" : "creado"} con éxito`,
+        severity: "success",
+      });
+    } catch (error) {
+      setSnack({
+        open: true,
+        message: `Error al ${userSelected ? "editar" : "crear"} el usuario, intente de nuevo`,
+        severity: "error",
+      });
     }
   };
+
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
 
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
+        <CustomSnackbar
+          snackState={snack}
+          onClose={() => setSnack({ ...snack, open: false })}
+        />
         <DialogTitle>
           <div
             style={{
@@ -238,7 +269,7 @@ const AssignModal: React.FC<IProps> = ({
                   <InputLabel htmlFor="password">Contraseña</InputLabel>
                   <Input
                     error={
-                    //@ts-expect-error 321
+                      //@ts-expect-error 321
                       (query.error as AxiosError)?.response?.data.error.password
                     }
                     id="password"
@@ -286,8 +317,7 @@ const AssignModal: React.FC<IProps> = ({
                   minWidth: "100%",
                 }}
                 item
-              >
-              </Grid>
+              ></Grid>
             ) : null}
             <Grid item>
               <FormControlLabel

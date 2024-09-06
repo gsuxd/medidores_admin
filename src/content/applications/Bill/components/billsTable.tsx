@@ -93,7 +93,6 @@ const BillsTable: React.FC = () => {
       {isOpen && (
         <BillModal
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
           setSelectedBill={setSelectedBill}
           bill={selectedBill!}
           onClose={() => {

@@ -24,6 +24,7 @@ import { Document, Page } from "react-pdf";
 import blobToURL from "@/helpers/blobToUrl";
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
@@ -83,13 +84,18 @@ const AssignModal: React.FC<IProps> = ({
   const confirmQuery = useMutation({ mutationFn: () => confirm() });
 
   const handleConfirm = async () => {
-    await confirmQuery.mutateAsync();
+    try {await confirmQuery.mutateAsync();
     if (confirmQuery.data) {
       setIsOpen(false);
       setSelectedBill(null);
       query.refetch();
+      setSnack({ open: true, message: "Factura editada con éxito", severity: "success" });
+    }} catch (e) {
+      setSnack({ open: true, message: "Hubo un error al editar la factura", severity: "error" });
     }
   };
+
+  const [snack, setSnack] = useState({ open: false, message: "", severity: "success" });
 
   return (
     <>
@@ -99,7 +105,8 @@ const AssignModal: React.FC<IProps> = ({
     bill={bill}
     />
       <Dialog fullWidth open={isOpen} onClose={onClose}>
-        <DialogTitle>
+      <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
+      <DialogTitle>
           <div
             style={{
               display: "flex",

@@ -20,6 +20,7 @@ import { adminDuesContext } from "../context";
 import { format } from "date-fns";
 import Due from "@/models/due";
 import { BillStatus } from "@/models/bill";
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
@@ -52,9 +53,9 @@ const AssignModal: React.FC<IProps> = ({
       ...due.toJson(),
     };
     for (const key of Object.keys(due)) {
-      //@ts-expect-error 40392
-      const val = userData[key];
-      if (dueSelected.toJson()[key] === val) {
+      const val = sendData[key];
+      //@ts-expect-error 321
+      if (dueSelected[key] === val) {
         delete sendData[key];
       }
     }
@@ -72,21 +73,42 @@ const AssignModal: React.FC<IProps> = ({
     return data;
   };
 
-  const confirmQuery = useMutation({ mutationFn: () => confirm() });
+  const confirmQuery = useMutation({ mutationFn: async () => await confirm() });
+
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const handleConfirm = async () => {
-    await confirmQuery.mutateAsync();
+    try {
+      await confirmQuery.mutateAsync();
     if (confirmQuery.data) {
       setIsOpen(false);
       setSelectedDue(null);
       query.refetch();
+      setSnack({
+        open: true,
+        message: "Deuda editada con éxito",
+        severity: "success",
+      });
+    }
+    } catch (error) {
+      setSnack({
+        open: true,
+        message: "Error al editar la deuda",
+        severity: "error",
+      });
     }
   };
 
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
+          <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
         <DialogTitle>
+
           <div
             style={{
               display: "flex",

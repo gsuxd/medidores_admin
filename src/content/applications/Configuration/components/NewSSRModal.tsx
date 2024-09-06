@@ -26,6 +26,7 @@ import { AdminContext } from "@/contexts/AdminContext";
 import UsersApi from "@/api/usersApi";
 import SellerAccount from "@/models/user/sellerAccount";
 import User, { UserRole } from "@/models/user/user";
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
@@ -196,15 +197,33 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
   const confirmQuery = useMutation({ mutationFn: () => confirm() });
 
   const handleConfirm = async () => {
-    await confirmQuery.mutateAsync();
+    try {await confirmQuery.mutateAsync();
     if (confirmQuery.data) {
       setIsOpen(false);
+      setSnack({
+        open: true,
+        message: "SSR creado correctamente",
+        severity: "success",
+      });
+    }} catch (e) {
+      setSnack({
+        open: true,
+        message: "Error al crear SSR",
+        severity: "error",
+      });
     }
   };
+
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
+      <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
         <DialogTitle>
           <div
             style={{

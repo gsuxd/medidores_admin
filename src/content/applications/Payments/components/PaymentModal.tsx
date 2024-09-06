@@ -11,8 +11,6 @@ import {
   Grid,
   DialogActions,
   TextField,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -24,6 +22,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import Payment, { PaymentMethod, PaymentStatus } from "@/models/payment";
 import UsersApi from "@/api/usersApi";
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
@@ -181,20 +180,7 @@ const AssignModal: React.FC<IProps> = ({
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
-        <Snackbar
-          open={snack.open}
-          autoHideDuration={5000}
-          onClose={() => setSnack({ ...snack, open: false })}
-        >
-          <Alert
-            onClose={() => setSnack({ ...snack, open: false })}
-            severity={snack.severity as never}
-            variant="filled"
-            sx={{ width: "100%" }}
-          >
-            {snack.message}
-          </Alert>
-        </Snackbar>
+        <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
         <DialogTitle>
           <div
             style={{

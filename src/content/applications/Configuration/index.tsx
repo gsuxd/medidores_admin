@@ -207,6 +207,7 @@ export default function SSRConfiguration() {
     const ssr = query.data!.ssr.get(selectedSSR)?.toJson();
     for (const key in data) {
       if (key === "president") {
+        //@ts-expect-error 321
         if (data["president"] === ssr["president"]["id"]) {
           data["presidentId"] = data["president"]["id"];
         }
@@ -215,6 +216,7 @@ export default function SSRConfiguration() {
       }
       if (key === "config") {
         for (const subKey in data["config"]) {
+          //@ts-expect-error 321
           if (ssr["config"][subKey] === data["config"][subKey]) {
             delete data["config"][subKey];
             continue;
@@ -229,6 +231,7 @@ export default function SSRConfiguration() {
       if (key === "sellers") {
         delete data[key];
       }
+      //@ts-expect-error 321
       if (data[key] === ssr![key]) {
         delete data[key];
         continue;

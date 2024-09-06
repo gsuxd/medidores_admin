@@ -18,6 +18,7 @@ import { Label } from "@mui/icons-material";
 import User, { UserRole } from "@/models/user/user";
 import { AdminContext } from "@/contexts/AdminContext";
 import UsersApi from "@/api/usersApi";
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
@@ -93,16 +94,34 @@ const MultipleUserModal: React.FC<IProps> = ({
   const confirmQuery = useMutation({ mutationFn: () => confirm() });
 
   const handleConfirm = async () => {
-    if (!file) return;
+    try {if (!file) return;
     await confirmQuery.mutateAsync();
     if (confirmQuery.data) {
       query.refetch();
+      setSnack({
+        open: true,
+        message: "Usuarios creados con éxito",
+        severity: "success",
+      });
+    }} catch (e) {
+      setSnack({
+        open: true,
+        message: "Error al crear usuarios",
+        severity: "error",
+      })
     }
   };
+
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
+      <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
         <DialogTitle>
           <div
             style={{

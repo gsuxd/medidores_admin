@@ -28,6 +28,7 @@ import PartnerAccount from "@/models/user/partnerAccount";
 import AdminAccount from "@/models/user/adminAccount";
 import OperatorAccount from "@/models/user/operatorAccount";
 import UsersApi from "@/api/usersApi";
+import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
   isOpen: boolean;
@@ -321,18 +322,39 @@ const AssignModal: React.FC<IProps> = ({
   });
 
   const handleConfirm = async () => {
-    await confirmQuery.mutateAsync();
+    try {
+      await confirmQuery.mutateAsync();
     if (confirmQuery.data) {
       setIsOpen(false);
       setSelectedUser(null);
       query.refetch();
+      setSnack({
+        open: true,
+        message: `Usuario ${userSelected ? "editado" : "creado"} con éxito`,
+        severity: "success",
+      });
+    }
+    } catch (error) {
+      setSnack({
+        open: true,
+        message: `Error al ${userSelected ? "editar" : "crear"} el usuario`,
+        severity: "error",
+      });
     }
   };
+
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
+          <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
         <DialogTitle>
+
           <div
             style={{
               display: "flex",
