@@ -1,12 +1,12 @@
-import { Box, Card, Divider, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Card, Divider, Stack } from "@mui/material";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { useContext, useMemo } from "react";
 import { userBillsContext } from "../context";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 export default function UserCharts() {
-  const theme = useTheme();
   const { query } = useContext(userBillsContext);
   const labels = useMemo(
     () =>
@@ -26,69 +26,42 @@ export default function UserCharts() {
   );
   const chartOptions: ApexOptions = {
     chart: {
-      background: "transparent",
+      // background: "transparent",
       toolbar: {
         show: false,
       },
-      sparkline: {
-        enabled: true,
-      },
-      zoom: {
-        enabled: false,
-      },
+      // sparkline: {
+      //   enabled: true,
+      // },
+      // zoom: {
+      //   enabled: false,
+      // },
     },
-    fill: {
-      gradient: {
-        shade: "light",
-        type: "vertical",
-        shadeIntensity: 0.1,
-        inverseColors: false,
-        opacityFrom: 0.8,
-        opacityTo: 0,
-        stops: [0, 100],
-      },
-    },
-    colors: [theme.colors.primary.main],
+    colors: ["#15bee8", "#46eb34"],
+    // fill: {
+    //   type: "solid",
+    //   colors: ["#15bee8", "#46eb34"],
+    // },
     dataLabels: {
       enabled: false,
     },
-    theme: {
-      mode: theme.palette.mode,
-    },
     stroke: {
-      show: true,
-      colors: [theme.colors.primary.main],
-      width: 3,
+      show: false,
     },
     legend: {
-      show: false,
+      show: true,
+      position: "top",
+      horizontalAlign: "center",
     },
-    labels,
+    //labels: labels.map((label) => format(label, "dd-MM-yyyy")),
     xaxis: {
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-      show: false,
-      tickAmount: 5,
+      categories: labels.map((label) =>
+        format(label, "LLLL", { locale: es }),
+      ),
     },
     tooltip: {
       x: {
-        show: true,
-      },
-      y: {
-        title: {
-          formatter: function () {
-            return "Consumo: m3";
-          },
-        },
+        show: false,
       },
       marker: {
         show: false,
@@ -122,47 +95,65 @@ export default function UserCharts() {
           justifyContent="space-evenly"
         >
           <Box p={3}>
-            <Typography variant="h2">Consumo</Typography>
             <Box
               sx={{
-                p: 2,
+                pt: 2,
                 width: "100%",
               }}
             >
               <Chart
                 options={chartOptions}
-                series={[{ name: "Consumo", data }]}
-                type="area"
-                height={200}
+                series={[
+                  { name: "Consumo", data },
+                  { name: "Total", data: dataPrices },
+                ]}
+                type="bar"
+                height={260}
               />
             </Box>
           </Box>
-          <Box
-            sx={{
-              p: 3,
-            }}
-          >
-            <Typography variant="h2">Precio</Typography>
-            <Box p={2} width="100%">
+          <Box p={3}>
+            <Box
+              sx={{
+                pt: 2,
+                width: "100%",
+              }}
+            >
               <Chart
                 options={{
-                  ...chartOptions,
-                  colors: [theme.colors.secondary.main],
-                  tooltip: {
-                    ...chartOptions.tooltip,
-                    y: {
-                      ...chartOptions.tooltip!.y,
-                      title: {
-                        formatter: function () {
-                          return "Precio: $";
-                        },
-                      },
+                  labels,
+                  chart: {
+                    toolbar: {
+                      show: false,
                     },
+                    zoom: {
+                      enabled: false
+                    }
                   },
+                  colors: ["#15bee8", "#46eb34"],
+                  dataLabels: {
+                    enabled: false,
+                  },
+                  markers: {
+                    size: 4,
+                  },
+                  legend: {
+                    show: true,
+                    position: "top",
+                    horizontalAlign: "center",
+                  },
+                  xaxis: {
+                    categories: labels.map((label) =>
+                      format(label, "LLLL", { locale: es })
+                    ),
+                  }
                 }}
-                series={[{ name: "Total", data: dataPrices }]}
-                type="area"
-                height={200}
+                series={[
+                  { name: "Consumo", data },
+                  { name: "Total", data: dataPrices },
+                ]}
+                type="line"
+                height={260}
               />
             </Box>
           </Box>
