@@ -2,7 +2,24 @@ import Config from "./config";
 import AdminAccount from "./user/adminAccount";
 import SellerAccount from "./user/sellerAccount";
 
-export default class SSR {
+interface ISSR {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date | undefined;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  president: AdminAccount;
+  seller: SellerAccount;
+  admins: AdminAccount[];
+  bankNumber: string;
+  config: Config;
+}
+
+
+export default class SSR implements ISSR{
   readonly id: number;
   readonly createdAt: Date;
   readonly updatedAt: Date;
@@ -38,52 +55,23 @@ export default class SSR {
     });
   }
 
-  constructor({
-    id,
-    createdAt,
-    updatedAt,
-    deletedAt,
-    name,
-    address,
-    phone,
-    email,
-    president,
-    seller,
-    admins,
-    bankNumber,
-    config,
-  }: {
-    id: number;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date | undefined;
-    name: string;
-    address: string;
-    phone: string;
-    email: string;
-    president: AdminAccount;
-    seller: SellerAccount;
-    admins: AdminAccount[];
-    bankNumber: string;
-    config: Config;
-  }) {
-    this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-    this.deletedAt = deletedAt;
-    this.name = name;
-    this.address = address;
-    this.phone = phone;
-    this.email = email;
-    this.president = president;
-    this.seller = seller;
-    this.admins = admins;
-    this.bankNumber = bankNumber;
-    this.config = config;
+  constructor(props: ISSR) {
+    this.id = props.id;
+    this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
+    this.deletedAt = props.deletedAt;
+    this.name = props.name;
+    this.address = props.address;
+    this.phone = props.phone;
+    this.email = props.email;
+    this.president = props.president;
+    this.seller = props.seller;
+    this.admins = props.admins;
+    this.bankNumber = props.bankNumber;
+    this.config = props.config;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toJson(): any {
+  toJson() {
     return {
       id: this.id,
       createdAt: this.createdAt.toISOString(),
@@ -102,48 +90,34 @@ export default class SSR {
   }
 
   copyWith({
-    id = this.id,
-    createdAt = this.createdAt,
-    updatedAt = this.updatedAt,
-    deletedAt = this.deletedAt,
-    name = this.name,
-    address = this.address,
-    phone = this.phone,
-    email = this.email,
-    president = this.president,
-    seller = this.seller,
-    admins = this.admins,
-    bankNumber = this.bankNumber,
-    config = this.config,
-  }: {
-    id?: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-    deletedAt?: Date;
-    name?: string;
-    address?: string;
-    phone?: string;
-    email?: string;
-    president?: AdminAccount;
-    seller?: SellerAccount;
-    admins?: AdminAccount[];
-    bankNumber?: string;
-    config?: Config;
-  }): SSR {
+    id,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    name,
+    address,
+    phone,
+    email,
+    president,
+    seller,
+    admins,
+    bankNumber,
+    config,
+  }: Partial<ISSR>): SSR {
     return new SSR({
-      id,
-      createdAt,
-      updatedAt,
-      deletedAt,
-      name,
-      address,
-      phone,
-      email,
-      president,
-      seller,
-      admins,
-      bankNumber,
-      config,
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      name: name ?? this.name,
+      address: address ?? this.address,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      president: president ?? this.president,
+      seller: seller ?? this.seller,
+      admins: admins ?? this.admins,
+      bankNumber: bankNumber ?? this.bankNumber,
+      config: config ?? this.config,
     });
   }
 }

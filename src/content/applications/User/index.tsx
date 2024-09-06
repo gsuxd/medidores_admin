@@ -34,7 +34,7 @@ export default function UsersManagement() {
         ? user!.adminAccount!.ssrId
         : user!.role === UserRole.seller && user!.sellerAccount!.organizations[0]
         ? user!.sellerAccount!.organizations[0]
-        : 1,
+        : -1,
     enabled: false,
   });
   const query = useQuery({

@@ -7,8 +7,8 @@ import { useParams } from "react-router-dom";
 export default function UserHeader() {
   const params = useParams<{ userId: string }>();
   const query = useQuery({
-    queryFn: () => UsersApi.getUser(parseInt(params.userId!)),
-    queryKey: ["user"],
+    queryFn: async () => await UsersApi.getUser(parseInt(params.userId!)),
+    queryKey: ["user", params.userId],
   });
 
   return (

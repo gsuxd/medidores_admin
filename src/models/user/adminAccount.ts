@@ -1,4 +1,23 @@
-export default class AdminAccount {
+interface IAdminAccount {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: number;
+  ssrId: number;
+  organizationId?: number;
+  totalDebt: number;
+  fixedPrice: number;
+  section1Price: number;
+  section1Limit: number;
+  section2Price: number;
+  section2Limit: number;
+  section3Price: number;
+  section3Limit: number;
+  billDate: Date;
+  billPrice: number;
+}
+
+export default class AdminAccount implements IAdminAccount{
     readonly id: number;
     readonly createdAt: Date;
     readonly updatedAt: Date;
@@ -15,57 +34,23 @@ export default class AdminAccount {
     readonly section3Limit: number;
     readonly billDate: Date;
     readonly billPrice: number;
-    constructor({
-      id,
-      createdAt,
-      updatedAt,
-      userId,
-      ssrId,
-      organizationId,
-      totalDebt,
-      fixedPrice,
-      section1Price,
-      section1Limit,
-      section2Price,
-      section2Limit,
-      section3Price,
-      section3Limit,
-      billDate,
-      billPrice,
-    }: {
-      id: number;
-      createdAt: Date;
-      updatedAt: Date;
-      userId: number;
-      ssrId: number;
-      organizationId?: number;
-      totalDebt: number;
-      fixedPrice: number;
-      section1Price: number;
-      section1Limit: number;
-      section2Price: number;
-      section2Limit: number;
-      section3Price: number;
-      section3Limit: number;
-      billDate: Date;
-      billPrice: number;
-    }) {
-      this.id = id;
-      this.createdAt = createdAt;
-      this.updatedAt = updatedAt;
-      this.userId = userId;
-      this.ssrId = ssrId;
-      this.organizationId = organizationId;
-      this.totalDebt = totalDebt;
-      this.fixedPrice = fixedPrice;
-      this.section1Price = section1Price;
-      this.section1Limit = section1Limit;
-      this.section2Price = section2Price;
-      this.section2Limit = section2Limit;
-      this.section3Price = section3Price;
-      this.section3Limit = section3Limit;
-      this.billDate = billDate;
-      this.billPrice = billPrice;
+    constructor(props: IAdminAccount) {
+      this.id = props.id;
+      this.createdAt = props.createdAt;
+      this.updatedAt = props.updatedAt;
+      this.userId = props.userId;
+      this.ssrId = props.ssrId;
+      this.organizationId = props.organizationId;
+      this.totalDebt = props.totalDebt;
+      this.fixedPrice = props.fixedPrice;
+      this.section1Price = props.section1Price;
+      this.section1Limit = props.section1Limit;
+      this.section2Price = props.section2Price;
+      this.section2Limit = props.section2Limit;
+      this.section3Price = props.section3Price;
+      this.section3Limit = props.section3Limit;
+      this.billDate = props.billDate;
+      this.billPrice = props.billPrice;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static fromJson(json: any): AdminAccount {
@@ -88,24 +73,8 @@ export default class AdminAccount {
         billPrice: json.billPrice,
       });
     }
-    toJson(): {
-      id: number;
-      createdAt: string;
-      updatedAt: string;
-      userId: number;
-      ssrId: number;
-      organizationId?: number;
-      totalDebt: number;
-      fixedPrice: number;
-      section1Price: number;
-      section1Limit: number;
-      section2Price: number;
-      section2Limit: number;
-      section3Price: number;
-      section3Limit: number;
-      billDate: string;
-      billPrice: number;
-    } {
+
+    toJson() {
       return {
         id: this.id,
         createdAt: this.createdAt.toISOString(),
@@ -125,6 +94,7 @@ export default class AdminAccount {
         billPrice: this.billPrice,
       };
     }
+
     copyWith({
       id,
       createdAt,
@@ -142,24 +112,7 @@ export default class AdminAccount {
       section3Limit,
       billDate,
       billPrice,
-    }: {
-      id?: number;
-      createdAt?: Date;
-      updatedAt?: Date;
-      userId?: number;
-      ssrId?: number;
-      organizationId?: number;
-      totalDebt?: number;
-      fixedPrice?: number;
-      section1Price?: number;
-      section1Limit?: number;
-      section2Price?: number;
-      section2Limit?: number;
-      section3Price?: number;
-      section3Limit?: number;
-      billDate?: Date;
-      billPrice?: number;
-    }): AdminAccount {
+    }: Partial<IAdminAccount>): AdminAccount {
       return new AdminAccount({
         id: id ?? this.id,
         createdAt: createdAt ?? this.createdAt,

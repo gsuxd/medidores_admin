@@ -5,7 +5,27 @@ import SellerAccount from "./sellerAccount";
 
 export enum UserRole { master = "master", seller = "seller", admin = "admin", operator = "operator", partner = "partner" }
 
-export default class User {
+
+interface IUser {
+  id: number;
+  name: string;
+  lastName: string;
+  createdAt: Date;
+  updatedAt: Date;
+  email?: string;
+  password?: string;
+  role: UserRole;
+  emailVerified: boolean;
+  phone: string;
+  rut: string;
+  address: string;
+  partnerAccount?: PartnerAccount;
+  adminAccount?: AdminAccount;
+  operatorAccount?: OperatorAccount;
+  sellerAccount?: SellerAccount;
+}
+
+export default class User implements IUser{
   readonly id: number;
   readonly name: string;
   readonly lastName: string;
@@ -23,57 +43,23 @@ export default class User {
   readonly operatorAccount?: OperatorAccount;
   readonly sellerAccount?: SellerAccount;
 
-  constructor({
-    id,
-    name,
-    lastName,
-    createdAt,
-    updatedAt,
-    email,
-    password,
-    role,
-    emailVerified,
-    phone,
-    rut,
-    address,
-    partnerAccount,
-    adminAccount,
-    operatorAccount,
-    sellerAccount,
-  }: {
-    id: number;
-    name: string;
-    lastName: string;
-    createdAt: Date;
-    updatedAt: Date;
-    email?: string;
-    password?: string;
-    role: UserRole;
-    emailVerified: boolean;
-    phone: string;
-    rut: string;
-    address: string;
-    partnerAccount?: PartnerAccount;
-    adminAccount?: AdminAccount;
-    operatorAccount?: OperatorAccount;
-    sellerAccount?: SellerAccount;
-  }) {
-    this.id = id;
-    this.name = name;
-    this.lastName = lastName;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-    this.email = email;
-    this.password = password;
-    this.role = role;
-    this.emailVerified = emailVerified;
-    this.phone = phone;
-    this.rut = rut;
-    this.address = address;
-    this.partnerAccount = partnerAccount;
-    this.adminAccount = adminAccount;
-    this.sellerAccount = sellerAccount
-    this.operatorAccount = operatorAccount;
+  constructor(props: IUser) {
+    this.id = props.id;
+    this.name = props.name;
+    this.lastName = props.lastName;
+    this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
+    this.email = props.email;
+    this.password = props.password;
+    this.role = props.role;
+    this.emailVerified = props.emailVerified;
+    this.phone = props.phone;
+    this.rut = props.rut;
+    this.address = props.address;
+    this.partnerAccount = props.partnerAccount;
+    this.adminAccount = props.adminAccount;
+    this.sellerAccount = props.sellerAccount
+    this.operatorAccount = props.operatorAccount;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,24 +123,7 @@ export default class User {
   }
   
 
-  toJson(): {
-    id: number;
-    name: string;
-    lastName: string;
-    createdAt: string;
-    updatedAt: string;
-    email?: string;
-    password?: string;
-    role: string;
-    emailVerified: boolean;
-    phone: string;
-    rut: string;
-    address: string;
-    partnerAccount?: Record<string, unknown>;
-    adminAccount?: Record<string, unknown>;
-    sellerAccount?: Record<string, unknown>;
-    operatorAccount?: Record<string, unknown>;
-  } {
+  toJson() {
     return {
       id: this.id,
       name: this.name,
@@ -194,24 +163,7 @@ export default class User {
     operatorAccount,
     adminAccount,
     sellerAccount
-  }: {
-    id?: number;
-    name?: string;
-    lastName?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    email?: string;
-    password?: string;
-    role?: UserRole;
-    emailVerified?: boolean;
-    phone?: string;
-    rut?: string;
-    address?: string;
-    partnerAccount?: PartnerAccount;
-    operatorAccount?: OperatorAccount;
-    adminAccount?: AdminAccount;
-    sellerAccount?: SellerAccount;
-  }): User {
+  }:Partial<IUser>): User {
     return new User({
       id: id ?? this.id,
       name: name ?? this.name,

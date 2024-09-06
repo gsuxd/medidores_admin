@@ -6,7 +6,6 @@ import {
   CircularProgress,
   InputLabel,
   FormControl,
-  Input,
   Select,
   MenuItem,
   Grid,
@@ -14,6 +13,7 @@ import {
   Switch,
   FormControlLabel,
   Typography,
+  TextField,
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
@@ -286,7 +286,11 @@ const AssignModal: React.FC<IProps> = ({
             delete sendData[key];
           }
         }
-    }
+        break;
+      case UserRole.seller:
+        delete sendData["adminId"];
+        break;
+      }
     const userData = user.toJson();
     for (const key of Object.keys(userSelected ?? {})) {
       if (key === "id") continue;
@@ -353,8 +357,8 @@ const AssignModal: React.FC<IProps> = ({
           >
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="email">Correo</InputLabel>
-                <Input
+                <TextField
+                label="Correo"
                   error={
                     //@ts-expect-error 321
                     (query.error as AxiosError)?.response?.data.error.email
@@ -369,8 +373,8 @@ const AssignModal: React.FC<IProps> = ({
             </Grid>
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="name">Nombre</InputLabel>
-                <Input
+                <TextField
+                  label="Nombre"
                   //@ts-expect-error 321
                   error={(query.error as AxiosError)?.response?.data.error.name}
                   id="name"
@@ -382,8 +386,8 @@ const AssignModal: React.FC<IProps> = ({
             </Grid>
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="lastName">Apellido</InputLabel>
-                <Input
+                <TextField
+                  label="Apellido"
                   error={
                     //@ts-expect-error 321
                     (query.error as AxiosError)?.response?.data.error.lastName
@@ -398,8 +402,8 @@ const AssignModal: React.FC<IProps> = ({
             {!userSelected && (
               <Grid item>
                 <FormControl>
-                  <InputLabel htmlFor="password">Contraseña</InputLabel>
-                  <Input
+                  <TextField
+                    label="Contraseña"
                     error={
                       //@ts-expect-error 321
                       (query.error as AxiosError)?.response?.data.error.password
@@ -502,11 +506,14 @@ const AssignModal: React.FC<IProps> = ({
             )}
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="rut">Rut</InputLabel>
-                <Input
+                <TextField
+                  label="Rut"
                   error={
-                    //@ts-expect-error 321
-                    (query.error as AxiosError)?.response?.data.error["rut"]
+                    user?.rut !== ""
+                      ? isNaN(parseInt(user?.rut)) ||
+                        parseInt(user?.rut) < 1000000 ||
+                        parseInt(user?.rut) > 99999999
+                      : false
                   }
                   id="rut"
                   name="rut"
@@ -517,11 +524,12 @@ const AssignModal: React.FC<IProps> = ({
             </Grid>
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="phone">Telefono</InputLabel>
-                <Input
+                <TextField
+                  label="Teléfono"
                   error={
-                    //@ts-expect-error 321
-                    (query.error as AxiosError)?.response?.data.error.phone
+                    (user?.phone &&
+                      !RegExp(/^[0-9]{8,9}$/).test(user?.phone)) ||
+                    false
                   }
                   id="phone"
                   name="phone"
@@ -532,8 +540,8 @@ const AssignModal: React.FC<IProps> = ({
             </Grid>
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="address">Direccion</InputLabel>
-                <Input
+                <TextField
+                  label="Dirección"
                   error={
                     //@ts-expect-error 321
                     (query.error as AxiosError)?.response?.data.error.address
@@ -549,10 +557,8 @@ const AssignModal: React.FC<IProps> = ({
               <>
                 <Grid item>
                   <FormControl>
-                    <InputLabel htmlFor="measurer">
-                      Numero de medidor
-                    </InputLabel>
-                    <Input
+                    <TextField
+                      label="Medidor"
                       error={
                         //@ts-expect-error 321
                         (query.error as AxiosError)?.response?.data.error
@@ -572,10 +578,8 @@ const AssignModal: React.FC<IProps> = ({
                     <>
                       <Grid item>
                         <FormControl>
-                          <InputLabel htmlFor="totalDebt">
-                            Deuda total
-                          </InputLabel>
-                          <Input
+                          <TextField
+                            label="Deuda total"
                             error={
                               //@ts-expect-error 321
                               (query.error as AxiosError)?.response?.data.error
@@ -592,10 +596,8 @@ const AssignModal: React.FC<IProps> = ({
                       </Grid>
                       <Grid item>
                         <FormControl>
-                          <InputLabel htmlFor="totalConsumed">
-                            Consumido
-                          </InputLabel>
-                          <Input
+                          <TextField
+                            label="Consumido (M3)"
                             error={
                               //@ts-expect-error 321
                               (query.error as AxiosError)?.response?.data.error
@@ -639,10 +641,8 @@ const AssignModal: React.FC<IProps> = ({
                     </Grid> */}
                     <Grid item>
                       <FormControl>
-                        <InputLabel htmlFor="billPrice">
-                          Precio de Factura
-                        </InputLabel>
-                        <Input
+                        <TextField
+                          label="Precio de Factura"
                           error={
                             //@ts-expect-error 321
                             (query.error as AxiosError)?.response?.data.error
@@ -659,8 +659,8 @@ const AssignModal: React.FC<IProps> = ({
                     </Grid>
                     <Grid item>
                       <FormControl>
-                        <InputLabel htmlFor="totalDebt">Deuda total</InputLabel>
-                        <Input
+                        <TextField
+                          label="Deuda total"
                           error={
                             //@ts-expect-error 321
                             (query.error as AxiosError)?.response?.data.error
@@ -679,8 +679,8 @@ const AssignModal: React.FC<IProps> = ({
                 )}
                 <Grid item>
                   <FormControl>
-                    <InputLabel htmlFor="fixedPrice">Precio Fijo</InputLabel>
-                    <Input
+                    <TextField
+                      label="Precio Fijo"
                       error={
                         //@ts-expect-error 321
                         (query.error as AxiosError)?.response?.data.error
@@ -717,10 +717,8 @@ const AssignModal: React.FC<IProps> = ({
                 </Grid> */}
                 <Grid item>
                   <FormControl>
-                    <InputLabel htmlFor="section1Price">
-                      Seccion 1 Precio
-                    </InputLabel>
-                    <Input
+                    <TextField
+                      label="Seccion 1 Limite"
                       error={
                         //@ts-expect-error 321
                         (query.error as AxiosError)?.response?.data.error
@@ -737,10 +735,8 @@ const AssignModal: React.FC<IProps> = ({
                 </Grid>
                 <Grid item>
                   <FormControl>
-                    <InputLabel htmlFor="section2Limit">
-                      Seccion 2 Limite
-                    </InputLabel>
-                    <Input
+                    <TextField
+                      label="Seccion 2 Limite"
                       error={
                         //@ts-expect-error 321
                         (query.error as AxiosError)?.response?.data.error
@@ -757,10 +753,8 @@ const AssignModal: React.FC<IProps> = ({
                 </Grid>
                 <Grid item>
                   <FormControl>
-                    <InputLabel htmlFor="section2Price">
-                      Seccion 2 Precio
-                    </InputLabel>
-                    <Input
+                    <TextField
+                      label="Seccion 2 Precio"
                       error={
                         //@ts-expect-error 321
                         (query.error as AxiosError)?.response?.data.error
@@ -777,10 +771,8 @@ const AssignModal: React.FC<IProps> = ({
                 </Grid>
                 <Grid item>
                   <FormControl>
-                    <InputLabel htmlFor="section3Limit">
-                      Seccion 3 Limite
-                    </InputLabel>
-                    <Input
+                    <TextField
+                      label="Seccion 3 Limite"
                       error={
                         //@ts-expect-error 321
                         (query.error as AxiosError)?.response?.data.error
@@ -797,10 +789,8 @@ const AssignModal: React.FC<IProps> = ({
                 </Grid>
                 <Grid item>
                   <FormControl>
-                    <InputLabel htmlFor="section3Price">
-                      Seccion 3 Precio
-                    </InputLabel>
-                    <Input
+                    <TextField
+                      label="Seccion 3 Precio"
                       error={
                         //@ts-expect-error 321
                         (query.error as AxiosError)?.response?.data.error

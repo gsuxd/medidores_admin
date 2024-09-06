@@ -1,49 +1,40 @@
-export default class PartnerAccount {
+
+interface IPartnerAccount {
+    id: number;
+    userId: number;
+    adminId: number;
+    totalDebt: number;
+    totalConsumed: number;
+    measurer: string;
+  }
+
+export default class PartnerAccount implements IPartnerAccount {
     readonly id: number;
     readonly userId: number;
     readonly adminId: number;
     readonly totalDebt: number;
     readonly totalConsumed: number;
     readonly measurer: string;
-    constructor({
-      id,
-      userId,
-      adminId,
-      totalDebt,
-      totalConsumed,
-      measurer,
-    }: {
-      id: number;
-      userId: number;
-      adminId: number;
-      totalDebt: number;
-      totalConsumed: number;
-      measurer: string;
-    }) {
-      this.id = id;
-      this.userId = userId;
-      this.adminId = adminId;
-      this.totalDebt = totalDebt;
-      this.totalConsumed = totalConsumed;
-      this.measurer = measurer;
+    constructor(props: IPartnerAccount) {
+      this.id = props.id;
+      this.userId = props.userId;
+      this.adminId = props.adminId;
+      this.totalDebt = props.totalDebt;
+      this.totalConsumed = props.totalConsumed;
+      this.measurer = props.measurer;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static fromJson(json: any): PartnerAccount {
       return new PartnerAccount({
-        id: json['id'] as number,
-        userId: json['userId'] as number,
-        adminId: json['adminId'] as number,
-        totalDebt: typeof json['totalDebt'] === 'number'
-          ? json['totalDebt']
-          : Number(json['totalDebt']),
-        totalConsumed: typeof json['totalConsumed'] === 'number'
-          ? json['totalConsumed']
-          : Number(json['totalConsumed']),
-        measurer: json['measurer'] as string,
+        id: json.id,
+        userId: json.userId,
+        adminId: json.adminId,
+        totalDebt: json.totalDebt,
+        totalConsumed: json.totalConsumed,
+        measurer: json.measurer,
       });
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    toJson(): { [key: string]: any } {
+    toJson() {
       return {
         id: this.id,
         userId: this.userId,
@@ -60,14 +51,7 @@ export default class PartnerAccount {
       totalDebt,
       totalConsumed,
       measurer,
-    }: {
-      id?: number;
-      userId?: number;
-      adminId?: number;
-      totalDebt?: number;
-      totalConsumed?: number;
-      measurer?: string;
-    }): PartnerAccount {
+    }: Partial<IPartnerAccount>): PartnerAccount {
       return new PartnerAccount({
         id: id ?? this.id,
         userId: userId ?? this.userId,

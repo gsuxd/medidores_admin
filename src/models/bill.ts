@@ -4,6 +4,7 @@ export enum BillStatus {
   emited,
   paid,
   overdue,
+  partial,
 }
 
 interface IBill {
@@ -20,9 +21,10 @@ interface IBill {
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
+  partialAmount?: number;
 }
 
-export default class Bill {
+export default class Bill implements IBill {
   readonly id: number;
   readonly accountId: number;
   readonly operatorId: number;
@@ -36,6 +38,7 @@ export default class Bill {
   readonly createdAt: Date;
   readonly updatedAt: Date;
   readonly deletedAt?: Date;
+  readonly partialAmount?: number;
 
   constructor(props: IBill) {
     this.id = props.id;
@@ -51,6 +54,7 @@ export default class Bill {
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
     this.deletedAt = props.deletedAt;
+    this.partialAmount = props.partialAmount;
   }
 
   get estado() {
@@ -59,6 +63,8 @@ export default class Bill {
         return "Emitido";
       case BillStatus.overdue:
         return "Vencida";
+      case BillStatus.partial:
+        return "Parcial";
       case BillStatus.paid:
         return "Pagada";
       default:
@@ -74,11 +80,11 @@ export default class Bill {
     user: props.user,
     createdAt: new Date(props.createdAt),
     updatedAt: new Date(props.updatedAt),
-    deletedAt: props.deletedAt && new Date(props.deletedAt)
+    deletedAt: props.deletedAt && new Date(props.deletedAt),
    });
   }
 
-  toJson(): IBill {
+  toJson() {
     return {
       id: this.id,
       accountId: this.accountId,
@@ -89,9 +95,11 @@ export default class Bill {
       notes: this.notes,
       status: this.status,
       total: this.total,
+      partialAmount: this.partialAmount,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       deletedAt: this.deletedAt,
+      user: this.user,
     };
   }
 
@@ -106,24 +114,11 @@ export default class Bill {
     notes,
     status,
     total,
+    partialAmount,
     createdAt,
     updatedAt,
     deletedAt
-  }: {
-    id?: number;
-    accountId?: number;
-    operatorId?: number;
-    user?: User;
-    consumed?: number;
-    picture?: string;
-    file?: string;
-    notes?: string;
-    status?: BillStatus;
-    total?: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-    deletedAt?: Date;
-  }) {
+  }: Partial<IBill>) {
     return new Bill({
         id: id ?? this.id,
         accountId: accountId ?? this.accountId,
@@ -135,6 +130,7 @@ export default class Bill {
         user: user ?? this.user,
         status: status ?? this.status,
         total: total ?? this.total,
+        partialAmount: partialAmount ?? this.partialAmount,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         deletedAt: deletedAt ?? this.deletedAt,

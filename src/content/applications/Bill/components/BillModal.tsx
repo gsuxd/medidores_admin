@@ -6,14 +6,14 @@ import {
   CircularProgress,
   InputLabel,
   FormControl,
-  Input,
   Select,
   MenuItem,
   Grid,
   DialogActions,
+  TextField,
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useContext, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { Label } from "@mui/icons-material";
@@ -55,6 +55,10 @@ const AssignModal: React.FC<IProps> = ({
     const sendData: any = {
       ...bill.toJson(),
     };
+    delete sendData.createdAt;
+    delete sendData.updatedAt;
+    delete sendData.total;
+    delete sendData.partialAmount;
     for (const key of Object.keys(bill)) {
       if (key === "id") continue;
       //@ts-expect-error 40392
@@ -124,12 +128,9 @@ const AssignModal: React.FC<IProps> = ({
           >
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="consumed">Consumido</InputLabel>
-                <Input
-                  error={
-                    //@ts-expect-error 321
-                    (query.error as AxiosError)?.response?.data.error.consumed
-                  }
+                <TextField
+                  label="Consumo"
+                  error={isNaN(parseInt(`${bill.consumed}`)) || bill.consumed < 0}
                   id="consumed"
                   type="number"
                   name="consumed"
@@ -140,39 +141,51 @@ const AssignModal: React.FC<IProps> = ({
             </Grid>
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="total">Total</InputLabel>
-                <Input
-                  //@ts-expect-error 321
-                  error={(query.error as AxiosError)?.response?.data.error.name}
+                <TextField
+                  label="Total"
+                  error={isNaN(bill.total) || bill.total < 0}
                   id="total"
                   name="total"
                   disabled
+                  type="number"
                   value={bill.total}
-                  onChange={(e) => handleChange(e)}
                 />
               </FormControl>
             </Grid>
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="createdAt">Fecha de Emisión</InputLabel>
-                <Input
+                <TextField
+                  label="Abonado"
+                  //@ts-expect-error 321
+                  error={isNaN(parseInt(`${bill.partialAmount}`)) || bill.partialAmount < 0}
+                  id="partialAmount"
+                  name="partialAmount"
+                  disabled
+                  value={bill.partialAmount}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Fecha de Emisión"
                   id="createdAt"
                   name="createdAt"
+                  type="datetime-local"
                   disabled
                   value={format(bill.createdAt, "dd-MM-yyyy h:mm a")}
-                  onChange={(e) => handleChange(e)}
                 />
               </FormControl>
             </Grid>
             <Grid item>
               <FormControl>
-                <InputLabel htmlFor="updatedAt">Fecha de Actualización</InputLabel>
-                <Input
+                <TextField
+                  label="Fecha de Actualización"
                   id="updatedAt"
                   name="updatedAt"
+                  type="datetime-local"
                   disabled
                   value={format(bill.updatedAt, "dd-MM-yyyy h:mm a")}
-                  onChange={(e) => handleChange(e)}
                 />
               </FormControl>
             </Grid>
@@ -185,7 +198,7 @@ const AssignModal: React.FC<IProps> = ({
                 <InputLabel htmlFor="status">Estado</InputLabel>
                 <Select
                   //@ts-expect-error 321
-                  error={(query.error as AxiosError)?.response?.data.error.role}
+                  error={bill.status === ""}
                   labelId="status"
                   label="Estado"
                   id="status"

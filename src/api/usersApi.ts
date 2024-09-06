@@ -76,7 +76,7 @@ export default abstract class UsersApi {
                 role: params.role === "all" ? undefined : params.role,
               }
             : {
-              ssrId: params.ssrId,
+              ssrId: params.ssrId !== -1 ? params.ssrId : undefined,
               page: params.page,
             },
           headers: {

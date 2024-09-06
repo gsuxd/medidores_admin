@@ -5,10 +5,9 @@ import { NavLink as RouterLink } from "react-router-dom";
 import { SidebarContext } from "@/contexts/SidebarContext";
 
 import HomeIcon from "@mui/icons-material/Home";
-import { Apartment, 
-  //Receipt,
-   SupervisedUserCircle } from "@mui/icons-material";
-
+import Apartment from "@mui/icons-material/Apartment"; 
+import SupervisedUserCircle from "@mui/icons-material/SupervisedUserCircle";
+import PaymentsIcon from "@mui/icons-material/Payments";
 const MenuWrapper = styled(Box)(
   ({ theme }) => `
   .MuiList-root {
@@ -184,6 +183,17 @@ function SidebarMenu() {
                   to="/admin/users"
                 >
                   Usuarios
+                </Button>
+              </ListItem>
+              <ListItem>
+                <Button
+                  disableRipple
+                  component={RouterLink}
+                  onClick={closeSidebar}
+                  startIcon={<PaymentsIcon />}
+                  to="/admin/payments"
+                >
+                  Pagos
                 </Button>
               </ListItem>
               {/* <ListItem>

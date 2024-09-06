@@ -42,6 +42,7 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
     queryFn: async () =>
       await UsersApi.listUsers({
         role: "seller",
+        enabled: true,
       }),
   });
 

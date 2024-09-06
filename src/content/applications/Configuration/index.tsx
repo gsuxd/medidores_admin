@@ -42,13 +42,17 @@ export default function SSRConfiguration() {
 
   const ssrList = useMemo(
     () =>
-      query.data &&
+      query.data ?
       Array.from(query.data.ssr.values()).map((val) => (
         <MenuItem key={val.id} value={val.id}>
           {val.name}
         </MenuItem>
-      )),
-    [query.data]
+      )) : [
+      <MenuItem key={-1} value={-1}>
+        {query.isLoading ? "Cargando..." : "No hay SSRs"}
+      </MenuItem>
+      ],
+    [query.data, query.isLoading]
   );
 
   const [selectedSSR, setSelectedSSR] = useState<number>(-1);

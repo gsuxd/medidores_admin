@@ -1,27 +1,24 @@
-export default class OperatorAccount {
+
+interface IOperatorAccount {
+    id: number;
+    createdAt: Date;
+    updatedAt: Date;
+    userId: number;
+    adminId: number;
+}
+
+export default class OperatorAccount implements IOperatorAccount {
     readonly id: number;
     readonly createdAt: Date;
     readonly updatedAt: Date;
     readonly userId: number;
     readonly adminId: number;
-    constructor({
-      id,
-      createdAt,
-      updatedAt,
-      userId,
-      adminId,
-    }: {
-      id: number;
-      createdAt: Date;
-      updatedAt: Date;
-      userId: number;
-      adminId: number;
-    }) {
-      this.id = id;
-      this.createdAt = createdAt;
-      this.updatedAt = updatedAt;
-      this.userId = userId;
-      this.adminId = adminId;
+    constructor(props: IOperatorAccount) {
+      this.id = props.id;
+      this.createdAt = props.createdAt;
+      this.updatedAt = props.updatedAt;
+      this.userId = props.userId;
+      this.adminId = props.adminId;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static fromJson(json: any): OperatorAccount {
@@ -33,13 +30,7 @@ export default class OperatorAccount {
         adminId: json.adminId,
       });
     }
-    toJson(): {
-      id: number;
-      createdAt: string;
-      updatedAt: string;
-      userId: number;
-      adminId: number;
-    } {
+    toJson() {
       return {
         id: this.id,
         createdAt: this.createdAt.toISOString(),
@@ -54,13 +45,7 @@ export default class OperatorAccount {
       updatedAt,
       userId,
       adminId,
-    }: {
-      id?: number;
-      createdAt?: Date;
-      updatedAt?: Date;
-      userId?: number;
-      adminId?: number;
-    }): OperatorAccount {
+    }: Partial<IOperatorAccount>): OperatorAccount {
       return new OperatorAccount({
         id: id ?? this.id,
         createdAt: createdAt ?? this.createdAt,

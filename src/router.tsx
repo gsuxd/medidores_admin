@@ -39,6 +39,10 @@ const UsersManagement = Loader(
   lazy(() => import("@/content/applications/User"))
 );
 
+const PaymentsManagement = Loader(
+  lazy(() => import("@/content/applications/Payments"))
+);
+
 // const BillsManagement = Loader(
 //   lazy(() => import("@/content/applications/Bill"))
 // );
@@ -142,6 +146,10 @@ const routes: RouteObject[] = [
       {
         path: "users",
         element: <UsersManagement />,
+      },
+      {
+        path: "payments",
+        element: <PaymentsManagement />,
       },
       {
         path: "user/:userId",

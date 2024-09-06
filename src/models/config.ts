@@ -1,4 +1,21 @@
-export default class Config {
+
+
+interface IConfig {
+  id: number;
+  billPrice: number;
+  billDate: Date;
+  ssrId: number;
+  billPriceSection1: number;
+  billPriceSection2: number;
+  billPriceSection3: number;
+  billLimitSection1: number;
+  billLimitSection2: number;
+  billLimitSection3: number;
+  fixedPrice: number;
+  subsidy: number;
+}
+
+export default class Config implements IConfig{
   readonly id: number;
   readonly billPrice: number;
   readonly billDate: Date;
@@ -11,6 +28,21 @@ export default class Config {
   readonly billLimitSection3: number;
   readonly fixedPrice: number;
   readonly subsidy: number;
+
+  constructor(props: IConfig) {
+    this.id = props.id;
+    this.billPrice = props.billPrice;
+    this.billDate = props.billDate;
+    this.ssrId = props.ssrId;
+    this.billPriceSection1 = props.billPriceSection1;
+    this.billPriceSection2 = props.billPriceSection2;
+    this.billPriceSection3 = props.billPriceSection3;
+    this.billLimitSection1 = props.billLimitSection1;
+    this.billLimitSection2 = props.billLimitSection2;
+    this.billLimitSection3 = props.billLimitSection3;
+    this.fixedPrice = props.fixedPrice;
+    this.subsidy = props.subsidy;
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJson(data: any): Config {
@@ -30,49 +62,7 @@ export default class Config {
     });
   }
 
-  constructor({
-    id,
-    billPrice,
-    billDate,
-    ssrId,
-    billPriceSection1,
-    billPriceSection2,
-    billPriceSection3,
-    billLimitSection1,
-    billLimitSection2,
-    billLimitSection3,
-    fixedPrice,
-    subsidy,
-  }: {
-    id: number;
-    billPrice: number;
-    billDate: Date;
-    ssrId: number;
-    billPriceSection1: number;
-    billPriceSection2: number;
-    billPriceSection3: number;
-    billLimitSection1: number;
-    billLimitSection2: number;
-    billLimitSection3: number;
-    fixedPrice: number;
-    subsidy: number;
-  }) {
-    this.id = id;
-    this.billPrice = billPrice;
-    this.billDate = billDate;
-    this.ssrId = ssrId;
-    this.billPriceSection1 = billPriceSection1;
-    this.billPriceSection2 = billPriceSection2;
-    this.billPriceSection3 = billPriceSection3;
-    this.billLimitSection1 = billLimitSection1;
-    this.billLimitSection2 = billLimitSection2;
-    this.billLimitSection3 = billLimitSection3;
-    this.fixedPrice = fixedPrice;
-    this.subsidy = subsidy;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toJson(): any {
+  toJson() {
     return {
       id: this.id,
       billPrice: this.billPrice,
@@ -89,47 +79,33 @@ export default class Config {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   copyWith({
-    id = this.id,
-    billPrice = this.billPrice,
-    billDate = this.billDate,
-    ssrId = this.ssrId,
-    billPriceSection1 = this.billPriceSection1,
-    billPriceSection2 = this.billPriceSection2,
-    billPriceSection3 = this.billPriceSection3,
-    billLimitSection1 = this.billLimitSection1,
-    billLimitSection2 = this.billLimitSection2,
-    billLimitSection3 = this.billLimitSection3,
-    fixedPrice = this.fixedPrice,
-    subsidy = this.subsidy,
-  }: {
-    id?: number;
-    billPrice?: number;
-    billDate?: Date;
-    ssrId?: number;
-    billPriceSection1?: number;
-    billPriceSection2?: number;
-    billPriceSection3?: number;
-    billLimitSection1?: number;
-    billLimitSection2?: number;
-    billLimitSection3?: number;
-    fixedPrice?: number;
-    subsidy?: number;
-  }): Config {
+    id,
+    billPrice,
+    billDate,
+    ssrId,
+    billPriceSection1,
+    billPriceSection2,
+    billPriceSection3,
+    billLimitSection1,
+    billLimitSection2,
+    billLimitSection3,
+    fixedPrice,
+    subsidy,
+  }: Partial<IConfig>): Config {
     return new Config({
-      id,
-      billPrice,
-      billDate,
-      ssrId,
-      billPriceSection1,
-      billPriceSection2,
-      billPriceSection3,
-      billLimitSection1,
-      billLimitSection2,
-      billLimitSection3,
-      fixedPrice,
-      subsidy,
+      id: id ?? this.id,
+      billPrice: billPrice ?? this.billPrice,
+      billDate: billDate ?? this.billDate,
+      ssrId: ssrId ?? this.ssrId,
+      billPriceSection1: billPriceSection1 ?? this.billPriceSection1,
+      billPriceSection2: billPriceSection2 ?? this.billPriceSection2,
+      billPriceSection3: billPriceSection3 ?? this.billPriceSection3,
+      billLimitSection1: billLimitSection1 ?? this.billLimitSection1,
+      billLimitSection2:  billLimitSection2 ?? this.billLimitSection2,
+      billLimitSection3: billLimitSection3 ?? this.billLimitSection3,
+      fixedPrice: fixedPrice ?? this.fixedPrice,
+      subsidy: subsidy ?? this.subsidy,
     });
   }
 }

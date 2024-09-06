@@ -1,6 +1,16 @@
 import { BillStatus } from "./bill";
 
-export default class Due {
+interface IDue {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
+  adminId: number;
+  total: number;
+  status: BillStatus;
+}
+
+export default class Due implements IDue{
   readonly id: number;
   readonly createdAt: Date;
   readonly updatedAt: Date;
@@ -9,30 +19,14 @@ export default class Due {
   readonly total: number;
   readonly status: BillStatus;
 
-  constructor({
-    id,
-    createdAt,
-    updatedAt,
-    deletedAt,
-    adminId,
-    total,
-    status,
-  }: {
-    id: number;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-    adminId: number;
-    total: number;
-    status: BillStatus;
-  }) {
-    this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-    this.deletedAt = deletedAt;
-    this.adminId = adminId;
-    this.total = total;
-    this.status = status;
+  constructor(props: IDue) {
+    this.id = props.id;
+    this.createdAt = props.createdAt;
+    this.updatedAt = props.updatedAt;
+    this.deletedAt = props.deletedAt;
+    this.adminId = props.adminId;
+    this.total = props.total;
+    this.status = props.status;
   }
 
   get estado(): string {
@@ -43,6 +37,8 @@ export default class Due {
         return "Pagada";
       case BillStatus.overdue:
         return "Vencida";
+      case BillStatus.partial:
+        return "Parcial";
       default:
         return "Desconocido";
     }
@@ -61,8 +57,7 @@ export default class Due {
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    toJson(): any {
+    toJson() {
         return {
         id: this.id,
         createdAt: this.createdAt,
@@ -82,15 +77,7 @@ export default class Due {
         adminId,
         total,
         status,
-    }: {
-        id?: number;
-        createdAt?: Date;
-        updatedAt?: Date;
-        deletedAt?: Date;
-        adminId?: number;
-        total?: number;
-        status?: BillStatus;
-    }): Due {
+    }: Partial<IDue>): Due {
         return new Due({
         id: id ?? this.id,
         createdAt: createdAt ?? this.createdAt,

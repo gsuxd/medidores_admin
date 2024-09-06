@@ -1,9 +1,4 @@
-import {
-  Add,
-  Checklist,
-  DeleteForeverOutlined,
-  RequestQuote,
-} from "@mui/icons-material";
+import { Add, DeleteForeverOutlined } from "@mui/icons-material";
 import {
   useTheme,
   Card,
@@ -20,32 +15,28 @@ import {
   Tooltip,
   IconButton,
   Box,
+  Fab,
   Button,
-  SpeedDialAction,
-  SpeedDial,
 } from "@mui/material";
 import Filtros from "./filters";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import { useContext, useMemo, useState } from "react";
-import { usersContext } from "../context";
-//import UserModal from './UserModal';
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import DeleteModal from "./DeleteModal";
-import User, { UserRole } from "@/models/user/user";
 import { format } from "date-fns";
-import UserModal from "./UserModal";
-import { AdminContext } from "@/contexts/AdminContext";
-import MultipleUserModal from "./MultipleUserModal";
+import PaymentModal from "./PaymentModal";
+import { paymentsContext } from "../context";
+import Payment from "@/models/payment";
+import { Link } from "react-router-dom";
 
-const UsersTable: React.FC = () => {
-  const { query, filters, setFilters } = useContext(usersContext);
+const PaymentsTable: React.FC = () => {
+  const { query, filters, setFilters } = useContext(paymentsContext);
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -56,82 +47,57 @@ const UsersTable: React.FC = () => {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const usersList = useMemo(
+  const paymentsList = useMemo(
     () =>
       query.data &&
-      Array.from(query.data.users.values()).map((user) => {
+      Array.from(query.data.payments.values()).map((payment) => {
         return (
-          <TableRow hover key={user.id.toString()}>
-            <UserRow
-              user={user}
-              setSelectedUser={setSelectedUser}
+          <TableRow hover key={payment.id.toString()}>
+            <PaymentRow
+              payment={payment}
+              setSelectedPayment={setSelectedPayment}
               setIsOpen={setIsOpen}
               setIsDeleteOpen={setIsDeleteOpen}
             />
           </TableRow>
         );
-        // eslint-disable-next-line react-hooks/exhaustive-deps
       }),
     [query.data]
   );
 
-  const [isMultipleOpen, setIsMultipleOpen] = useState(false);
-
   return (
     <Card>
-      <SpeedDial
+      <Fab
         color="primary"
-        aria-label="edit"
-        icon={<Add />}
+        aria-label="add"
         style={{ position: "fixed", bottom: "10px", right: "10px" }}
-        ariaLabel="Crear"
+        onClick={() => {
+          // alert('A')
+          setSelectedPayment(null);
+          setIsOpen(true);
+        }}
       >
-        <SpeedDialAction
-          icon={<Add />}
-          tooltipTitle="Crear Usuario"
-          onClick={() => {
-            setSelectedUser(null);
-            setIsOpen(true);
-          }}
-        />
-        <SpeedDialAction
-          icon={<Checklist />}
-          onClick={() => {
-            setIsMultipleOpen(true);
-          }}
-          tooltipTitle="Multiples Usuarios"
-        />
-      </SpeedDial>
+        <Add />
+      </Fab>
       {isDeleteOpen && (
         <DeleteModal
-          user={selectedUser!}
+          payment={selectedPayment!}
           isOpen={isDeleteOpen}
           onClose={() => {
             setIsDeleteOpen(false);
-            setSelectedUser(null);
+            setSelectedPayment(null);
             query.refetch();
           }}
         />
       )}
-      {
-        <MultipleUserModal
-          isOpen={isMultipleOpen}
-          ssrId={filters.ssrId!}
-          onClose={() => {
-            setIsMultipleOpen(false);
-          }}
-          setIsOpen={setIsMultipleOpen}
-        />
-      }
       {isOpen && (
-        <UserModal
+        <PaymentModal
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          setSelectedUser={setSelectedUser}
-          user={selectedUser}
+          setSelectedPayment={setSelectedPayment}
+          payment={selectedPayment!}
           onClose={() => {
             setIsOpen(false);
-            setSelectedUser(null);
+            setSelectedPayment(null);
           }}
         />
       )}
@@ -145,11 +111,11 @@ const UsersTable: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Correo</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Estado</TableCell>
-              <TableCell>Fecha de creación</TableCell>
+              <TableCell align="center">Socio</TableCell>
+              <TableCell align="center">Fecha de creación</TableCell>
+              <TableCell align="center">Total</TableCell>
+              <TableCell align="center">Método</TableCell>
+              <TableCell align="center">Estado</TableCell>
               <TableCell align="right">Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -160,8 +126,8 @@ const UsersTable: React.FC = () => {
                   <Typography variant="h6">Cargando...</Typography>
                 </TableCell>
               </TableRow>
-            ) : query.data && query.data.users.size ? (
-              usersList
+            ) : query.data && query.data.payments.size ? (
+              paymentsList
             ) : (
               <TableRow>
                 <TableCell colSpan={9} align="center">
@@ -183,11 +149,11 @@ const UsersTable: React.FC = () => {
           }}
         >
           Page {(filters.page ?? 0) + 1} of{" "}
-          {query.data?.count
+          {(query.data?.count
             ? query.data.count < 10
-              ? filters.page! + 1
-              : Math.floor(query.data.count / 10) + 1
-            : 0}
+              ? filters.page
+              : Math.floor(query.data.count / 10)
+            : 0) + 1}
           <Box>
             <Button
               disabled={filters.page === 0}
@@ -198,7 +164,7 @@ const UsersTable: React.FC = () => {
               <ArrowBackIosIcon />
             </Button>
             <Button
-              disabled={query.data ?  query.data.users.size < 10 : true}
+              disabled={query.data ? query.data.payments.size < 10 : true}
               onClick={() => {
                 setFilters({
                   ...filters,
@@ -215,25 +181,38 @@ const UsersTable: React.FC = () => {
   );
 };
 
-function UserRow({
-  user,
-  setSelectedUser,
+function PaymentRow({
+  payment,
+  setSelectedPayment,
   setIsOpen,
   setIsDeleteOpen,
 }: {
-  user: User;
-  setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>;
+  payment: Payment;
+  setSelectedPayment: React.Dispatch<React.SetStateAction<Payment | null>>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const theme = useTheme();
-  const navigate = useNavigate();
-  const {
-    auth: { user: actualUser },
-  } = useContext(AdminContext);
   return (
     <>
-      <TableCell>
+      <TableCell align="center">
+        <Tooltip
+        title="Ir al usuario"
+        >
+          <Link to={`/admin/user/${payment.userId}/`}>
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              color="text.primary"
+              gutterBottom
+              noWrap
+            >
+              {payment.fullName}
+            </Typography>
+          </Link>
+        </Tooltip>
+      </TableCell>
+      <TableCell align="center">
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -241,10 +220,10 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.fullName}
+          {format(payment.createdAt, "dd/MM/yyyy hh:mm a")}
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell align="center">
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -252,10 +231,10 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.email}
+          $ {payment.amount}
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell align="center">
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -263,10 +242,10 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.roleLabel}
+          {payment.metodo}
         </Typography>
       </TableCell>
-      <TableCell>
+      <TableCell align="center">
         <Typography
           variant="body1"
           fontWeight="bold"
@@ -274,18 +253,7 @@ function UserRow({
           gutterBottom
           noWrap
         >
-          {user.emailVerified ? "Verificado" : "No verificado"}
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <Typography
-          variant="body1"
-          fontWeight="bold"
-          color="text.primary"
-          gutterBottom
-          noWrap
-        >
-          {format(user.createdAt, "dd/MM/yyyy")}
+          {payment.estado}
         </Typography>
       </TableCell>
       <TableCell align="right">
@@ -300,7 +268,7 @@ function UserRow({
             color="inherit"
             size="small"
             onClick={() => {
-              setSelectedUser(user);
+              setSelectedPayment(payment);
               setIsOpen(true);
             }}
           >
@@ -318,55 +286,16 @@ function UserRow({
             color="inherit"
             size="small"
             onClick={() => {
-              setSelectedUser(user);
+              setSelectedPayment(payment);
               setIsDeleteOpen(true);
             }}
           >
             <DeleteForeverOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
-        {user.role === UserRole.partner && (
-          <Tooltip title="Ver Facturas" arrow>
-            <IconButton
-              sx={{
-                "&:hover": {
-                  background: theme.colors.primary.lighter,
-                },
-                color: theme.palette.primary.main,
-              }}
-              color="inherit"
-              size="small"
-              onClick={() => {
-                navigate("/admin/user/" + user.id + "/");
-              }}
-            >
-              <RequestQuote fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        )}
-        {user.role === UserRole.admin &&
-          actualUser!.role === UserRole.master && (
-            <Tooltip title="Ver Deudas" arrow>
-              <IconButton
-                sx={{
-                  "&:hover": {
-                    background: theme.colors.primary.lighter,
-                  },
-                  color: theme.palette.primary.main,
-                }}
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  navigate("/admin/user-admin/" + user.id + "/");
-                }}
-              >
-                <RequestQuote fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
       </TableCell>
     </>
   );
 }
 
-export default UsersTable;
+export default PaymentsTable;

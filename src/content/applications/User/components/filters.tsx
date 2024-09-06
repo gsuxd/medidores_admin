@@ -35,12 +35,20 @@ const Filtros: React.FC = (): JSX.Element => {
 
   const ssrList = useMemo(
     () =>
-      ssrQuery.data &&
+      ssrQuery.data ?
       Array.from(ssrQuery.data.ssr.values()).map((ssr) => (
         <MenuItem key={ssr.id} value={ssr.id}>
           {ssr.name}
         </MenuItem>
-      )),
+      )).concat([
+        <MenuItem key={-1} value={-1}>
+          Sin SSR
+        </MenuItem>,
+      ]) : [
+        <MenuItem key={-1} value={-1}>
+          Sin SSR
+        </MenuItem>,
+      ],
     [ssrQuery.data]
   );
 
