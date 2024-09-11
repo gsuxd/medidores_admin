@@ -215,7 +215,7 @@ const AssignModal: React.FC<IProps> = ({
     }
 
     const { data } = await axios({
-      method: user.id > 0 ? "put" : "post",
+      method: "put",
       url: import.meta.env.VITE_SERVER_URL + "/api/admin/user/",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")!}`,
@@ -265,7 +265,7 @@ const AssignModal: React.FC<IProps> = ({
               alignItems: "center",
             }}
           >
-            {userSelected ? "Edición" : "Creación"} de usuario{" "}
+            Edición de usuario{" "}
             <Button onClick={(e) => onClose(e, "backdropClick")}>
               <CloseIcon />
             </Button>
@@ -286,7 +286,11 @@ const AssignModal: React.FC<IProps> = ({
                 <Input
                   error={
                     //@ts-expect-error 321
-                    (query.error as AxiosError)?.response?.data.error.email
+                    (query.error as AxiosError)?.response?.data.errors.email
+                  }
+                  aria-errormessage={
+                    //@ts-expect-error 321
+                    (query.error as AxiosError)?.response?.data.errors.email
                   }
                   id="email"
                   type="email"
@@ -301,7 +305,11 @@ const AssignModal: React.FC<IProps> = ({
                 <InputLabel htmlFor="name">Nombre</InputLabel>
                 <Input
                   //@ts-expect-error 321
-                  error={(query.error as AxiosError)?.response?.data.error.name}
+                  error={(query.error as AxiosError)?.response?.data.errors.name}
+                  aria-errormessage={
+                    //@ts-expect-error 321
+                    (query.error as AxiosError)?.response?.data.errors.name
+                  }
                   id="name"
                   name="name"
                   value={user?.name}

@@ -15,6 +15,10 @@ interface ISSR {
   seller: SellerAccount;
   admins: AdminAccount[];
   bankNumber: string;
+  bankName: string;
+  bankType: string;
+  bankHolder: string;
+  bankRut: string;
   config: Config;
 }
 
@@ -32,6 +36,10 @@ export default class SSR implements ISSR{
   readonly president: AdminAccount;
   readonly admins: AdminAccount[];
   readonly bankNumber: string;
+  readonly bankName: string;
+  readonly bankType: string;
+  readonly bankHolder: string;
+  readonly bankRut: string;
   readonly config: Config;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,8 +58,11 @@ export default class SSR implements ISSR{
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       admins: data.admins.map((seller: any) => AdminAccount.fromJson(seller)),
       bankNumber: data.bankNumber,
+      bankName: data.bankName,
+      bankType: data.bankType,
+      bankHolder: data.bankHolder,
+      bankRut: data.bankRut,
       config: Config.fromJson(data.config),
-    
     });
   }
 
@@ -68,6 +79,10 @@ export default class SSR implements ISSR{
     this.seller = props.seller;
     this.admins = props.admins;
     this.bankNumber = props.bankNumber;
+    this.bankName = props.bankName;
+    this.bankType = props.bankType;
+    this.bankHolder = props.bankHolder;
+    this.bankRut = props.bankRut;
     this.config = props.config;
   }
 
@@ -85,6 +100,10 @@ export default class SSR implements ISSR{
       seller: this.seller.toJson(),
       admins: this.admins.map((admin) => admin.toJson()),
       bankNumber: this.bankNumber,
+      bankName: this.bankName,
+      bankType: this.bankType,
+      bankHolder: this.bankHolder,
+      bankRut: this.bankRut,
       config: this.config?.toJson(),
     };
   }
@@ -102,6 +121,10 @@ export default class SSR implements ISSR{
     seller,
     admins,
     bankNumber,
+    bankName,
+    bankType,
+    bankHolder,
+    bankRut,
     config,
   }: Partial<ISSR>): SSR {
     return new SSR({
@@ -117,6 +140,10 @@ export default class SSR implements ISSR{
       seller: seller ?? this.seller,
       admins: admins ?? this.admins,
       bankNumber: bankNumber ?? this.bankNumber,
+      bankName: bankName ?? this.bankName,
+      bankType: bankType ?? this.bankType,
+      bankHolder: bankHolder ?? this.bankHolder,
+      bankRut: bankRut ?? this.bankRut,
       config: config ?? this.config,
     });
   }

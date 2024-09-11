@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useContext, useMemo, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { Label } from "@mui/icons-material";
@@ -109,6 +109,10 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
       phone: "",
       address: "",
       bankNumber: "",
+      bankName: "",
+      bankType: "",
+      bankHolder: "",
+      bankRut: "",
       admins: [],
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -165,6 +169,12 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
         setAdmin((val) => val.copyWith({ [subKey]: value }));
         break;
       case "ssr":
+        if (subKey === "phone") {
+          if (value.length > 10) return;
+        }
+        if (subKey === "bankNumber") {
+          if (isNaN(parseInt(value))) return;
+        }
         setSSR((val) => val.copyWith({ [subKey]: value }));
         break;
       default:
@@ -183,6 +193,7 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
     delete sendData["config"];
     delete sendData["seller"];
     delete sendData["president"];
+    delete sendData["admins"];
     const { data } = await axios({
       method: "post",
       url: import.meta.env.VITE_SERVER_URL + "/api/admin/ssr/",
@@ -250,11 +261,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .name
-                  }
                   label="Nombre"
                   id="ssr.name"
                   name="ssr.name"
@@ -267,11 +273,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
               <FormControl>
                 <TextField
                   label="Email"
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .email
-                  }
                   id="ssr.email"
                   name="ssr.email"
                   type="email"
@@ -284,9 +285,10 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
               <FormControl>
                 <TextField
                   error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .phone
+                    ssr.phone.trim().length !== 0 &&
+                    (ssr.phone.trim().length < 9 ||
+                    ssr.phone.trim().length > 10)
+                    
                   }
                   label="Teléfono"
                   id="ssr.phone"
@@ -300,11 +302,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .address
-                  }
                   label="Dirección"
                   id="ssr.address"
                   name="ssr.address"
@@ -316,15 +313,54 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .bankNumber
-                  }
+                  label="Nombre del titular"
+                  id="ssr.bankHolder"
+                  name="ssr.bankHolder"
+                  value={ssr.bankHolder}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Nombre del banco"
+                  id="ssr.bankName"
+                  name="ssr.bankName"
+                  value={ssr.bankName}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Número de RUT del banco"
+                  id="ssr.bankRut"
+                  name="ssr.bankRut"
+                  value={ssr.bankRut}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
                   label="Número de cuenta"
                   id="ssr.bankNumber"
                   name="ssr.bankNumber"
                   value={ssr.bankNumber}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Tipo de cuenta"
+                  id="ssr.bankType"
+                  name="ssr.bankType"
+                  value={ssr.bankType}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -338,11 +374,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
                 >
                   <InputLabel htmlFor="ssr.seller">Vendedor</InputLabel>
                   <Select
-                    error={
-                      //@ts-expect-error 321
-                      (confirmQuery.error as AxiosError)?.response?.data.error
-                        .sellerId
-                    }
                     labelId="ssr.seller"
                     label="Vendedor"
                     id="ssr.seller"
@@ -370,11 +401,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .name
-                  }
                   label="Nombre"
                   id="user.name"
                   name="user.name"
@@ -386,11 +412,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .lastName
-                  }
                   label="Apellido"
                   id="user.lastName"
                   name="user.lastName"
@@ -402,11 +423,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .email
-                  }
                   label="Email"
                   id="user.email"
                   name="user.email"
@@ -419,10 +435,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error.rut
-                  }
                   label="Rut"
                   id="user.rut"
                   name="user.rut"
@@ -434,11 +446,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .phone
-                  }
                   label="Teléfono"
                   id="user.phone"
                   name="user.phone"
@@ -450,11 +457,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .address
-                  }
                   label="Dirección"
                   id="user.address"
                   name="user.address"
@@ -466,11 +468,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
             <Grid item>
               <FormControl>
                 <TextField
-                  error={
-                    //@ts-expect-error 321
-                    (confirmQuery.error as AxiosError)?.response?.data.error
-                      .password
-                  }
                   label="Contraseña"
                   id="user.password"
                   name="user.password"

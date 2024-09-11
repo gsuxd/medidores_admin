@@ -65,6 +65,10 @@ export default function SSRConfiguration() {
       deletedAt: undefined,
       address: "",
       bankNumber: "",
+      bankHolder: "",
+      bankName:   "",
+      bankRut: "",
+      bankType: "",
       email: "",
       phone: "",
       president: new AdminAccount({
@@ -340,10 +344,42 @@ export default function SSRConfiguration() {
                     />
                   </Box>
                   <Box mb={1}>
+                    <Typography variant="h5">Nombre de Banco</Typography>
+                    <TextField
+                      name={"bankName"}
+                      value={editSSR.bankName}
+                      onChange={(e) => handleChange(e)}
+                    />
+                  </Box>
+                  <Box mb={1}>
+                    <Typography variant="h5">Nombre de Titular</Typography>
+                    <TextField
+                      name={"bankHolder"}
+                      value={editSSR.bankHolder}
+                      onChange={(e) => handleChange(e)}
+                    />
+                  </Box>
+                  <Box mb={1}>
+                    <Typography variant="h5">Rut del titular</Typography>
+                    <TextField
+                      name={"bankRut"}
+                      value={editSSR.bankRut}
+                      onChange={(e) => handleChange(e)}
+                    />
+                  </Box>
+                  <Box mb={1}>
                     <Typography variant="h5">Número de cuenta</Typography>
                     <TextField
                       name={"bankNumber"}
                       value={editSSR.bankNumber}
+                      onChange={(e) => handleChange(e)}
+                    />
+                  </Box>
+                  <Box mb={1}>
+                    <Typography variant="h5">Tipo de Cuenta</Typography>
+                    <TextField
+                      name={"bankType"}
+                      value={editSSR.bankType}
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
