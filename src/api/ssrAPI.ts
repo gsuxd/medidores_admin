@@ -59,7 +59,7 @@ export default abstract class SSRApi {
         }
     }
 
-    static async list(params: IListParams | undefined): Promise<{ssr: Map<number, SSR>}>{
+    static async list(params: Partial<IListParams> | undefined): Promise<{ssr: Map<number, SSR>}>{
         try {
             const {data} = await axios.get(import.meta.env.VITE_SERVER_URL + '/api/admin/ssr/', {
                 headers: {

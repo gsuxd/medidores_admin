@@ -162,16 +162,20 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (event: any) => {
-    const { name, value } = event.target;
+    const { name } = event.target;
     const [key, subKey] = (name as string).split(".");
+    const value = event.target.value.trim();
+    if (subKey === "phone") {
+      if (value.length > 10) return;
+    }
+    if (subKey === "rut" || subKey === "bankRut") {
+      if (value.length > 9) return;
+    }
     switch (key) {
       case "user":
         setAdmin((val) => val.copyWith({ [subKey]: value }));
         break;
       case "ssr":
-        if (subKey === "phone") {
-          if (value.length > 10) return;
-        }
         if (subKey === "bankNumber") {
           if (isNaN(parseInt(value))) return;
         }
@@ -231,6 +235,15 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
     severity: "success",
   });
 
+  const gridStyle = {
+    sx: {
+      display: "grid",
+      marginTop: "1rem",
+      gridTemplateColumns: "1fr 1fr 1fr",
+    },
+    gap: 2
+  }
+
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
@@ -250,13 +263,11 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
           </div>
         </DialogTitle>
         <DialogContent>
+            <Divider sx={{marginTop: "1rem"}}>
+              <Typography>Información del SSR</Typography>
+            </Divider>
           <Grid
-            sx={{
-              marginTop: "1rem",
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-            }}
-            gap={2}
+            {...gridStyle}
           >
             <Grid item>
               <FormControl>
@@ -310,61 +321,6 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
                 />
               </FormControl>
             </Grid>
-            <Grid item>
-              <FormControl>
-                <TextField
-                  label="Nombre del titular"
-                  id="ssr.bankHolder"
-                  name="ssr.bankHolder"
-                  value={ssr.bankHolder}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item>
-              <FormControl>
-                <TextField
-                  label="Nombre del banco"
-                  id="ssr.bankName"
-                  name="ssr.bankName"
-                  value={ssr.bankName}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item>
-              <FormControl>
-                <TextField
-                  label="Número de RUT del banco"
-                  id="ssr.bankRut"
-                  name="ssr.bankRut"
-                  value={ssr.bankRut}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item>
-              <FormControl>
-                <TextField
-                  label="Número de cuenta"
-                  id="ssr.bankNumber"
-                  name="ssr.bankNumber"
-                  value={ssr.bankNumber}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item>
-              <FormControl>
-                <TextField
-                  label="Tipo de cuenta"
-                  id="ssr.bankType"
-                  name="ssr.bankType"
-                  value={ssr.bankType}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </Grid>
             {actualUser!.role === "master" && (
               <Grid item>
                 <FormControl
@@ -394,10 +350,72 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
                 </FormControl>
               </Grid>
             )}
-            <Grid item gap="1rem">
-              <Divider/>
-              <Typography>Presidente (Admin)</Typography>
             </Grid>
+            <Divider sx={{marginTop: "1rem"}}>
+              <Typography>Información bancaria</Typography>
+            </Divider>
+            <Grid {...gridStyle}
+            >
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Nombre del titular"
+                  id="ssr.bankHolder"
+                  name="ssr.bankHolder"
+                  value={ssr.bankHolder}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Nombre del banco"
+                  id="ssr.bankName"
+                  name="ssr.bankName"
+                  value={ssr.bankName}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Número de RUT del Titular"
+                  id="ssr.bankRut"
+                  name="ssr.bankRut"
+                  value={ssr.bankRut}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Número de cuenta"
+                  id="ssr.bankNumber"
+                  name="ssr.bankNumber"
+                  value={ssr.bankNumber}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl>
+                <TextField
+                  label="Tipo de cuenta"
+                  id="ssr.bankType"
+                  name="ssr.bankType"
+                  value={ssr.bankType}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            </Grid>
+            <Divider sx={{marginTop: "1rem"}}>
+              <Typography>Información del Presidente</Typography>
+            </Divider>
+            <Grid {...gridStyle}>
             <Grid item>
               <FormControl>
                 <TextField

@@ -6,8 +6,8 @@ import IllustrationPhones from "@/assets/illustration-phones.png";
 import IllustrationLaptopDesktop from "@/assets/illustration-laptop-desktop.png";
 import IllustrationEditorMobile from "@/assets/illustration-editor-mobile.png";
 import IllustrationLaptopMobile from "@/assets/illustration-laptop-mobile.png";
+import WhatsappButtonGreenMedium from "@/assets/WhatsAppButtonGreenMedium.svg";
 import { useEffect } from "react";
-
 
 export default function LandingPage() {
   function onResize() {
@@ -32,7 +32,7 @@ export default function LandingPage() {
     return () => {
       window.removeEventListener("resize", onResize);
     };
-  }, [])
+  }, []);
 
   return (
     <>
@@ -40,10 +40,10 @@ export default function LandingPage() {
         <h2>H2O Gestión</h2>
         <p>Siente el flujo, controla el curso</p>
         <div id="button-group">
-          <Link to="#" id="get-started">
+          {/* <Link to="#" id="get-started">
             Contactar con ventas
-          </Link>
-          <Link to="#" id="learn-more">
+          </Link> */}
+          <Link target="_blank" to="https://wa.me/+56977904563" id="learn-more">
             Más Información
           </Link>
         </div>
@@ -55,37 +55,37 @@ export default function LandingPage() {
             <div className="paragraph">
               <h3>Administración a medida</h3>
               <p>
-                H2O Gestión es un sistema completo de administración para tu
-                SSR. Designa administradores para vender a tus socios y
-                operadores, además de ofrecer seguimiento a tus socios de sus
-                deudas y notificaciones en tiempo real mediante notificaciones
-                Push y correos masivos.
+                H2O Gestión es un software integral diseñado para la gestión
+                eficiente del suministro de agua potable en comunidades rurales.
+                Este sistema facilita la administración al simplificar la toma
+                de estados de los medidores, generar avisos de cobranza, emitir
+                boletas y gestionar pagos en línea. Con un enfoque en la
+                transparencia y la precisión, H2O Gestión permite un registro
+                detallado del consumo y una atención al cliente óptima. Su
+                objetivo es optimizar los procesos de facturación y monitoreo,
+                ofreciendo herramientas para una gestión del agua efectiva y
+                sostenible.
               </p>
             </div>
             <div className="paragraph">
               <h3>Nuestros Servicios</h3>
               <p>
-                H2O se compromete a mejorar continuamente y a ofrecer servicios
-                de gestión innovadores y actualizados. Nuestro enfoque se basa
-                en la utilización de las últimas tecnologías y metodologías para
-                adelantarnos a las tendencias del sector y cambios en el marco
-                regulatorio para los APR. Invertimos significativamente en
-                investigación y desarrollo para garantizar que nuestro software
-                sea capaz de integrarse a la perfección con las tecnologías de
-                vanguardia que están cambiando el sector del agua potable rural.
-                Por ejemplo, hemos incorporado soluciones inteligentes de
-                lectura de medidores que proporcionan lecturas precisas en
-                tiempo real para minimizar los errores y mejorar la eficacia en
-                la recopilación de datos. Además, nos mantenemos al tanto de las
-                nuevas normativas y estándares del sector para garantizar que
-                nuestros clientes cumplen los nuevos requisitos legales. Por
-                último, nuestro equipo está comprometido con la formación y el
-                desarrollo, aprendiendo y mejorando continuamente para estar al
-                día de las nuevas tendencias, tecnologías y mejores prácticas
-                del sector. En H2O Gestión, nos esforzamos por ofrecer a
-                nuestros clientes servicios excepcionales que sean innovadores,
-                fiables y que satisfagan las necesidades cambiantes del sector
-                del agua potable rural en Chile.
+                En H2O Gestión, nos dedicamos a ofrecer servicios de gestión de
+                agua potable rural que son innovadores y siempre actualizados.
+                Utilizamos las últimas tecnologías y metodologías para
+                adelantarnos a las tendencias del sector y cumplir con las
+                normativas vigentes. Nuestro software integra soluciones
+                inteligentes de lectura de medidores, proporcionando lecturas
+                precisas en tiempo real para minimizar errores y mejorar la
+                eficiencia en la recopilación de datos. Además, invertimos
+                continuamente en investigación y desarrollo para asegurar que
+                nuestras herramientas se mantengan a la vanguardia. Nos
+                comprometemos a la formación continua de nuestro equipo,
+                garantizando que estamos al día con las nuevas tendencias y
+                mejores prácticas del sector. En H2O Gestión, nos esforzamos por
+                ofrecer servicios excepcionales, confiables y adaptados a las
+                necesidades cambiantes del sector del agua potable
+                rural en Chile.
               </p>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function LandingPage() {
         <div className="content">
           <h2>Herramienta para tus operadores</h2>
           <p>
-            Usando un modelo de Inteligencia Artificial entrenado escanea los
+            Un modelo de Inteligencia Artificial entrenado para escanear los
             medidores con solo una foto, agrega la lectura a la cola y súbelas
             cuando tengas conexión a internet estable, dando soporte a las zonas
             rurales donde la conexión es limitada.
@@ -126,7 +126,7 @@ export default function LandingPage() {
             <h2>Pagos oportunos</h2>
             <p>
               Tus socios tendrán la opción de pagar mediante la app usando su
-              método de pago preferido, ya sea transferencia bancaria; tarjeta o
+              método de pago preferido, ya sea transferencia bancaria, tarjeta o
               efectivo.
             </p>
           </div>
@@ -146,9 +146,9 @@ export default function LandingPage() {
         </div>
         <div className="link-container">
           <h2>Conecta con nosotros</h2>
-          <a href="#">Contacto</a>
-          <a href="#">Instagram</a>
-          <a href="#">Whatsapp</a>
+          <a target="_blank" href="web.facebook.com/profile.php?id=61565050997415">Facebook</a>
+          <a target="_blank" href="https://www.instagram.com/h2ogestionapp/">Instagram</a>
+          <a target="_blank" href="https://wa.me/+56977904563"><img src={WhatsappButtonGreenMedium} alt="Chat On Whatsapp" /></a>
         </div>
       </footer>
     </>

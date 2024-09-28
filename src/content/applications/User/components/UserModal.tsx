@@ -29,6 +29,7 @@ import AdminAccount from "@/models/user/adminAccount";
 import OperatorAccount from "@/models/user/operatorAccount";
 import UsersApi from "@/api/usersApi";
 import CustomSnackbar from "@/components/Snackbar";
+import SSRApi from "@/api/ssrAPI";
 
 interface IProps {
   isOpen: boolean;
@@ -99,6 +100,14 @@ const AssignModal: React.FC<IProps> = ({
   );
   const { filters } = useContext(usersContext);
 
+  const ssrQuery = useQuery({
+    queryFn: () =>
+      SSRApi.list({
+        enabled: false,
+      }),
+    queryKey: ["ssr"],
+  });
+
   const query = useQuery({
     queryFn: () =>
       UsersApi.listUsers({
@@ -149,6 +158,24 @@ const AssignModal: React.FC<IProps> = ({
       : ""
   );
 
+  const [ssrId, setSSRId] = useState<number>(
+    userSelected?.adminAccount?.ssrId ?? actualUser?.adminAccount?.ssrId ?? 0
+  );
+
+  useEffect(() => {
+    if (ssrId === 0) {
+      setSSRId(
+        userSelected?.adminAccount?.ssrId ??
+          (actualUser!.role === UserRole.admin
+            ? actualUser?.adminAccount?.ssrId
+            : (ssrQuery.data?.ssr.size ?? -1) > 0
+            ? ssrQuery.data!.ssr.entries().next().value[0]
+            : 0)
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ssrQuery.data]);
+
   useEffect(() => {
     //@ts-expect-error 3212
     if (adminId === "") {
@@ -172,12 +199,22 @@ const AssignModal: React.FC<IProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (event: any) => {
-    const { name, value } = event.target;
+    const { name } = event.target;
+    const value = event.target.value.trim();
+    if (name === "rut") {
+      if (value.length > 9) return;
+    }
+    if (name === "phone") {
+      if (value.length > 10) return;
+    }
     let newUser = user;
     if (name.includes(".")) {
       const [key, subKey] = name.split(".");
       switch (key) {
         case "partnerAccount":
+          if (subKey === "measurer") {
+            if (value.length > 7) return;
+          }
           newUser = newUser.copyWith({
             partnerAccount: newUser.partnerAccount?.copyWith({
               [subKey]: value,
@@ -248,7 +285,7 @@ const AssignModal: React.FC<IProps> = ({
             : selectionUsers.get(adminId)?.adminAccount?.id;
         break;
       case UserRole.admin:
-        sendData["ssrId"] = filters.ssrId!;
+        sendData["ssrId"] = ssrId;
         sendData["sellerId"] =
           actualUser!.role === UserRole.seller
             ? actualUser?.sellerAccount?.id
@@ -291,7 +328,7 @@ const AssignModal: React.FC<IProps> = ({
       case UserRole.seller:
         delete sendData["adminId"];
         break;
-      }
+    }
     const userData = user.toJson();
     for (const key of Object.keys(userSelected ?? {})) {
       if (key === "id") continue;
@@ -324,16 +361,16 @@ const AssignModal: React.FC<IProps> = ({
   const handleConfirm = async () => {
     try {
       await confirmQuery.mutateAsync();
-    if (confirmQuery.data) {
-      setIsOpen(false);
-      setSelectedUser(null);
-      query.refetch();
-      setSnack({
-        open: true,
-        message: `Usuario ${userSelected ? "editado" : "creado"} con éxito`,
-        severity: "success",
-      });
-    }
+      if (confirmQuery.data) {
+        setIsOpen(false);
+        setSelectedUser(null);
+        query.refetch();
+        setSnack({
+          open: true,
+          message: `Usuario ${userSelected ? "editado" : "creado"} con éxito`,
+          severity: "success",
+        });
+      }
     } catch (error) {
       setSnack({
         open: true,
@@ -352,9 +389,11 @@ const AssignModal: React.FC<IProps> = ({
   return (
     <>
       <Dialog fullWidth open={isOpen} onClose={onClose}>
-          <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
+        <CustomSnackbar
+          snackState={snack}
+          onClose={() => setSnack({ ...snack, open: false })}
+        />
         <DialogTitle>
-
           <div
             style={{
               display: "flex",
@@ -380,7 +419,7 @@ const AssignModal: React.FC<IProps> = ({
             <Grid item>
               <FormControl>
                 <TextField
-                label="Correo"
+                  label="Correo"
                   error={
                     //@ts-expect-error 321
                     (query.error as AxiosError)?.response?.data.error.email
@@ -533,8 +572,8 @@ const AssignModal: React.FC<IProps> = ({
                   error={
                     user?.rut !== ""
                       ? isNaN(parseInt(user?.rut)) ||
-                        parseInt(user?.rut) < 1000000 ||
-                        parseInt(user?.rut) > 99999999
+                        user?.rut.length < 7 ||
+                        user?.rut.length > 9
                       : false
                   }
                   id="rut"
@@ -549,8 +588,8 @@ const AssignModal: React.FC<IProps> = ({
                 <TextField
                   label="Teléfono"
                   error={
-                    (user?.phone &&
-                      !RegExp(/^[0-9]{8,9}$/).test(user?.phone)) ||
+                    (user?.phone && isNaN(parseInt(user?.phone))) ||
+                    user?.phone.length < 10 ||
                     false
                   }
                   id="phone"
@@ -662,6 +701,44 @@ const AssignModal: React.FC<IProps> = ({
                       </FormControl>
                     </Grid> */}
                     <Grid item>
+                      <FormControl
+                        sx={{
+                          minWidth: "100%",
+                        }}
+                      >
+                        <InputLabel htmlFor="adminId">SSR</InputLabel>
+                        <Select
+                          error={
+                            //@ts-expect-error 321
+                            (query.error as AxiosError)?.response?.data.error
+                              .ssrId
+                          }
+                          labelId="ssrId"
+                          label="SSR"
+                          id="ssrId"
+                          name="ssrId"
+                          value={ssrId}
+                          required
+                          children={
+                            ssrQuery.data?.ssr.size ?? -1 > 0
+                              ? Array.from(ssrQuery.data!.ssr.values()).map(
+                                  (val) => (
+                                    <MenuItem
+                                      LinkComponent={"div"}
+                                      key={val.id}
+                                      value={val.id}
+                                    >
+                                      {val.name}
+                                    </MenuItem>
+                                  )
+                                )
+                              : []
+                          }
+                          onChange={(e) => setSSRId(e.target.value as number)}
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid item>
                       <FormControl>
                         <TextField
                           label="Precio de Factura"
@@ -710,7 +787,7 @@ const AssignModal: React.FC<IProps> = ({
                       }
                       id="fixedPrice"
                       name="adminAccount.fixedPrice"
-                      placeholder="Precio Fijo"
+                      placeholder="Cargo Fijo"
                       type="number"
                       value={user!.adminAccount!.fixedPrice}
                       onChange={(e) => handleChange(e)}
@@ -738,22 +815,36 @@ const AssignModal: React.FC<IProps> = ({
                   </FormControl>
                 </Grid> */}
                 <Grid item>
-                  <FormControl>
-                    <TextField
-                      label="Seccion 1 Limite"
-                      error={
-                        //@ts-expect-error 321
-                        (query.error as AxiosError)?.response?.data.error
-                          .section1Price
-                      }
-                      id="section1Price"
-                      name="adminAccount.section1Price"
-                      placeholder="Sección 1 Precio"
-                      type="number"
-                      value={user!.adminAccount!.section1Price}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </FormControl>
+                  <TextField
+                    label="Seccion 1 Limite"
+                    error={
+                      //@ts-expect-error 321
+                      (query.error as AxiosError)?.response?.data.error
+                        .section1Limit
+                    }
+                    id="section1Limit"
+                    name="adminAccount.section1Limit"
+                    placeholder="Sección 1 Limite"
+                    type="number"
+                    value={user!.adminAccount!.section1Limit}
+                    onChange={(e) => handleChange(e)}
+                  />
+                </Grid>
+                <Grid item>
+                  <TextField
+                    label="Seccion 1 Precio"
+                    error={
+                      //@ts-expect-error 321
+                      (query.error as AxiosError)?.response?.data.error
+                        .section1Price
+                    }
+                    id="section1Price"
+                    name="adminAccount.section1Price"
+                    placeholder="Sección 1 Precio"
+                    type="number"
+                    value={user!.adminAccount!.section1Price}
+                    onChange={(e) => handleChange(e)}
+                  />
                 </Grid>
                 <Grid item>
                   <FormControl>

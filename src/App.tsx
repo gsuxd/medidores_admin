@@ -15,12 +15,16 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
-axios.interceptors.response.use((res) => {
-  if (res.status === 401) {
+axios.interceptors.response.use((res) => res, (err) => {
+  if (err.response?.status === 401) {
     localStorage.clear();
     window.location.href = '/login';
+    return;
+  } else if (err.response?.status === 500) {
+    window.location.href = '/status/500';
+    return;
   }
-  return res;
+  return Promise.reject(err);
 })
 
 function App() {

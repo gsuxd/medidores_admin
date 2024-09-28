@@ -373,7 +373,7 @@
   border-top-right-radius: 5rem;
 }
 
-#footer img {
+#footer > img {
   width: clamp(5rem, 10vw, 10rem);
   border-radius: 100%;
   margin-top: clamp(0.1rem, 1.5vw, 10rem);

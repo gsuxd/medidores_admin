@@ -1,23 +1,15 @@
-import { useState } from 'react';
 import {
   Box,
   Typography,
-  Hidden,
   Container,
   Button,
   Grid
 } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 import RefreshTwoToneIcon from '@mui/icons-material/RefreshTwoTone';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Status500Image from '@/assets/status500.svg';
 
 import { styled } from '@mui/material/styles';
-
-const GridWrapper = styled(Grid)(
-  ({ theme }) => `
-    background: ${theme.colors.gradients.black1};
-`
-);
 
 const MainContent = styled(Box)(
   () => `
@@ -31,23 +23,7 @@ const MainContent = styled(Box)(
 `
 );
 
-const TypographyPrimary = styled(Typography)(
-  ({ theme }) => `
-      color: ${theme.colors.alpha.white[100]};
-`
-);
-
-const TypographySecondary = styled(Typography)(
-  ({ theme }) => `
-      color: ${theme.colors.alpha.white[70]};
-`
-);
-
 function Status500() {
-  const [pending, setPending] = useState(false);
-  function handleClick() {
-    setPending(true);
-  }
 
   return (
     <>
@@ -58,7 +34,8 @@ function Status500() {
         <Grid
           container
           sx={{ height: '100%' }}
-          alignItems="stretch"
+          alignItems="center"
+          justifyContent="center"
           spacing={0}
         >
           <Grid
@@ -74,10 +51,10 @@ function Status500() {
                 <img
                   alt="500"
                   height={260}
-                  src="/static/images/status/500.svg"
+                  src={Status500Image}
                 />
                 <Typography variant="h2" sx={{ my: 2 }}>
-                  There was an error, please try again later
+                  Ocurrió un error, porfavor intenta nuevamente
                 </Typography>
                 <Typography
                   variant="h4"
@@ -85,55 +62,26 @@ function Status500() {
                   fontWeight="normal"
                   sx={{ mb: 4 }}
                 >
-                  The server encountered an internal error and was not able to
-                  complete your request
+                  El servidor ha encontrado una situación inesperada que no puede manejar.
                 </Typography>
-                <LoadingButton
-                  onClick={handleClick}
-                  loading={pending}
+                <Button
                   variant="outlined"
                   color="primary"
                   startIcon={<RefreshTwoToneIcon />}
+                  href="/admin/dashboard"
                 >
-                  Refresh view
-                </LoadingButton>
-                <Button href="/overview" variant="contained" sx={{ ml: 1 }}>
-                  Go back
+                  Intentar de nuevo
+                </Button>
+                <Button href="/" variant="contained" sx={{ ml: 1 }}>
+                  Volver al inicio
                 </Button>
               </Box>
             </Container>
           </Grid>
-          <Hidden mdDown>
-            <GridWrapper
-              xs={12}
-              md={6}
-              alignItems="center"
-              display="flex"
-              justifyContent="center"
-              item
-            >
-              <Container maxWidth="sm">
-                <Box textAlign="center">
-                  <TypographyPrimary variant="h1" sx={{ my: 2 }}>
-                    Tokyo Free White React Typescript Admin Dashboard
-                  </TypographyPrimary>
-                  <TypographySecondary
-                    variant="h4"
-                    fontWeight="normal"
-                    sx={{ mb: 4 }}
-                  >
-                    High performance React template built with lots of powerful
-                    Material-UI components across multiple product niches for
-                    fast &amp; perfect apps development processes.
-                  </TypographySecondary>
-                  <Button href="/overview" size="large" variant="contained">
-                    Overview
-                  </Button>
-                </Box>
-              </Container>
-            </GridWrapper>
-          </Hidden>
         </Grid>
+        <Box>
+          <a href=""></a>
+        </Box>
       </MainContent>
     </>
   );

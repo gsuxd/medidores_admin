@@ -98,7 +98,7 @@ export default function Navbar() {
           <img id="title" src={Logo} alt="logo" />
         </Link>
         <div className="links-group links">
-          <ul>
+          {/* <ul>
             <li className="item-group">
               <h3 className="item-group-title">
                 Producto
@@ -120,7 +120,7 @@ export default function Navbar() {
                 </li>
               </ul>
             </li>
-          </ul>
+          </ul> */}
         </div>
         <div className="links-group links-2">
           <ul>

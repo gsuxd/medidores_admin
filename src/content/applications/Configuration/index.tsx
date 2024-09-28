@@ -8,15 +8,14 @@ import AdminAccount from "@/models/user/adminAccount";
 import SellerAccount from "@/models/user/sellerAccount";
 import { UserRole } from "@/models/user/user";
 import { Save } from "@mui/icons-material";
-import CheckIcon from "@mui/icons-material/Check";
 import {
-  Alert,
   Box,
   Button,
   Card,
   CircularProgress,
   Divider,
   Fab,
+  Grid,
   MenuItem,
   Select,
   Stack,
@@ -28,6 +27,7 @@ import { motion } from "framer-motion";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import AssignModal from "./components/NewSSRModal";
+import CustomSnackbar from "@/components/Snackbar";
 
 export default function SSRConfiguration() {
   const {
@@ -42,16 +42,17 @@ export default function SSRConfiguration() {
 
   const ssrList = useMemo(
     () =>
-      query.data ?
-      Array.from(query.data.ssr.values()).map((val) => (
-        <MenuItem key={val.id} value={val.id}>
-          {val.name}
-        </MenuItem>
-      )) : [
-      <MenuItem key={-1} value={-1}>
-        {query.isLoading ? "Cargando..." : "No hay SSRs"}
-      </MenuItem>
-      ],
+      query.data
+        ? Array.from(query.data.ssr.values()).map((val) => (
+            <MenuItem key={val.id} value={val.id}>
+              {val.name}
+            </MenuItem>
+          ))
+        : [
+            <MenuItem key={-1} value={-1}>
+              {query.isLoading ? "Cargando..." : "No hay SSRs"}
+            </MenuItem>,
+          ],
     [query.data, query.isLoading]
   );
 
@@ -66,7 +67,7 @@ export default function SSRConfiguration() {
       address: "",
       bankNumber: "",
       bankHolder: "",
-      bankName:   "",
+      bankName: "",
       bankRut: "",
       bankType: "",
       email: "",
@@ -191,22 +192,14 @@ export default function SSRConfiguration() {
     [admins.data, editSSR.president.id, actualUser]
   );
 
-  const [showAlert, setShowAlert] = useState(false);
-
   const mutation = useMutation({
     mutationKey: ["updateSSR", editSSR.id],
     mutationFn: SSRApi.update,
-    onMutate: async () => {
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 5000);
-      await query.refetch();
-    },
   });
 
-  function update() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function update() {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = editSSR.toJson();
     const ssr = query.data!.ssr.get(selectedSSR)?.toJson();
     for (const key in data) {
@@ -242,8 +235,36 @@ export default function SSRConfiguration() {
       }
     }
     data["id"] = selectedSSR;
-    mutation.mutate(data);
+    await mutation.mutateAsync(data);
+    setSnack({
+      open: true,
+      message: "SSR actualizado correctamente",
+      severity: "success",
+    })
+    await query.refetch();
+    } catch (error) {
+      setSnack({
+        open: true,
+        message: "Error al actualizar SSR",
+        severity: "error",
+      })
+    }
   }
+
+  const gridStyle = {
+    sx: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+    },
+    gap: 2,
+    p: 2,
+  };
+
+  const [snack, setSnack] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   return (
     <motion.div
@@ -257,11 +278,10 @@ export default function SSRConfiguration() {
         y: parseInt("-" + window.innerHeight.toString()),
       }}
     >
-      {showAlert && (
-        <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-          Actualizado exitosamente.
-        </Alert>
-      )}
+      <CustomSnackbar
+        snackState={snack}
+        onClose={() => setSnack({ ...snack, open: false })}
+      />
       {
         <Helmet>
           <title>Configuración de SSR</title>
@@ -310,82 +330,84 @@ export default function SSRConfiguration() {
             <Stack direction="row" justifyContent="start">
               <Box flexBasis={"50%"}>
                 <Typography variant="h2">Información</Typography>
-                <Box gap={2} p={2}>
+                <Grid {...gridStyle}>
                   <Box mb={2}>
-                    <Typography variant="h5">Nombre</Typography>
                     <TextField
+                      label="Nombre"
                       name={"name"}
                       value={editSSR.name}
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
                   <Box mb={2}>
-                    <Typography variant="h5">Dirección</Typography>
                     <TextField
+                      label="Dirección"
                       name={"address"}
                       value={editSSR.address}
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
                   <Box mb={1}>
-                    <Typography variant="h5">Teléfono</Typography>
                     <TextField
+                      label="Teléfono"
                       name={"phone"}
                       value={editSSR.phone}
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
                   <Box mb={1}>
-                    <Typography variant="h5">Email</Typography>
                     <TextField
+                      label="Email"
                       name={"email"}
                       value={editSSR.email}
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
-                  <Box mb={1}>
-                    <Typography variant="h5">Nombre de Banco</Typography>
+                </Grid>
+                <Divider sx={{ mb: 1 }}>
+                  <Typography variant="h5">Cuenta Bancaria</Typography>
+                </Divider>
+                <Grid {...gridStyle}>
+                  <Grid item>
                     <TextField
                       name={"bankName"}
                       value={editSSR.bankName}
                       onChange={(e) => handleChange(e)}
                     />
-                  </Box>
-                  <Box mb={1}>
-                    <Typography variant="h5">Nombre de Titular</Typography>
+                  </Grid>
+                  <Grid item>
                     <TextField
+                      label="Nombre de Titular"
                       name={"bankHolder"}
                       value={editSSR.bankHolder}
                       onChange={(e) => handleChange(e)}
                     />
-                  </Box>
-                  <Box mb={1}>
-                    <Typography variant="h5">Rut del titular</Typography>
+                  </Grid>
+                  <Grid item>
                     <TextField
+                      label="Rut de Titular"
                       name={"bankRut"}
                       value={editSSR.bankRut}
                       onChange={(e) => handleChange(e)}
                     />
-                  </Box>
-                  <Box mb={1}>
-                    <Typography variant="h5">Número de cuenta</Typography>
+                  </Grid>
+                  <Grid item>
                     <TextField
+                      label="Número de Cuenta"
                       name={"bankNumber"}
                       value={editSSR.bankNumber}
                       onChange={(e) => handleChange(e)}
                     />
-                  </Box>
-                  <Box mb={1}>
-                    <Typography variant="h5">Tipo de Cuenta</Typography>
+                  </Grid>
+                  <Grid item>
                     <TextField
+                      label="Tipo de Cuenta"
                       name={"bankType"}
                       value={editSSR.bankType}
                       onChange={(e) => handleChange(e)}
                     />
-                  </Box>
-
-                  <Box mb={1}>
-                    <Typography variant="h5">Presidente</Typography>
+                  </Grid>
+                  <Grid item>
                     <Select
                       label="Presidente"
                       value={editSSR.president.userId}
@@ -401,13 +423,13 @@ export default function SSRConfiguration() {
                     >
                       {adminsList}
                     </Select>
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
               <Divider orientation="vertical" flexItem />
               <Box ml={2}>
                 <Typography variant="h2">Predeterminados</Typography>
-                <Box gap={2} alignItems="start" p={2}>
+                <Box alignItems="start" p={2}>
                   {actualUser!.role === UserRole.master && (
                     <Box mb={2}>
                       <Typography variant="h5">Precio de factura</Typography>
@@ -418,67 +440,61 @@ export default function SSRConfiguration() {
                       />
                     </Box>
                   )}
-                  <Box mb={2}>
-                    <Typography variant="h5">
-                      Precio de factura sección 1
-                    </Typography>
+                  <Box mb="1.3rem">
+                    <Divider sx={{ mb: 2 }}>
+                      <Typography variant="h5">Seccion 1</Typography>
+                    </Divider>
                     <TextField
+                      label="Precio"
+                      sx={{ mr: "1rem" }}
                       name={"config.billPriceSection1"}
                       value={editSSR.config.billPriceSection1}
                       onChange={(e) => handleChange(e)}
                     />
-                  </Box>
-                  <Box mb={2}>
-                    <Typography variant="h5">
-                      Precio de factura sección 2
-                    </Typography>
                     <TextField
-                      name={"config.billPriceSection2"}
-                      value={editSSR.config.billPriceSection2}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box mb={2}>
-                    <Typography variant="h5">
-                      Precio de factura sección 3
-                    </Typography>
-                    <TextField
-                      name={"config.billPriceSection3"}
-                      value={editSSR.config.billPriceSection3}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box mb={2}>
-                    <Typography variant="h5">
-                      Límite de factura sección 1
-                    </Typography>
-                    <TextField
+                      label="Limite"
                       name={"config.billLimitSection1"}
                       value={editSSR.config.billLimitSection1}
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
-                  <Box mb={2}>
-                    <Typography variant="h5">
-                      Límite de factura sección 2
-                    </Typography>
+                  <Box mb="1.2rem">
+                    <Divider sx={{ mb: 2 }}>
+                      <Typography variant="h5">Seccion 2</Typography>
+                    </Divider>
                     <TextField
+                      label="Precio"
+                      sx={{ mr: "1rem" }}
+                      name={"config.billPriceSection2"}
+                      value={editSSR.config.billPriceSection2}
+                      onChange={(e) => handleChange(e)}
+                    />
+                    <TextField
+                      label="Limite"
                       name={"config.billLimitSection2"}
                       value={editSSR.config.billLimitSection2}
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
-                  <Box mb={2}>
-                    <Typography variant="h5">
-                      Límite de factura sección 3
-                    </Typography>
+                  <Box mb="1.3rem">
+                    <Divider sx={{ mb: 2 }}>
+                      <Typography variant="h5">Seccion 3</Typography>
+                    </Divider>
                     <TextField
+                      label="Precio"
+                      name={"config.billPriceSection3"}
+                      value={editSSR.config.billPriceSection3}
+                      sx={{ mr: "1rem" }}
+                      onChange={(e) => handleChange(e)}
+                    />
+                    <TextField
+                      label="Limite"
                       name={"config.billLimitSection3"}
                       value={editSSR.config.billLimitSection3}
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
-                  <Box mb={2}>
+                  <Box mb="1.3rem">
                     <Typography variant="h5">Precio fijo</Typography>
                     <TextField
                       name={"config.fixedPrice"}
@@ -486,7 +502,7 @@ export default function SSRConfiguration() {
                       onChange={(e) => handleChange(e)}
                     />
                   </Box>
-                  <Box mb={2}>
+                  <Box>
                     <Typography variant="h5">Subsidio</Typography>
                     <TextField
                       name={"config.subsidy"}

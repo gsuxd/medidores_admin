@@ -69,6 +69,10 @@ const Status404 = Loader(
   lazy(() => import("@/content/pages/Status/Status404"))
 );
 
+const Status500 = Loader(
+  lazy(() => import("@/content/pages/Status/Status500"))
+);
+
 const App = Loader(
   lazy(() => import("@/content/pages/Status/App"))
 );
@@ -122,6 +126,10 @@ const routes: RouteObject[] = [
           {
             path: "404",
             element: <Status404 />,
+          },
+          {
+            path: "500",
+            element: <Status500 />,
           },
           {
             path: "app",
