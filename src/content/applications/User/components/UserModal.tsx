@@ -376,6 +376,16 @@ const AssignModal: React.FC<IProps> = ({
         });
       }
     } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 400 && typeof error.response.data.error === "string") {
+          setSnack({
+            open: true,
+            message: error.response.data.error,
+            severity: "error",
+          });
+          return;
+        }
+      }
       setSnack({
         open: true,
         message: `Error al ${userSelected ? "editar" : "crear"} el usuario`,
