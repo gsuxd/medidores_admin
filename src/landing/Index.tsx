@@ -146,7 +146,7 @@ export default function LandingPage() {
         </div>
         <div className="link-container">
           <h2>Conecta con nosotros</h2>
-          <a target="_blank" href="web.facebook.com/profile.php?id=61565050997415">Facebook</a>
+          <a target="_blank" href="https://web.facebook.com/profile.php?id=61565050997415">Facebook</a>
           <a target="_blank" href="https://www.instagram.com/h2ogestionapp/">Instagram</a>
           <a target="_blank" href="https://wa.me/+56977904563"><img src={WhatsappButtonGreenMedium} alt="Chat On Whatsapp" /></a>
         </div>
