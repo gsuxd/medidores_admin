@@ -208,6 +208,10 @@ const AssignModal: React.FC<IProps> = ({
       if (value.length > 10) return;
     }
     let newUser = user;
+    if (name === "address") {
+      if (value.length > 255) return;
+      setUser(newUser.copyWith({ [name]: event.target.value }));
+    }
     if (name.includes(".")) {
       const [key, subKey] = name.split(".");
       switch (key) {
