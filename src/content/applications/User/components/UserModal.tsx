@@ -154,8 +154,8 @@ const AssignModal: React.FC<IProps> = ({
         (actualUser?.role === UserRole.seller && user?.role === UserRole.admin)
       ? actualUser!.id
       : selectionUsers.size > 0
-      ? selectionUsers.entries().next().value[0]
-      : ""
+      ? selectionUsers.entries().next().value![0]
+      : 0
   );
 
   const [ssrId, setSSRId] = useState<number>(
@@ -165,12 +165,12 @@ const AssignModal: React.FC<IProps> = ({
   useEffect(() => {
     if (ssrId === 0) {
       setSSRId(
-        userSelected?.adminAccount?.ssrId ??
+        userSelected?.adminAccount?.ssrId ?
           (actualUser!.role === UserRole.admin
             ? actualUser?.adminAccount?.ssrId
             : (ssrQuery.data?.ssr.size ?? -1) > 0
-            ? ssrQuery.data!.ssr.entries().next().value[0]
-            : 0)
+            ? ssrQuery.data!.ssr.entries().next().value![0]
+            : 0)! : 0
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -190,8 +190,8 @@ const AssignModal: React.FC<IProps> = ({
               user?.role === UserRole.admin)
           ? actualUser!.id
           : selectionUsers.size > 0
-          ? selectionUsers.entries().next().value[0]
-          : ""
+          ? selectionUsers.entries().next().value![0]
+          : 0
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -520,8 +520,8 @@ const AssignModal: React.FC<IProps> = ({
                 </Select>
               </FormControl>
             </Grid>
-            {user.role === UserRole.operator ||
-              (user.role === UserRole.partner && (
+            {(user.role === UserRole.operator ||
+              user.role === UserRole.partner) && (
                 <Grid item>
                   <FormControl
                     sx={{
@@ -558,7 +558,7 @@ const AssignModal: React.FC<IProps> = ({
                     />
                   </FormControl>
                 </Grid>
-              ))}
+              )}
             {user.id !== -1 && (
               <Grid item>
                 <FormControlLabel

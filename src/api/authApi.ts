@@ -1,10 +1,7 @@
 import axios, { AxiosError } from "axios";
 
 export default abstract class AuthApi {
-  static async recoverPassword(data: { newPassword: string; confirmNewPassword: string; token: string }) {
-    if (data.newPassword !== data.confirmNewPassword) {
-      throw new Error('Las contraseñas no coinciden')
-    }
+  static async recoverPassword(data: { newPassword: string; token: string }) {
     try {
       const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/reset-password`, {
         token: data.token,
