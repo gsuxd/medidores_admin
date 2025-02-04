@@ -29,7 +29,7 @@ export default function TerminosYCondiciones() {
           <h2>Términos y Condiciones</h2>
         </div>
         <div className="content">
-          <Document renderMode="svg" onLoadSuccess={onLoadSuccess} file={query}>
+          <Document renderMode="canvas" onLoadSuccess={onLoadSuccess} file={query}>
             {new Array(numPages).fill(0).map((_, index) => (
               <Page key={index} width={isMobile ? width : undefined} pageNumber={index + 1} />
             ))}

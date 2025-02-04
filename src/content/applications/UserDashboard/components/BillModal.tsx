@@ -20,10 +20,6 @@ import { Label } from "@mui/icons-material";
 import Bill, { BillStatus } from "@/models/bill";
 import { userBillsContext } from "../context";
 import { format } from "date-fns";
-import { Document, Page } from "react-pdf";
-import blobToURL from "@/helpers/blobToUrl";
-import 'react-pdf/dist/Page/TextLayer.css';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
 import CustomSnackbar from "@/components/Snackbar";
 
 interface IProps {
@@ -43,6 +39,24 @@ const AssignModal: React.FC<IProps> = ({
 }) => {
   const [bill, setBill] = useState<Bill>(billSelected);
   const { query } = useContext(userBillsContext);
+
+  const queryPdf = useQuery({
+    queryKey: ["queryPdf", billSelected.id],
+    queryFn: async () => {
+      // const req = await axios.get(, {headers: {
+      //
+      // }});
+      const req = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/media/${billSelected.file}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return req.data.url;
+    },
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (event: any) => {
@@ -79,8 +93,6 @@ const AssignModal: React.FC<IProps> = ({
     return data;
   };
 
-  const [isWarningOpen, setIsWarningOpen] = useState(false);
-
   const confirmQuery = useMutation({ mutationFn: () => confirm() });
 
   const handleConfirm = async () => {
@@ -99,11 +111,6 @@ const AssignModal: React.FC<IProps> = ({
 
   return (
     <>
-    <WarningModal 
-    isOpen={isWarningOpen}
-    onClose={() => setIsWarningOpen(!isWarningOpen)}
-    bill={bill}
-    />
       <Dialog fullWidth open={isOpen} onClose={onClose}>
       <CustomSnackbar snackState={snack} onClose={() => setSnack({ ...snack, open: false })}/>
       <DialogTitle>
@@ -212,7 +219,7 @@ const AssignModal: React.FC<IProps> = ({
           display: "flex",
           justifyContent: "space-between"
         }}>
-        <Button onClick={() => setIsWarningOpen(true)}>Ver Aviso</Button>
+        <Button disabled={!queryPdf.data} href={queryPdf.data} target="_blank">Ver Aviso</Button>
         {
           confirmQuery.error && <Label color="error">Revisa los datos y vuelve a intentarlo</Label>
         }
@@ -239,55 +246,4 @@ const AssignModal: React.FC<IProps> = ({
     </>
   );
 };
-
-function WarningModal({
-  bill,
-  isOpen,
-  onClose,
-}: {
-  bill: Bill;
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  const query = useQuery({
-    queryKey: ["warningModal", bill.id],
-    queryFn: async () => {
-      // const req = await axios.get(, {headers: {
-      //
-      // }});
-      const req = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/media/bills/aviso_cobranza-${
-          bill.id
-        }.pdf`,
-        {
-          headers: {
-            'Content-Type': 'application/pdf',
-            'Accept': 'application/pdf',
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data = await blobToURL(await req.blob());
-      return data;
-    },
-  });
-
-  return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Visualización de Aviso de cobranza</DialogTitle>
-      <DialogContent sx={{
-        paddingBottom: query.data ? 0 : "1rem",
-        paddingLeft: query.data ? 0 : "1rem",
-      }}>
-        {query.isLoading && <CircularProgress />}
-        {query.data && (
-              <Document renderMode="canvas" file={query.data}>
-              <Page pageNumber={1} /> 
-              </Document>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 export default AssignModal;

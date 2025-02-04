@@ -16,7 +16,7 @@ export default function PoliticaPrivacidad() {
         <h2>Politica de Privacidad</h2>
       </div>
       <div className="content">
-        <Document renderMode="svg" onLoadSuccess={onLoadSuccess} file={query}>
+        <Document renderMode="canvas" onLoadSuccess={onLoadSuccess} file={query}>
           {new Array(numPages).fill(0).map((_, index) => (
             <Page key={index} pageNumber={index + 1} />
           ))}
