@@ -156,6 +156,7 @@ const AssignModal: React.FC<IProps> = ({ isOpen, onClose, setIsOpen }) => {
         id: -1,
         ssrId: -1,
         subsidy: 0,
+        paymentEnabled: false,
       }),
     })
   );
