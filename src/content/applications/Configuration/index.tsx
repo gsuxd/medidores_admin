@@ -12,6 +12,7 @@ import {
   Box,
   Button,
   Card,
+  Checkbox,
   CircularProgress,
   Divider,
   Fab,
@@ -112,13 +113,15 @@ export default function SSRConfiguration() {
         billLimitSection3: 0,
         fixedPrice: 0,
         subsidy: 0,
+        paymentEnabled: false,
+        paymentToken: "",
       }),
     })
   );
 
   useEffect(() => {
     if (selectedSSR === -1 && query.data) {
-      setSelectedSSR(query.data!.ssr.keys().next().value);
+      setSelectedSSR(query.data!.ssr.keys().next().value!);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.data]);
@@ -424,6 +427,27 @@ export default function SSRConfiguration() {
                       {adminsList}
                     </Select>
                   </Grid>
+                  <Grid item sx={{ alignItems: "center"}}>
+                      <Checkbox 
+                      name="config.paymentEnabled"
+                      aria-label="Habilitar pagos"
+                      value={editSSR.config.paymentEnabled}
+                      onChange={handleChange}
+                      />
+                      Habilitar Pagos
+                  </Grid>
+                  {
+                    editSSR.config.paymentEnabled && (
+                      <Grid item>
+                      <TextField 
+                      label="Token de Acceso"
+                      name="config.paymentToken"
+                      value={editSSR.config.paymentToken}
+                      onChange={handleChange}
+                      />
+                  </Grid>
+                    )
+                  }
                 </Grid>
               </Box>
               <Divider orientation="vertical" flexItem />

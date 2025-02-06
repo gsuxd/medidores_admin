@@ -13,6 +13,8 @@ interface IConfig {
   billLimitSection3: number;
   fixedPrice: number;
   subsidy: number;
+  paymentEnabled: boolean;
+  paymentToken?: string | null | undefined;
 }
 
 export default class Config implements IConfig{
@@ -28,6 +30,8 @@ export default class Config implements IConfig{
   readonly billLimitSection3: number;
   readonly fixedPrice: number;
   readonly subsidy: number;
+  readonly paymentEnabled: boolean;
+  readonly paymentToken: string | null | undefined;
 
   constructor(props: IConfig) {
     this.id = props.id;
@@ -42,6 +46,8 @@ export default class Config implements IConfig{
     this.billLimitSection3 = props.billLimitSection3;
     this.fixedPrice = props.fixedPrice;
     this.subsidy = props.subsidy;
+    this.paymentEnabled = props.paymentEnabled;
+    this.paymentToken = props.paymentToken;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -59,6 +65,8 @@ export default class Config implements IConfig{
       billLimitSection3: data.billLimitSection3,
       fixedPrice: data.fixedPrice,
       subsidy: data.subsidy,
+      paymentEnabled: data.paymentEnabled,
+      paymentToken: data.paymentToken
     });
   }
 
@@ -76,6 +84,8 @@ export default class Config implements IConfig{
       billLimitSection3: this.billLimitSection3,
       fixedPrice: this.fixedPrice,
       subsidy: this.subsidy,
+      paymentEnabled: this.paymentEnabled,
+      paymentToken: this.paymentToken
     };
   }
 
@@ -92,6 +102,8 @@ export default class Config implements IConfig{
     billLimitSection3,
     fixedPrice,
     subsidy,
+    paymentEnabled,
+    paymentToken,
   }: Partial<IConfig>): Config {
     return new Config({
       id: id ?? this.id,
@@ -106,6 +118,8 @@ export default class Config implements IConfig{
       billLimitSection3: billLimitSection3 ?? this.billLimitSection3,
       fixedPrice: fixedPrice ?? this.fixedPrice,
       subsidy: subsidy ?? this.subsidy,
+      paymentEnabled: paymentEnabled ?? this.paymentEnabled,
+      paymentToken: paymentToken ?? this.paymentToken,
     });
   }
 }

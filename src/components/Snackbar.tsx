@@ -14,6 +14,7 @@ interface IProps {
 const CustomSnackbar = ({snackState, onClose, snackProps, alertProps}: IProps) => {
     return (
         <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           open={snackState.open}
           autoHideDuration={5000}
           onClose={onClose}
