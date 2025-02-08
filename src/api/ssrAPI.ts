@@ -1,27 +1,6 @@
 import SSR from "@/models/ssr";
 import axios from "axios";
 
-interface IUpdate {
-    id: number;
-    name: string;
-    address: string;
-    phone: string;
-    email: string;
-    bankNumber: string;
-    president: number;
-    config: {
-        billPrice: number;
-        billLimitSection1: number;
-        billLimitSection2: number;
-        billLimitSection3: number;
-        billPriceSection1: number;
-        billPriceSection2: number;
-        billPriceSection3: number;
-        fixedPrice: number;
-        subsidy: number;
-    };
-  }
-
   interface IListParams {
     name: string,
     enabled: boolean,
@@ -46,7 +25,8 @@ export default abstract class SSRApi {
         }
     }
 
-    static async update(data: IUpdate): Promise<void>{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static async update(data: Record<string, any>): Promise<void>{
         try {
             await axios.put(import.meta.env.VITE_SERVER_URL + '/api/admin/ssr/', data, {
                 headers: {

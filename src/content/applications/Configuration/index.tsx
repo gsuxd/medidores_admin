@@ -29,6 +29,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import AssignModal from "./components/NewSSRModal";
 import CustomSnackbar from "@/components/Snackbar";
+import { useForm, Controller } from "react-hook-form";
 
 export default function SSRConfiguration() {
   const {
@@ -133,38 +134,6 @@ export default function SSRConfiguration() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSSR]);
 
-  const handleChange = (e: React.ChangeEvent) => {
-    const { name, value } = e.target as HTMLInputElement;
-    if (name.includes(".")) {
-      const [obj, key] = name.split(".");
-      if (obj === "config") {
-        setEditSSR((val) => {
-          return val.copyWith({
-            config: val.config.copyWith({
-              [key]: value,
-            }),
-          });
-        });
-        return;
-      }
-      setEditSSR((val) => {
-        return val.copyWith({
-          [obj]: {
-            //@ts-expect-error 3943
-            ...val[obj],
-            [key]: value,
-          },
-        });
-      });
-      return;
-    }
-    setEditSSR((val) => {
-      return val.copyWith({
-        [name]: value,
-      });
-    });
-  };
-
   const admins = useQuery({
     queryFn: async () =>
       await UsersApi.listUsers({
@@ -200,57 +169,70 @@ export default function SSRConfiguration() {
     mutationFn: SSRApi.update,
   });
 
-  async function update() {
+  async function update(formData: Partial<SSR>): Promise<void> {
     try {
+      const currentSSR = query.data!.ssr.get(selectedSSR)?.toJson();
+      if (!currentSSR) throw new Error("SSR no encontrado");
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = editSSR.toJson();
-    const ssr = query.data!.ssr.get(selectedSSR)?.toJson();
-    for (const key in data) {
-      if (key === "president") {
-        //@ts-expect-error 321
-        if (data["president"] === ssr["president"]["id"]) {
-          data["presidentId"] = data["president"]["id"];
+      const updates: Record<string, any> = {};
+
+      // Procesar el campo "president"
+      if (formData.president) {
+        // Verificamos si el id del presidente cambió
+        if (currentSSR.president.id !== formData.president.id) {
+          updates.presidentId = formData.president.id;
         }
-        delete data["president"];
-        continue;
       }
-      if (key === "config") {
-        for (const subKey in data["config"]) {
-          //@ts-expect-error 321
-          if (ssr["config"][subKey] === data["config"][subKey]) {
-            delete data["config"][subKey];
-            continue;
+
+      // Procesar la configuración (config)
+      if (formData.config) {
+        const newConfig = formData.config as Partial<Config>;
+        for (const key in newConfig) {
+          if (Object.prototype.hasOwnProperty.call(newConfig, key)) {
+            const newVal = newConfig[key as keyof Config];
+            // Excepción: no convertir a número los campos paymentEnabled y paymentToken
+            if (key === "paymentEnabled" || key === "paymentToken") {
+              if (currentSSR.config[key] !== newVal) {
+                updates[key] = newVal;
+              }
+            } else {
+              /// @ts-expect-error: key dinámico
+              if (currentSSR.config[key] !== newVal) {
+                updates[key] = Number(newVal);
+              }
+            }
           }
-          data[subKey] = Number(data["config"][subKey]);
         }
       }
-      if (!data[key]) {
-        delete data[key];
-        continue;
-      }
-      if (key === "sellers") {
-        delete data[key];
-      }
-      //@ts-expect-error 321
-      if (data[key] === ssr![key]) {
-        delete data[key];
-        continue;
-      }
-    }
-    data["id"] = selectedSSR;
-    await mutation.mutateAsync(data);
-    setSnack({
-      open: true,
-      message: "SSR actualizado correctamente",
-      severity: "success",
-    })
-    await query.refetch();
+
+      // Procesar otros campos de primer nivel (excluyendo president, config y sellers)
+      Object.keys(formData).forEach((key) => {
+        if (["president", "config", "sellers"].includes(key)) return;
+        // @ts-expect-error: key dinámico
+        const newVal = formData[key];
+        // Comparación simple, se asume que los valores primitivos pueden compararse directamente
+        // @ts-expect-error 2532
+        if (newVal !== undefined && newVal !== currentSSR[key]) {
+          updates[key] = newVal;
+        }
+      });
+
+      updates.id = selectedSSR;
+
+      await mutation.mutateAsync(updates);
+      setSnack({
+        open: true,
+        message: "SSR actualizado correctamente",
+        severity: "success",
+      });
+      await query.refetch();
     } catch (error) {
       setSnack({
         open: true,
         message: "Error al actualizar SSR",
         severity: "error",
-      })
+      });
     }
   }
 
@@ -269,6 +251,17 @@ export default function SSRConfiguration() {
     severity: "success",
   });
 
+  const { control, handleSubmit, reset, watch } = useForm<Partial<SSR>>({
+    defaultValues: editSSR,
+  });
+
+  const paymentEnabled = watch("config.paymentEnabled");
+
+  // Si editSSR cambia, actualizamos los valores del formulario.
+  useEffect(() => {
+    reset(editSSR);
+  }, [editSSR, reset]);
+
   return (
     <motion.div
       initial={{
@@ -285,17 +278,14 @@ export default function SSRConfiguration() {
         snackState={snack}
         onClose={() => setSnack({ ...snack, open: false })}
       />
-      {
-        <Helmet>
-          <title>Configuración de SSR</title>
-        </Helmet>
-      }
+      <Helmet>
+        <title>Configuración de SSR</title>
+      </Helmet>
       <AssignModal
         isOpen={showModal}
         setIsOpen={setShowModal}
         onClose={() => setShowModal(false)}
       />
-
       <PageTitleWrapper>
         <Stack direction="row" justifyContent="space-evenly">
           <Box>
@@ -317,233 +307,460 @@ export default function SSRConfiguration() {
           </Stack>
         </Stack>
       </PageTitleWrapper>
-      {editSSR.id !== -1 && (
-        <Fab
-          color="primary"
-          style={{ position: "fixed", bottom: "10px", right: "10px" }}
-          disabled={mutation.isPending}
-          onClick={update}
-        >
-          {mutation.isPending ? <CircularProgress /> : <Save />}
-        </Fab>
-      )}
       <Card sx={{ marginLeft: 2, marginRight: 2 }}>
-        {selectedSSR !== -1 && (
-          <Box p={3}>
-            <Stack direction="row" justifyContent="start">
-              <Box flexBasis={"50%"}>
-                <Typography variant="h2">Información</Typography>
-                <Grid {...gridStyle}>
-                  <Box mb={2}>
-                    <TextField
-                      label="Nombre"
-                      name={"name"}
-                      value={editSSR.name}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box mb={2}>
-                    <TextField
-                      label="Dirección"
-                      name={"address"}
-                      value={editSSR.address}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box mb={1}>
-                    <TextField
-                      label="Teléfono"
-                      name={"phone"}
-                      value={editSSR.phone}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box mb={1}>
-                    <TextField
-                      label="Email"
-                      name={"email"}
-                      value={editSSR.email}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                </Grid>
-                <Divider sx={{ mb: 1 }}>
-                  <Typography variant="h5">Cuenta Bancaria</Typography>
-                </Divider>
-                <Grid {...gridStyle}>
-                  <Grid item>
-                    <TextField
-                      name={"bankName"}
-                      value={editSSR.bankName}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      label="Nombre de Titular"
-                      name={"bankHolder"}
-                      value={editSSR.bankHolder}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      label="Rut de Titular"
-                      name={"bankRut"}
-                      value={editSSR.bankRut}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      label="Número de Cuenta"
-                      name={"bankNumber"}
-                      value={editSSR.bankNumber}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <TextField
-                      label="Tipo de Cuenta"
-                      name={"bankType"}
-                      value={editSSR.bankType}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <Select
-                      label="Presidente"
-                      value={editSSR.president.userId}
-                      onChange={(e) =>
-                        setEditSSR((val) =>
-                          val.copyWith({
-                            president: admins.data!.users.get(
-                              e.target.value as number
-                            )!.adminAccount,
-                          })
-                        )
-                      }
-                    >
-                      {adminsList}
-                    </Select>
-                  </Grid>
-                  <Grid item sx={{ alignItems: "center"}}>
-                      <Checkbox 
-                      name="config.paymentEnabled"
-                      aria-label="Habilitar pagos"
-                      value={editSSR.config.paymentEnabled}
-                      onChange={handleChange}
-                      />
-                      Habilitar Pagos
-                  </Grid>
-                  {
-                    editSSR.config.paymentEnabled && (
-                      <Grid item>
-                      <TextField 
-                      label="Token de Acceso"
-                      name="config.paymentToken"
-                      value={editSSR.config.paymentToken}
-                      onChange={handleChange}
-                      />
-                  </Grid>
-                    )
-                  }
-                </Grid>
-              </Box>
-              <Divider orientation="vertical" flexItem />
-              <Box ml={2}>
-                <Typography variant="h2">Predeterminados</Typography>
-                <Box alignItems="start" p={2}>
-                  {actualUser!.role === UserRole.master && (
+        <form onSubmit={handleSubmit(update)}>
+          {editSSR.id !== -1 && (
+            <Fab
+              type="submit"
+              color="primary"
+              style={{ position: "fixed", bottom: "10px", right: "10px" }}
+              disabled={mutation.isPending}
+              onClick={handleSubmit(update)}
+            >
+              {mutation.isPending ? <CircularProgress /> : <Save />}
+            </Fab>
+          )}
+          {selectedSSR !== -1 ? (
+            <Box p={3}>
+              <Stack direction="row" justifyContent="start">
+                <Box flexBasis={"50%"}>
+                  <Typography variant="h2">Información</Typography>
+                  <Grid {...gridStyle}>
                     <Box mb={2}>
-                      <Typography variant="h5">Precio de factura</Typography>
-                      <TextField
-                        name={"config.billPrice"}
-                        value={editSSR.config.billPrice}
-                        onChange={(e) => handleChange(e)}
+                      <Controller
+                        name="name"
+                        control={control}
+                        rules={{ required: "El nombre es obligatorio." }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Nombre"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
                       />
                     </Box>
-                  )}
-                  <Box mb="1.3rem">
-                    <Divider sx={{ mb: 2 }}>
-                      <Typography variant="h5">Seccion 1</Typography>
-                    </Divider>
-                    <TextField
-                      label="Precio"
-                      sx={{ mr: "1rem" }}
-                      name={"config.billPriceSection1"}
-                      value={editSSR.config.billPriceSection1}
-                      onChange={(e) => handleChange(e)}
-                    />
-                    <TextField
-                      label="Limite"
-                      name={"config.billLimitSection1"}
-                      value={editSSR.config.billLimitSection1}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box mb="1.2rem">
-                    <Divider sx={{ mb: 2 }}>
-                      <Typography variant="h5">Seccion 2</Typography>
-                    </Divider>
-                    <TextField
-                      label="Precio"
-                      sx={{ mr: "1rem" }}
-                      name={"config.billPriceSection2"}
-                      value={editSSR.config.billPriceSection2}
-                      onChange={(e) => handleChange(e)}
-                    />
-                    <TextField
-                      label="Limite"
-                      name={"config.billLimitSection2"}
-                      value={editSSR.config.billLimitSection2}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box mb="1.3rem">
-                    <Divider sx={{ mb: 2 }}>
-                      <Typography variant="h5">Seccion 3</Typography>
-                    </Divider>
-                    <TextField
-                      label="Precio"
-                      name={"config.billPriceSection3"}
-                      value={editSSR.config.billPriceSection3}
-                      sx={{ mr: "1rem" }}
-                      onChange={(e) => handleChange(e)}
-                    />
-                    <TextField
-                      label="Limite"
-                      name={"config.billLimitSection3"}
-                      value={editSSR.config.billLimitSection3}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box mb="1.3rem">
-                    <Typography variant="h5">Precio fijo</Typography>
-                    <TextField
-                      name={"config.fixedPrice"}
-                      value={editSSR.config.fixedPrice}
-                      onChange={(e) => handleChange(e)}
-                    />
-                  </Box>
-                  <Box>
-                    <Typography variant="h5">Subsidio</Typography>
-                    <TextField
-                      name={"config.subsidy"}
-                      value={editSSR.config.subsidy}
-                      onChange={(e) => handleChange(e)}
-                    />
+                    <Box mb={2}>
+                      <Controller
+                        name="address"
+                        control={control}
+                        rules={{ required: "La dirección es obligatoria." }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Dirección"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box mb={1}>
+                      <Controller
+                        name="phone"
+                        control={control}
+                        rules={{
+                          required: "El teléfono es obligatorio.",
+                          pattern: {
+                            value: /^[0-9\-+()\s]*$/,
+                            message: "Teléfono inválido.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Teléfono"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box mb={1}>
+                      <Controller
+                        name="email"
+                        control={control}
+                        rules={{
+                          required: "El correo es obligatorio.",
+                          pattern: {
+                            value:
+                              /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+                            message: "Correo inválido.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Email"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
+                  </Grid>
+                  <Divider sx={{ mb: 1 }}>
+                    <Typography variant="h5">Cuenta Bancaria</Typography>
+                  </Divider>
+                  <Grid {...gridStyle}>
+                    <Grid item>
+                      <Controller
+                        name="bankName"
+                        control={control}
+                        rules={{
+                          required: "El nombre del banco es obligatorio.",
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Banco"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Controller
+                        name="bankHolder"
+                        control={control}
+                        rules={{
+                          required: "El nombre del titular es obligatorio.",
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Nombre de Titular"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Controller
+                        name="bankRut"
+                        control={control}
+                        rules={{ required: "El RUT es obligatorio." }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Rut de Titular"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Controller
+                        name="bankNumber"
+                        control={control}
+                        rules={{
+                          required: "El número de cuenta es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+$/,
+                            message: "Solo se permiten números.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Número de Cuenta"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Controller
+                        name="bankType"
+                        control={control}
+                        rules={{
+                          required: "El tipo de cuenta es obligatorio.",
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Tipo de Cuenta"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Select
+                        label="Presidente"
+                        value={editSSR.president.userId}
+                        onChange={(e) =>
+                          setEditSSR((val) =>
+                            val.copyWith({
+                              president: admins.data!.users.get(
+                                e.target.value as number
+                              )!.adminAccount,
+                            })
+                          )
+                        }
+                      >
+                        {adminsList}
+                      </Select>
+                    </Grid>
+                    <Grid item sx={{ alignItems: "center" }}>
+                      <Controller
+                        name="config.paymentEnabled"
+                        control={control}
+                        render={({ field }) => (
+                          <>
+                            <Checkbox
+                              {...field}
+                              checked={field.value}
+                              aria-label="Habilitar pagos"
+                            />
+                            Habilitar Pagos
+                          </>
+                        )}
+                      />
+                    </Grid>
+                    {paymentEnabled && (
+                      <Grid item>
+                        <Controller
+                          name="config.paymentToken"
+                          control={control}
+                          rules={{
+                            required:
+                              "El token es obligatorio si se habilitan pagos.",
+                          }}
+                          render={({ field, fieldState }) => (
+                            <TextField
+                              {...field}
+                              label="Token de Acceso"
+                              value={field.value ?? ""}
+                              error={!!fieldState.error}
+                              helperText={fieldState.error?.message}
+                            />
+                          )}
+                        />
+                      </Grid>
+                    )}
+                  </Grid>
+                </Box>
+                <Divider orientation="vertical" flexItem />
+                <Box ml={2}>
+                  <Typography variant="h2">Predeterminados</Typography>
+                  <Box alignItems="start" p={2}>
+                    {actualUser!.role === UserRole.master && (
+                      <Box mb={2}>
+                        <Typography variant="h5">Precio de factura</Typography>
+                        <Controller
+                          name="config.billPrice"
+                          control={control}
+                          rules={{
+                            required: "El precio de factura es obligatorio.",
+                            pattern: {
+                              value: /^[0-9]+(\.[0-9]+)?$/,
+                              message: "Formato numérico inválido.",
+                            },
+                          }}
+                          render={({ field, fieldState }) => (
+                            <TextField
+                              {...field}
+                              label="Precio de factura"
+                              error={!!fieldState.error}
+                              helperText={fieldState.error?.message}
+                            />
+                          )}
+                        />
+                      </Box>
+                    )}
+                    <Box mb="1.3rem">
+                      <Divider sx={{ mb: 2 }}>
+                        <Typography variant="h5">Sección 1</Typography>
+                      </Divider>
+                      <Controller
+                        name="config.billPriceSection1"
+                        control={control}
+                        rules={{
+                          required: "El precio es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+(\.[0-9]+)?$/,
+                            message: "Formato numérico inválido.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Precio"
+                            sx={{ mr: "1rem" }}
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                      <Controller
+                        name="config.billLimitSection1"
+                        control={control}
+                        rules={{
+                          required: "El límite es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+$/,
+                            message: "Solo se permiten números.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Límite"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box mb="1.2rem">
+                      <Divider sx={{ mb: 2 }}>
+                        <Typography variant="h5">Sección 2</Typography>
+                      </Divider>
+                      <Controller
+                        name="config.billPriceSection2"
+                        control={control}
+                        rules={{
+                          required: "El precio es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+(\.[0-9]+)?$/,
+                            message: "Formato numérico inválido.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Precio"
+                            sx={{ mr: "1rem" }}
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                      <Controller
+                        name="config.billLimitSection2"
+                        control={control}
+                        rules={{
+                          required: "El límite es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+$/,
+                            message: "Solo se permiten números.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Límite"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box mb="1.3rem">
+                      <Divider sx={{ mb: 2 }}>
+                        <Typography variant="h5">Sección 3</Typography>
+                      </Divider>
+                      <Controller
+                        name="config.billPriceSection3"
+                        control={control}
+                        rules={{
+                          required: "El precio es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+(\.[0-9]+)?$/,
+                            message: "Formato numérico inválido.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Precio"
+                            sx={{ mr: "1rem" }}
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                      <Controller
+                        name="config.billLimitSection3"
+                        control={control}
+                        rules={{
+                          required: "El límite es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+$/,
+                            message: "Solo se permiten números.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Límite"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box mb="1.3rem">
+                      <Typography variant="h5">Precio fijo</Typography>
+                      <Controller
+                        name="config.fixedPrice"
+                        control={control}
+                        rules={{
+                          required: "El precio fijo es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+(\.[0-9]+)?$/,
+                            message: "Formato numérico inválido.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Precio fijo"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box>
+                      <Typography variant="h5">Subsidio</Typography>
+                      <Controller
+                        name="config.subsidy"
+                        control={control}
+                        rules={{
+                          required: "El subsidio es obligatorio.",
+                          pattern: {
+                            value: /^[0-9]+(\.[0-9]+)?$/,
+                            message: "Formato numérico inválido.",
+                          },
+                        }}
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            {...field}
+                            label="Subsidio"
+                            error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                          />
+                        )}
+                      />
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            </Stack>
-          </Box>
-        )}
-        {selectedSSR === -1 && (
-          <Box p={3}>
-            <Typography variant="h2">No hay SSR seleccionado</Typography>
-          </Box>
-        )}
+              </Stack>
+            </Box>
+          ) : (
+            <Box p={3}>
+              <Typography variant="h2">No hay SSR seleccionado</Typography>
+            </Box>
+          )}
+        </form>
       </Card>
     </motion.div>
   );

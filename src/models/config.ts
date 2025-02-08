@@ -70,10 +70,11 @@ export default class Config implements IConfig{
     });
   }
 
-  toJson() {
+  toJson(): IConfig {
     return {
       id: this.id,
       billPrice: this.billPrice,
+      //@ts-expect-error 3219
       billDate: this.billDate.toISOString(),
       ssrId: this.ssrId,
       billPriceSection1: this.billPriceSection1,
