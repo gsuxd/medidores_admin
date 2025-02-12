@@ -128,18 +128,18 @@ const BillsTable: React.FC = () => {
         </Table>
       </TableContainer>
       <Box p={2}>
-        <TableCell
+        <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "center",
           }}
         >
-          Page {filters.page ?? 0} of{" "}
+          Pagina {(filters.page ?? 0) + 1} de{" "}
           {query.data?.count
             ? query.data.count < 10
-              ? filters.page
-              : Math.floor(query.data.count / 10)
+              ? filters.page + 1
+              : Math.floor(query.data.count / 10) + 1
             : 0}
           <Box>
             <Button
@@ -162,7 +162,7 @@ const BillsTable: React.FC = () => {
               <ArrowForwardIosIcon />
             </Button>
           </Box>
-        </TableCell>
+        </Box>
       </Box>
     </Card>
   );

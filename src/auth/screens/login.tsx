@@ -4,34 +4,40 @@ import {
   Box,
   Button,
   Card,
+  CircularProgress,
   TextField,
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import Logo from "../../assets/logo.jpeg";
 import { useNavigate } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
 
 export default function LoginPage() {
-  const [values, setValues] = useState({
-    email: "",
-    password: "",
+  const {control, handleSubmit} = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
   const {
     auth: {
-      loginMutation: { error },
+      loginMutation: { error, loading },
       login,
     },
   } = useContext(AdminContext);
+
   const phone = useMediaQuery("max-width: 640px");
   const navigate = useNavigate();
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       navigate("/admin/dashboard", { replace: true });
 
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigate]);
+
   return (
     <>
       <Box
@@ -41,6 +47,8 @@ export default function LoginPage() {
         alignItems="center"
         justifyContent="center"
       >
+        <form onSubmit={handleSubmit(login)}>
+
         <Card
           sx={{
             display: "flex",
@@ -61,27 +69,41 @@ export default function LoginPage() {
           <Typography mb="1rem" variant="h2">
             Iniciar Sesión
           </Typography>
-          <TextField
+          <Controller 
+          control={control}
+          name="email"
+          rules={{ required: "Este campo es requerido", pattern: { value: /^\S+@\S+$/i, message: "Correo inválido" } }}
+          render={({ field, fieldState }) => (
+            <TextField
             label="Correo"
-            value={values.email}
             sx={{ width: "70%" }}
-            type="email"
-            required
-            onChange={(e) => setValues({ ...values, email: e.target.value })}
+            {...field}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
             />
-          <TextField
+          )}
+          />
+          <Controller
+          control={control}
+          name="password"
+          rules={{ required: "Este campo es requerido" }}
+          render={({ field, fieldState }) => (
+            <TextField
             label="Contraseña"
-            value={values.password}
             sx={{ width: "70%" }}
             type="password"
-            required
-            onChange={(e) => setValues({ ...values, password: e.target.value })}
+            {...field}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            />
+          )}
           />
           {error && <Text color="error">{error.message}</Text>}
-          <Button onClick={() => login(values.email, values.password)}>
-            Iniciar Sesión
+          <Button type="submit" variant="contained" sx={{ width: "70%" }}>
+            {error ? "Intentar de nuevo" : loading ? <CircularProgress color="secondary" /> : "Iniciar Sesión"}
           </Button>
         </Card>
+            </form>
       </Box>
     </>
   );

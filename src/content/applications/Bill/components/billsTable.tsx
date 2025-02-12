@@ -141,7 +141,7 @@ const BillsTable: React.FC = () => {
         </Table>
       </TableContainer>
       <Box p={2}>
-        <TableCell
+        <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",

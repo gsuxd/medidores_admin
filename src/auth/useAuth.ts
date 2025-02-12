@@ -26,7 +26,7 @@ export default function useAuth() {
     mutationFn: AuthApi.createMaster,
   })
 
-  async function login(email: string, password: string) {
+  async function login({ email, password }: { email: string, password: string }) {
     const emailParsed = email.trim();
     const passwordParsed = password.trim();
     if (emailParsed === "" || passwordParsed === "") {
@@ -48,27 +48,27 @@ export default function useAuth() {
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((e as any).message === "CREATE_MASTER") {
-          navigate("/create-master", { replace: true });
-          return;
-        }
+        navigate("/create-master", { replace: true });
+        return;
+      }
     }
   }
 
-  async function createMaster(data: {name: string; lastName: string; rut: string; address: string; email: string; password: string}) {
+  async function createMaster(data: { name: string; lastName: string; rut: string; address: string; email: string; password: string }) {
     if (masterMutation.isPending) {
       return;
     }
     const res = await masterMutation.mutateAsync(data);
     const user = User.fromJson(res.user);
-      if (user.role === UserRole.operator || user.role === UserRole.partner) {
-        navigate("/status/app", { replace: true });
-        return;
-      }
+    if (user.role === UserRole.operator || user.role === UserRole.partner) {
+      navigate("/status/app", { replace: true });
+      return;
+    }
 
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("user", JSON.stringify(res.user));
-      setUser(user);
-      navigate("/admin/dashboard", { replace: true });
+    localStorage.setItem("token", res.token);
+    localStorage.setItem("user", JSON.stringify(res.user));
+    setUser(user);
+    navigate("/admin/dashboard", { replace: true });
   }
 
   async function logout() {

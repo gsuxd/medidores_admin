@@ -6,31 +6,47 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import Logo from "@/assets/logo.jpeg";
 import { useNavigate } from "react-router-dom";
 import { AdminContext } from "@/contexts/AdminContext";
+import { Controller, useForm } from "react-hook-form";
 
 export default function LoginPage() {
-  const [values, setValues] = useState({
-    name: "",
-    lastName: "",
-    rut: "",
-    address: "",
-    phone: "",
-    email: "",
-    password: "",
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      name: "",
+      lastName: "",
+      rut: "",
+      address: "",
+      phone: "",
+      email: "",
+      password: "",
+    },
   });
+
   const navigate = useNavigate();
-  const {auth: {createMaster: {mutate, error, loading}}} = useContext(AdminContext);
+
+  const {
+    auth: {
+      createMaster: { mutate, error, loading },
+    },
+  } = useContext(AdminContext);
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       navigate("/admin/dashboard", { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigate]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function confirm(data: any) {
+    mutate(data);
+  }
+
   return (
     <>
+      <form onSubmit={handleSubmit(confirm)}>
         <Card
           sx={{
             display: "flex",
@@ -39,79 +55,137 @@ export default function LoginPage() {
             placeItems: "center",
             gap: "2rem",
             padding: "4rem 0",
-            overflow: "auto"
+            overflow: "auto",
           }}
         >
           <img
             src={Logo}
             alt="logo"
-            width="20%"
+            width="10%"
             style={{ borderRadius: "50%" }}
           />
           <Typography mb="1rem" variant="h2">
             Crea tu usuario master
           </Typography>
-          <TextField
-            label="Nombre"
-            value={values.name}
-            sx={{ width: "70%" }}
-            required
-            onChange={(e) => setValues({ ...values, name: e.target.value })}
+          <Controller
+            control={control}
+            name="name"
+            rules={{ required: "Este campo es requerido" }}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Nombre"
+                sx={{ width: "70%" }}
+                {...field}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
           />
-          <TextField
-            label="Apellido"
-            value={values.lastName}
-            sx={{ width: "70%" }}
-            required
-            onChange={(e) => setValues({ ...values, lastName: e.target.value })}
+          <Controller
+            control={control}
+            name="lastName"
+            rules={{ required: "Este campo es requerido" }}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Apellido"
+                sx={{ width: "70%" }}
+                {...field}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
           />
-          <TextField
-            label="Rut"
-            value={values.rut}
-            sx={{ width: "70%" }}
-            required
-            onChange={(e) => setValues({ ...values, rut: e.target.value })}
+          <Controller
+            control={control}
+            name="rut"
+            rules={{
+              required: "Este campo es requerido",
+              pattern: {
+                value: /^([1-9]|[1-9]\d|[1-9]\d{2})((\.\d{3})*|(\d{3})*)-(\d|k|K)$/i,
+                message: "Rut inválido",
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Rut"
+                sx={{ width: "70%" }}
+                {...field}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
           />
-          <TextField
-            label="Dirección"
-            value={values.address}
-            sx={{ width: "70%" }}
-            required
-            onChange={(e) => setValues({ ...values, address: e.target.value })}
+          <Controller
+            control={control}
+            name="address"
+            rules={{ required: "Este campo es requerido" }}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Dirección"
+                sx={{ width: "70%" }}
+                {...field}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
           />
-          <TextField
-            label="Teléfono"
-            value={values.phone}
-            sx={{ width: "70%" }}
-            required
-            onChange={(e) => setValues({ ...values, phone: e.target.value })}
+          <Controller
+            control={control}
+            name="phone"
+            rules={{
+              required: "Este campo es requerido",
+              pattern: { value: /^[0-9]{9}$/i, message: "Teléfono inválido" },
+            }}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Teléfono"
+                sx={{ width: "70%" }}
+                {...field}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
           />
-          <TextField
-            label="Correo"
-            value={values.email}
-            sx={{ width: "70%" }}
-            type="email"
-            required
-            onChange={(e) => setValues({ ...values, email: e.target.value })}
+          <Controller
+            control={control}
+            name="email"
+            rules={{
+              required: "Este campo es requerido",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+                message: "Correo inválido",
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <TextField
+                label="Correo"
+                sx={{ width: "70%" }}
+                {...field}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
           />
-          <TextField
-            label="Contraseña"
-            value={values.password}
-            sx={{ width: "70%" }}
-            type="password"
-            required
-            onChange={(e) => setValues({ ...values, password: e.target.value })}
+          <Controller
+            control={control}
+            name="password"
+            rules={{ required: "Este campo es requerido", minLength: 8 }}
+            render={({ field, fieldState }) => (
+              <TextField label="Contraseña" sx={{ width: "70%" }} {...field} error={!!fieldState.error}
+              helperText={fieldState.error?.message} />
+            )}
           />
-          {error && (
-            <Text color="error">{error.message}</Text>
-          )}
+
+          {error && <Text color="error">{error.message}</Text>}
           <Button
             disabled={loading}
-            onClick={() => mutate(values)}
+            type="submit"
+            onClick={() => handleSubmit(confirm)}
           >
             {loading ? <CircularProgress /> : "Crear Master"}
           </Button>
         </Card>
+      </form>
     </>
   );
 }

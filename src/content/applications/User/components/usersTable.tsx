@@ -175,14 +175,14 @@ const UsersTable: React.FC = () => {
         </Table>
       </TableContainer>
       <Box p={2}>
-        <TableCell
+        <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "center",
           }}
         >
-          Page {(filters.page ?? 0) + 1} of{" "}
+          Pagina {(filters.page ?? 0) + 1} de{" "}
           {query.data?.count
             ? query.data.count < 10
               ? filters.page! + 1
@@ -209,7 +209,7 @@ const UsersTable: React.FC = () => {
               <ArrowForwardIosIcon />
             </Button>
           </Box>
-        </TableCell>
+        </Box>
       </Box>
     </Card>
   );
