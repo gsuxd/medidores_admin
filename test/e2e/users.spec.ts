@@ -24,11 +24,11 @@ test.describe('Users Routes', () => {
         await page.waitForSelector('text="Pagina 1 de 5"');
         
         //Verifica que renderiza los elementos
-        expect(page.getByText("Administrador Prueba 1", {exact: true})).toBeVisible();
-        expect(page.getByText("gsuxdxd@gmail.com", {exact: true})).toBeVisible();
+        await expect(page.getByText("Administrador Prueba 1", {exact: true})).toBeVisible();
+        await expect(page.getByText("gsuxdxd@gmail.com", {exact: true})).toBeVisible();
 
         //Verifica que renderiza TODOS los elementos
-        expect(page.locator("tr")).toHaveCount(11);
+        await expect(page.locator("tr")).toHaveCount(11);
     })
 
     test("Should change page", async ({ page }) => {
@@ -48,9 +48,9 @@ test.describe('Users Routes', () => {
         await page.locator('[data-testid=ArrowForwardIosIcon]').click();
         await page.waitForSelector('text="Pagina 2 de 5"');
         
-        expect(page.getByText('José Correa', {exact: true})).toBeVisible();
-        expect(page.getByText('jcorrea@gmail.com', {exact: true})).toBeVisible();
-        expect(page.locator("tr")).toHaveCount(11);
+        await expect(page.getByText('José Correa', {exact: true})).toBeVisible();
+        await expect(page.getByText('jcorrea@gmail.com', {exact: true})).toBeVisible();
+        await expect(page.locator("tr")).toHaveCount(11);
     });
 
     test("Should search user", async ({ page }) => {
@@ -84,19 +84,19 @@ test.describe('Users Routes', () => {
         await page.getByRole('button', { name: 'Filtrar' }).click();
         
         await page.waitForSelector('text="Pagina 1 de 1"');
-        expect(page.getByText('Administrador Prueba 1', {exact: true})).toBeVisible();
+        await expect(page.getByText('Administrador Prueba 1', {exact: true})).toBeVisible();
         
         await page.getByRole('textbox', { name: 'Apellido' }).fill('Test');
         
         await page.waitForSelector('text="Pagina 1 de 1"');
-        expect(page.getByText("Admin Test", {exact: true})).toBeVisible();
+        await expect(page.getByText("Admin Test", {exact: true})).toBeVisible();
         
         
         await page.locator('#ssrId').click();
         await page.getByText('Los Confines', {exact: true}).click();
 
         await page.waitForSelector('text="Pagina 1 de 0"');
-        expect(page.getByText("No se encontraron resultados", {exact: true})).toBeVisible();
+        await expect(page.getByText("No se encontraron resultados", {exact: true})).toBeVisible();
     });
 })
 

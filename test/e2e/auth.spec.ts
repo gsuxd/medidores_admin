@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { loginResponse } from './mocks/fakeUser';
+import { logIn } from './helpers';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/login');
@@ -10,12 +11,10 @@ test.describe('Auth Routes', () => {
 
         await page.routeFromHAR('./test/e2e/mocks/har/login.har', {
             url: '**/api/auth/login',
-            update: false,
         });
 
         await page.routeFromHAR('./test/e2e/mocks/har/dashboard.har', {
-            url: 'https://h2ogestion.cl/api/admin/dashboard',
-            update: false
+            url: '**/api/admin/dashboard',
         });
 
         // Get the input element and type some text into it.
@@ -29,7 +28,7 @@ test.describe('Auth Routes', () => {
         await page.click('button[type="submit"]');
 
         await page.waitForURL('/admin/dashboard');
-        expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
+        await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
     });
 
     test('Should show an error message when the login fails', async ({ page }) => {
@@ -49,7 +48,8 @@ test.describe('Auth Routes', () => {
         await passwordInput.fill('20132013');
 
         await page.click('button[type="submit"]');
-        expect(page.getByText('Usuario no encontrado', { exact: true })).toBeVisible();
+
+        await expect(page.getByText('Usuario no encontrado', { exact: true })).toBeVisible();
     });
 
     test("Should allow me to create a master user", async ({ page }) => {
@@ -77,7 +77,7 @@ test.describe('Auth Routes', () => {
 
         await page.waitForURL('/create-master');
 
-        expect(page.getByText('Crea tu usuario master', { exact: true })).toBeVisible();
+        await expect(page.getByText('Crea tu usuario master', { exact: true })).toBeVisible();
 
         await page.fill('input[name="name"]', 'Michael');
         await page.fill('input[name="lastName"]', 'Geiser');
@@ -89,7 +89,8 @@ test.describe('Auth Routes', () => {
 
         await page.click('button[type="submit"]');
         await page.waitForURL('/admin/dashboard');
-        expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
+
+        await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
     });
 
     test("Should redirect to landing page of the app", async ({ page }) => {
@@ -105,19 +106,15 @@ test.describe('Auth Routes', () => {
 
         await page.waitForURL('/status/app');
 
-        expect(page.getByText('Instala la app móvil para acceder.', { exact: true })).toBeVisible();
+        await expect(page.getByText('Instala la app móvil para acceder.', { exact: true })).toBeVisible();
     })
 
     test("Should redirect to dashboard if logged", async ({ page }) => {
-        await page.evaluate(({user, token}) => {
-            window.localStorage.setItem("user", JSON.stringify(user));
-            window.localStorage.setItem("token", token);
-        }, {user: loginResponse.user, token: loginResponse.token});
-        await page.reload();
+        await logIn(page);
 
         await page.waitForURL('/admin/dashboard');
 
-        expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
-        expect(page.getByText('Deudas totales', { exact: true })).toBeVisible();
+        await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
+        await expect(page.getByText('Deudas totales', { exact: true })).toBeVisible();
     });
 });
