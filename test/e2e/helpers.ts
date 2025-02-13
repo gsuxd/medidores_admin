@@ -2,7 +2,7 @@ import { Page } from "playwright";
 
 export const logIn = async (page: Page) => {
     await page.goto('/');
-    await page.routeFromHAR('./e2e/mocks/har/login.har', {
+    await page.routeFromHAR('./test/e2e/mocks/har/login.har', {
         url: 'https://h2ogestion.cl/api/auth/login',
     });
     await page.getByRole('link', { name: 'Iniciar Sesión' }).click();

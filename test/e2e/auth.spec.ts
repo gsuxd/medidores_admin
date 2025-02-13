@@ -8,12 +8,12 @@ test.beforeEach(async ({ page }) => {
 test.describe('Auth Routes', () => {
     test('should allow me to login', async ({ page }) => {
 
-        await page.routeFromHAR('./e2e/mocks/har/login.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/login.har', {
             url: '**/api/auth/login',
             update: false,
         });
 
-        await page.routeFromHAR('./e2e/mocks/har/dashboard.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/dashboard.har', {
             url: 'https://h2ogestion.cl/api/admin/dashboard',
             update: false
         });
@@ -93,7 +93,7 @@ test.describe('Auth Routes', () => {
     });
 
     test("Should redirect to landing page of the app", async ({ page }) => {
-        await page.routeFromHAR('./e2e/mocks/har/loginPartner.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/loginPartner.har', {
             url: '**/api/auth/login',
             update: true,
         })

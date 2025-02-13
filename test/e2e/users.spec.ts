@@ -4,7 +4,7 @@ import { logIn } from './helpers';
 test.beforeEach(async ({ page }) => {
     await logIn(page);
 
-    await page.routeFromHAR('./e2e/mocks/har/ssrUsers.har', {
+    await page.routeFromHAR('./test/e2e/mocks/har/ssrUsers.har', {
         url: 'https://h2ogestion.cl/api/admin/ssr',
     })
 
@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 test.describe('Users Routes', () => {
     test("Should navigate to users page", async ({ page}) => {
         
-        await page.routeFromHAR('./e2e/mocks/har/users.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/users.har', {
             url: 'https://h2ogestion.cl/api/admin/users',
         });
         
@@ -32,11 +32,11 @@ test.describe('Users Routes', () => {
     })
 
     test("Should change page", async ({ page }) => {
-        await page.routeFromHAR('./e2e/mocks/har/users.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/users.har', {
             url: 'https://h2ogestion.cl/api/admin/users',
         });
 
-        await page.routeFromHAR('./e2e/mocks/har/usersPage.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/usersPage.har', {
             url: 'https://h2ogestion.cl/api/admin/users?page=2',
         });
 
@@ -54,23 +54,23 @@ test.describe('Users Routes', () => {
     });
 
     test("Should search user", async ({ page }) => {
-        await page.routeFromHAR('./e2e/mocks/har/users.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/users.har', {
             url: 'https://h2ogestion.cl/api/admin/users',
         });
 
-        await page.routeFromHAR('./e2e/mocks/har/usersSearch.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/usersSearch.har', {
             url: 'https://h2ogestion.cl/api/admin/user/?page=0&limit=25&name=Admin&lastName=&email=&phone=&rut=&order=desc&orderBy=name&ssrId=-1&enabled=true',
         });
 
-        await page.routeFromHAR('./e2e/mocks/har/usersSearch2.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/usersSearch2.har', {
             url: 'https://h2ogestion.cl/api/admin/user/?page=0&limit=25&name=Admin&lastName=Test&email=&phone=&rut=&order=desc&orderBy=name&ssrId=-1&enabled=true',
         });
 
-        await page.routeFromHAR('./e2e/mocks/har/usersSearch3.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/usersSearch3.har', {
             url: 'https://h2ogestion.cl/api/admin/user/?page=0&limit=25&name=Admin&lastName=Test&email=&phone=&rut=&order=desc&orderBy=name&ssrId=1&enabled=true',
         });
 
-        await page.routeFromHAR('./e2e/mocks/har/usersSearch4.har', {
+        await page.routeFromHAR('./test/e2e/mocks/har/usersSearch4.har', {
             url: 'https://h2ogestion.cl/api/admin/user/?page=0&limit=25&name=Admin&lastName=Test&email=&phone=&rut=&order=desc&orderBy=name&ssrId=2&enabled=true',
         });
 
