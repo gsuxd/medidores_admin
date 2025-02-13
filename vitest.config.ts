@@ -9,8 +9,13 @@ export default defineConfig(
     ] as UserConfig['plugins'],
     test: {
       environment: 'happy-dom',
-      include: ['test/**/*.test.{ts,tsx}'],
+      include: ['test/unit/**/*.test.{ts,tsx}'],
       name: 'node',
+      exclude: ['test/e2e/**/*.test.{ts,tsx}'],
+      coverage: {
+        provider: 'istanbul',
+        include: ['src/**/*'],
+      }
     },
   },
 )

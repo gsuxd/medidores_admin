@@ -42,12 +42,10 @@ test.describe('Users Routes', () => {
 
 
         await page.getByRole('link', { name: 'Usuarios' }).click();
-        
-        //await page.waitForSelector('text="Pagina 1 de 5"');
-        
+                
         await page.locator('[data-testid=ArrowForwardIosIcon]').click();
-        //await page.waitForSelector('text="Pagina 2 de 5"');
         
+        //Verify that the page has changed
         await expect(page.getByText('José Correa', {exact: true})).toBeVisible();
         await expect(page.getByText('jcorrea@gmail.com', {exact: true})).toBeVisible();
         await expect(page.locator("tr")).toHaveCount(11);
@@ -82,20 +80,19 @@ test.describe('Users Routes', () => {
         await page.locator('#role').click();
         await page.locator('[data-value=admin]').click();
         await page.getByRole('button', { name: 'Filtrar' }).click();
-        
-        //await page.waitForSelector('text="Pagina 1 de 1"');
+        //Verify that the search was successful
         await expect(page.getByText('Administrador Prueba 1', {exact: true})).toBeVisible();
         
         await page.getByRole('textbox', { name: 'Apellido' }).fill('Test');
         
-        //await page.waitForSelector('text="Pagina 1 de 1"');
+        //Verify that the search was successful
         await expect(page.getByText("Admin Test", {exact: true})).toBeVisible();
         
         
         await page.locator('#ssrId').click();
         await page.getByText('Los Confines', {exact: true}).click();
 
-        //await page.waitForSelector('text="Pagina 1 de 0"');
+        //Verify that the search was unsuccessful
         await expect(page.getByText("No se encontraron resultados", {exact: true})).toBeVisible();
     });
 })

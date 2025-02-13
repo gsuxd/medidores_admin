@@ -3,7 +3,7 @@ import { loginResponse } from './mocks/fakeUser';
 import { logIn } from './helpers';
 
 test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
+    await page.goto('/');
 });
 
 test.describe('Auth Routes', () => {
@@ -17,6 +17,8 @@ test.describe('Auth Routes', () => {
             url: '**/api/admin/dashboard',
         });
 
+        await page.getByText('Iniciar sesión').click();
+
         // Get the input element and type some text into it.
         const emailInput = page.getByLabel('Correo');
         const passwordInput = page.getByLabel('Contraseña');
@@ -27,6 +29,7 @@ test.describe('Auth Routes', () => {
 
         await page.click('button[type="submit"]');
 
+        // Verify that the user is logged in
         await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
     });
 
@@ -38,6 +41,8 @@ test.describe('Auth Routes', () => {
             });
         });
 
+        await page.getByText('Iniciar sesión').click();
+
         // Get the input element and type some text into it.
         const emailInput = page.getByLabel('Correo');
         const passwordInput = page.getByLabel('Contraseña');
@@ -48,6 +53,7 @@ test.describe('Auth Routes', () => {
 
         await page.click('button[type="submit"]');
 
+        // Verify that it gets error message
         await expect(page.getByText('Usuario no encontrado', { exact: true })).toBeVisible();
     });
 
@@ -66,6 +72,8 @@ test.describe('Auth Routes', () => {
             });
         })
 
+        await page.getByText('Iniciar sesión').click();
+
         const emailInput = page.getByLabel('Correo');
         const passwordInput = page.getByLabel('Contraseña');
 
@@ -74,6 +82,7 @@ test.describe('Auth Routes', () => {
 
         await page.click('button[type="submit"]');
 
+        // Verify that the user is in the form
         await expect(page.getByText('Crea tu usuario master', { exact: true })).toBeVisible();
 
         await page.fill('input[name="name"]', 'Michael');
@@ -85,7 +94,8 @@ test.describe('Auth Routes', () => {
         await page.fill('input[name="password"]', '20242024');
 
         await page.click('button[type="submit"]');
-
+        
+        // Verify that the user is logged in
         await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
     });
 
@@ -94,18 +104,23 @@ test.describe('Auth Routes', () => {
             url: '**/api/auth/login',
         })
 
+        await page.getByText('Iniciar sesión').click();
 
         await page.fill('input[name="email"]', 'test3@test.com');
         await page.fill('input[name="password"]', '20132013');
 
         await page.click('button[type="submit"]');
 
+        // Verify that the user is in the page
         await expect(page.getByText('Instala la app móvil para acceder.', { exact: true })).toBeVisible();
     })
 
     test("Should redirect to dashboard if logged", async ({ page }) => {
         await logIn(page);
 
+        await page.goto('/login');
+
+        // Verify that the user is in the page
         await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
         await expect(page.getByText('Deudas totales', { exact: true })).toBeVisible();
     });
