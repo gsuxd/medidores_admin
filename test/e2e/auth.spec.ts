@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { loginResponse } from './mocks/fakeUser';
+import { loginResponse } from '../mocks/fakeUser';
 import { logIn } from './helpers';
 
 test.beforeEach(async ({ page }) => {

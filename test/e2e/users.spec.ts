@@ -19,12 +19,10 @@ test.describe('Users Routes', () => {
         
         await page.getByRole('link', { name: 'Usuarios' }).click();
 
-        expect(page.getByText("Administración de Usuarios", {exact: true})).toBeVisible();
+        expect(page.getByText("Administración de Usuarios", {exact: true})).toBeVisible()
 
-        //await page.waitForSelector('text="Pagina 1 de 5"');
-        
         //Verifica que renderiza los elementos
-        await expect(page.getByText("Administrador Prueba 1", {exact: true})).toBeVisible();
+        await expect(page.getByText("Administrador Prueba1", {exact: true})).toBeVisible();
         await expect(page.getByText("gsuxdxd@gmail.com", {exact: true})).toBeVisible();
 
         //Verifica que renderiza TODOS los elementos
@@ -81,7 +79,7 @@ test.describe('Users Routes', () => {
         await page.locator('[data-value=admin]').click();
         await page.getByRole('button', { name: 'Filtrar' }).click();
         //Verify that the search was successful
-        await expect(page.getByText('Administrador Prueba 1', {exact: true})).toBeVisible();
+        await expect(page.getByText('Administrador Prueba1', {exact: true})).toBeVisible();
         
         await page.getByRole('textbox', { name: 'Apellido' }).fill('Test');
         
