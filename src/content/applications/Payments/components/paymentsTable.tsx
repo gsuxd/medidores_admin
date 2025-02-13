@@ -175,7 +175,7 @@ const PaymentsTable: React.FC = () => {
               <ArrowForwardIosIcon />
             </Button>
           </Box>
-        </TableCell>
+        </Box>
       </Box>
     </Card>
   );
