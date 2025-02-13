@@ -95,7 +95,6 @@ test.describe('Auth Routes', () => {
     test("Should redirect to landing page of the app", async ({ page }) => {
         await page.routeFromHAR('./test/e2e/mocks/har/loginPartner.har', {
             url: '**/api/auth/login',
-            update: true,
         })
 
 
