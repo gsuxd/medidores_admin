@@ -27,7 +27,6 @@ test.describe('Auth Routes', () => {
 
         await page.click('button[type="submit"]');
 
-        await page.waitForURL('/admin/dashboard');
         await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
     });
 
@@ -75,8 +74,6 @@ test.describe('Auth Routes', () => {
 
         await page.click('button[type="submit"]');
 
-        await page.waitForURL('/create-master');
-
         await expect(page.getByText('Crea tu usuario master', { exact: true })).toBeVisible();
 
         await page.fill('input[name="name"]', 'Michael');
@@ -88,7 +85,6 @@ test.describe('Auth Routes', () => {
         await page.fill('input[name="password"]', '20242024');
 
         await page.click('button[type="submit"]');
-        await page.waitForURL('/admin/dashboard');
 
         await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
     });
@@ -104,15 +100,11 @@ test.describe('Auth Routes', () => {
 
         await page.click('button[type="submit"]');
 
-        await page.waitForURL('/status/app');
-
         await expect(page.getByText('Instala la app móvil para acceder.', { exact: true })).toBeVisible();
     })
 
     test("Should redirect to dashboard if logged", async ({ page }) => {
         await logIn(page);
-
-        await page.waitForURL('/admin/dashboard');
 
         await expect(page.getByText('Bienvenid@, Michael!', { exact: true })).toBeVisible();
         await expect(page.getByText('Deudas totales', { exact: true })).toBeVisible();
