@@ -123,6 +123,8 @@ export default function SSRConfiguration() {
   useEffect(() => {
     if (selectedSSR === -1 && query.data) {
       setSelectedSSR(query.data!.ssr.keys().next().value!);
+    } else {
+      setSelectedSSR(selectedSSR);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.data]);
@@ -217,7 +219,7 @@ export default function SSRConfiguration() {
           updates[key] = newVal;
         }
       });
-
+      //updates.paymentToken = "mKaTZ4yBm3rVFapqNctziKCvXsjD6fDO";
       updates.id = selectedSSR;
 
       await mutation.mutateAsync(updates);
